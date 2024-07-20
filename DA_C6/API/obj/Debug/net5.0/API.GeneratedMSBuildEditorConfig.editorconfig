@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = API
-build_property.ProjectDir = D:\Mon_Dang_Hoc\C_Shapes_6\ASM\DA_C6\API\
+build_property.ProjectDir = D:\Mon_Dang_Hoc\C_Shapes_6\DuAn_WebC6_24-06-24\DA_C6\API\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
