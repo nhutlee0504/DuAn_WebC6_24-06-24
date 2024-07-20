@@ -1,6 +1,9 @@
+using API.Data;
+using API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,6 +34,23 @@ namespace API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<IAccount, AccountResponse>();
+            services.AddScoped<IProduct, ProductResponse>();
+            services.AddScoped<IProductDetail, ProductDetailResponse>();
+            services.AddScoped<IImage, ImageResponse>();
+            services.AddScoped<ICategory, CategoryResponse>();
+            services.AddScoped<ISize, SizeResponse>();
+            services.AddScoped<IColor, ColorResponse>();
+            services.AddScoped<ISupplier, SupplierResponse>();
+            services.AddScoped<IEvaluate, EvaluateResponse>();
+            services.AddScoped<ICategory, CategoryResponse>();
+            services.AddScoped<IBill, BillResponse>();
+            services.AddScoped<IBillDetail, BillDetailResponse>();
+            services.AddScoped<ISale, SaleResponse>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
