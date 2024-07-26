@@ -1,25 +1,23 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Blazor.Data;
-using Blazor.Model;
-using Blazor.Services;
 using System.Collections.Generic;
+using Blazor.Shared.Model;
+using Blazor.Server.Services;
 
-namespace Blazor.Controllers
+namespace Blazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
         private IProduct product;
-        private IImage image;
-        public ProductController(IProduct prod, IImage img)
+        public ProductController(IProduct prod)
         {
             product = prod;
-            image = img;
         }
 
         [HttpGet]
+        [Route("GetProducts")]
         public IEnumerable<Product> GetProducts()
         {
             return product.GetProducts();

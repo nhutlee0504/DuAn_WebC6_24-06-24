@@ -1,5 +1,5 @@
-using Blazor.Data;
-using Blazor.Services;
+using Blazor.Server.Data;
+using Blazor.Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;

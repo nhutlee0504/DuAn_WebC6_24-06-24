@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Blazor.Data;
-using Blazor.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-
-namespace Blazor.Services
+using Blazor.Shared.Model;
+namespace Blazor.Server.Services
 {
     public interface ISupplier
     {

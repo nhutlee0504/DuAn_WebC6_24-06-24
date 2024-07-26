@@ -1,11 +1,10 @@
-﻿using Blazor.Model;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Blazor.Services;
+using Blazor.Server.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Blazor.Shared.Model;
 namespace Blazor.Controllers
 {
     [Route("api/[controller]")]

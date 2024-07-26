@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Blazor.Data;
-using Blazor.Model;
-using Blazor.Services;
 using System.Collections.Generic;
+using Blazor.Shared.Model;
+using Blazor.Server.Services;
 
-namespace Blazor.Controllers
+namespace Blazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -15,6 +14,7 @@ namespace Blazor.Controllers
         public CategoryController(ICategory cgr) => category = cgr;
 
         [HttpGet]
+        [Route("GetCategories")]
         public IEnumerable<Category> GetCategories()
         {
             return category.GetCategories();
