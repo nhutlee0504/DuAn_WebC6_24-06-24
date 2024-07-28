@@ -1,0 +1,120 @@
+﻿@page "/checkout"
+
+<style>
+    .breadcrumb-item a{
+        color: #6c757d;
+        text-decoration: none;
+    }
+</style>
+<div class="container">
+    <h1>Thanh toán</h1>
+    <ol class="breadcrumb bg-transparent">
+        <li class="breadcrumb-item"><a href="">Trang chủ</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
+    </ol>
+    <div class="row">
+        <div class="col-sm-6 d-flex flex-column">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <i class="bi bi-person-circle"></i>
+                    Thông tin liên hệ
+                </div>
+                <div class="card-body">
+                    <div class="form-section">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Số điện thoại</label>
+                                <input class="rounded border border-secondary" type="text" readonly />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Email</label>
+                                <br />
+                                <input class="rounded border border-secondary" type="text" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-5">
+                <div class="card-header bg-white">
+                    <img src="IMG/shipperaddress.png" alt="Alternate Text" />
+                    Địa chỉ giao hàng
+                </div>
+                <div class="card-body">
+                    <div class="form-section">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Họ tên</label>
+                                <br />
+                                <input class="rounded border border-secondary" type="text" readonly />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Địa chỉ</label>
+                                <br />
+                                <input class="rounded border border-secondary" type="text" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="container">
+                <h2>Sản phẩm</h2>
+                <hr/>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
+                    </div>
+                    <div class="col-sm-8 flex-column">
+                        <p class="font-weight-bold">Áo cầu lông 1</p>
+                        <p>Xanh/M</p>
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold">1</div>
+                            <div class="col-sm-6">200.000</div>
+                        </div>
+                    </div>
+                    <hr  class="m-3"/>
+                </div>
+
+                @*  s *@
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
+                    </div>
+                    <div class="col-sm-8 flex-column">
+                        <p class="font-weight-bold">Áo cầu lông 1</p>
+                        <p>Xanh/M</p>
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold">1</div>
+                            <div class="col-sm-6">200.000</div>
+                        </div>
+                    </div>
+                    <hr class="m-3" />
+                </div>
+                @*  s *@
+
+                <div class="row">
+                    <div class="col-sm-4 font-weight-bold">Tổng cộng</div>
+                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">400.000</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 font-weight-bold">Phí vận chuyển</div>
+                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">30.000</div>
+                </div>
+
+                <div class="row mt-3 mb-3">
+                    <h5 class="col-sm-4 font-weight-bold">Tổng tiền</h5>
+                    <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">430.000</h5>
+                </div>
+                <div class="row mt-3">
+                    <input type="submit" class="btn btn-dark rounded-pill" value="Xác nhận" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
