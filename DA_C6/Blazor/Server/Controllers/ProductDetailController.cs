@@ -21,10 +21,11 @@ namespace Blazor.Server.Controllers
         }
 
 
-        [HttpGet("prodId")]
-        public IEnumerable<ProductDetails> GetPddtByProdId(int prodId)
+        [HttpGet("id")]
+        [Route("GetPddtByProdId/{id}")]
+        public IEnumerable<ProductDetails> GetPddtByProdId(int id)
         {
-            return productDetail.GetPddtByProdId(prodId);
+            return productDetail.GetPddtByProdId(id);
         }
 
         [HttpGet("{id}")]

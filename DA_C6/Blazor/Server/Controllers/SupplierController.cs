@@ -18,6 +18,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet]
+        [Route("GetSuppliers")]
         public ActionResult<IEnumerable<Supplier>> GetSuppliers()
         {
             var suppliers = supplierService.GetSuppliers();

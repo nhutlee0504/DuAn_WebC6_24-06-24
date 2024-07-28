@@ -2,201 +2,158 @@
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
 <div class="container">
-    <div class="row">
-        <div class="col-md-7">
-            <div class="row ">
-                <div class="d-flex">
-                    <div class="col-md-9">
-                        <div class="justify-content-center" style="margin-right: 15px;">
-@*<img id="main-image" src="~/@Model.Product.Image" alt="Alternate Text" class="w-100" style="border-radius: 25px;">
- *@                        </div>
-                    </div>
-                    <div class="col-md-3">
-                      @*   @if (Model.Images != null && Model.Images.Any())
-                        {
-                            <div class="image-selection">
-                                @foreach (var img in Model.Images)
-                                {
-                                    <div class="image-option">
-                                        <input type="radio" id="image-@img.IDImage" name="options" value="@img.Image" class="radio-btn-image">
-                                        <label for="image-@img.IDImage">
-                                            <img src="@Url.Content("~/")@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
-                                        </label>
-                                    </div>
-                                }
-                            </div>
-                        } *@
+	@if (productitems != null)
+	{
+		<div class="row">
+			<div class="col-md-7">
+				<div class="row ">
+					<div class="d-flex">
+						<div class="col-md-9">
+							<div class="justify-content-center" style="margin-right: 15px;">
+								<img id="main-image" src="/@productitems.Image" alt="Alternate Text" class="w-100" style="border-radius: 25px;">
+							</div>
+						</div>
+						<div class="col-md-3">
+							@if (imagedetailitems != null && imagedetailitems.Any())
+							{
+								<div class="image-selection">
+									@foreach (var img in imagedetailitems)
+									{
+										<div class="image-option">
+											<input type="radio" id="image-@img.IDImage" name="options" value="@img.Image" class="radio-btn-image">
+											<label for="image-@img.IDImage">
+												<img src="/@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
+											</label>
+										</div>
+									}
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+				<hr>
+				<h3>THÔNG TIN SẢN PHẨM</h3>
+				<h4>@productitems.Name</h4>
+				<h6 class="text-secondary">
+					@categoryitems.FirstOrDefault(y => y.IDCategory == productitems.IDCategory).Name -
+					@supplieritems.FirstOrDefault(y => y.IDSupplier == productitems.IDSupplier).Name
+					<p>@productitems.Describe</p>
+				</h6>
 
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <h3>THÔNG TIN SẢN PHẨM</h3>
-@*             <h4>@Model.Product.Name</h4>
-            <h6 class="text-secondary">@Model.Product.Category.Name - @Model.Product.Supplier.Name</h5>
-            <p>@Model.Product.Describe</p> *@
-        </div>
-        <div class="col-md-5">
-@*             @if (TempData["FailQuantity"] != null)
-            {
-                <div class="alert alert-danger">@TempData["FailQuantity"]</div>
-            } *@
-            <div class="card" style="background-color:#D9D9D9">
-                <div class="card-body">
-                    <div class="container">
-                        <div class="row d-flex justify-content-between">
-                            <div class="">
-                                <div style="font-size:large">
-@*                                 <strong>Đánh giá: </strong><u>@Model.Evaluates.Where(x => x.IDProduct == Model.Product.IDProduct).Count()</u>
- *@                                </div>
-                            </div>
-                            <div class="text-center">
-                                <div class="">
-@*                                     <div class="font-weight-bold" style="font-size:x-large">@Model.Product.Price.ToString("N0") VNĐ</div>
- *@                                </div>
-                            </div>
-                        </div>
+			</div>
+			<div class="col-md-5">
 
-                        <div>
-                            <div class="font-weight-bold" style="font-size:large">Màu và kích cỡ:</div>
-                        </div>
+				<div class="card" style="background-color:#D9D9D9">
+					<div class="card-body">
+						<div class="container">
+							<div class="row d-flex justify-content-between">
+								<div class="">
+									<div style="font-size:large">
+									</div>
+								</div>
+								<div class="text-center">
+									<div class="">
+									</div>
+								</div>
+							</div>
 
-                        @*color and size*@
-                        <form method="post" asp-controller="Cart" asp-action="AddCart">
-                            <div class="row">
-                          @*       @foreach (var detail in Model.ProductDetails)
-                                {
-                                    <div class="col-sm-2">
-                                        <input class="radio-btn-size" type="radio" name="IdPDetail" id="@detail.IDPDetail + 1" value="@detail.IDPDetail" checked='@(detail.IDPDetail == selectedIdPDetail ? "checked" : "")'>
-                                        <label class="font-weight-bold radio-btn-size" for="@detail.IDPDetail + 1" style="background-color: @Model.Colors.FirstOrDefault(x => x.IDColor == detail.IDColor)?.Color; color:white" checked='@(detail.IDPDetail == selectedIdPDetail ? "checked" : "")'>
-                                            @Model.Sizes.FirstOrDefault(s => s.IDSize == detail.Size)?.SizeName
-                                        </label>
-                                    </div>
-                                } *@
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12 d-flex justify-content-between">
-                                    <div class="quantity-selector">
-                                        <form>
-                                            <button type="button" class="decrease-btn">-</button>
-                                            <input type="text" name="quantity" value="1" class="quantity-input" readonly>
-                                            <button type="button" class="increase-btn">+</button>
-                                        </form>
-                                    </div>
-                                    <div>
-                                        <button type="submit" class="btn add-cart">
-                                            <i class="bi bi-bag-plus"></i>
-                                            <div>Thêm vào giỏ hàng</div>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+							<div>
+								<div class="font-weight-bold" style="font-size:large">Màu và kích cỡ:</div>
+							</div>
 
-                    </div>
-                </div>
-            </div>
-            <div class="">
-                <hr>
+							@*color and size*@
+							<form method="post" asp-controller="Cart" asp-action="AddCart">
+								<div class="row">
+									@if(productdetailitems != null)
+									{
+										@foreach(var item in productdetailitems)
+										{
+											<div class="col-md-2">
+												<input class="radio-btn-size" type="radio" name="name" value="" />
+												<label class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y=>y.IDColor == item.IDColor).Color">
+													@sizeitems.FirstOrDefault(y => y.IDSize == item.Size).SizeName
+												</label>
+											</div>
+										}
+									}
+								</div>
+								<div class="row">
+									<div class="col-sm-12 d-flex justify-content-between">
+										<div class="quantity-selector">
+											<form>
+												<button type="button" class="decrease-btn">-</button>
+												<input type="text" name="quantity" value="1" class="quantity-input" readonly>
+												<button type="button" class="increase-btn">+</button>
+											</form>
+										</div>
+										<div>
+											<button type="submit" class="btn add-cart">
+												<i class="bi bi-bag-plus"></i>
+												<div>Thêm vào giỏ hàng</div>
+											</button>
+										</div>
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+				<div class="">
+					<hr>
 
 
-            @*     @if (ViewBag.Condition)
-                {
-                    <form asp-controller="ProductDetail" asp-action="AddEvaluate" method="post">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            <input type="radio" id="star-@i" name="point" value="@i" class="radio-btn-point">
-                            <label class="radio-label" for="star-@i"><i class="bi bi-star-fill"></i></label>
-                        }
-                        <input type="hidden" name="id" value="@Model.Product.IDProduct" />
-                        <textarea name="dsc" rows="5" class="w-100" placeholder="Đánh giá sản phẩm"></textarea>
-                        <button class="btn btn-secondary">Gửi đánh giá</button>
-                    </form>
-                } *@
 
-                <div class="card mt-3" style="border 1px solid: black">
 
-             @*        @foreach (var evaluate in Model.Evaluates.Where(x => x.IDProduct == Model.Product.IDProduct))
-                    {
-                        <div class="card-body border-1">
-                            <div class="evaluate-item">
-                                <div class="user">@evaluate.UserName - Đánh giá: @evaluate.Point<i class="bi bi-star-fill text-warning"></i> </div>
-                                <div class="describe">Mô tả: @evaluate.Describe</div>
-                            </div>
-                        </div>
-                    } *@
-                </div>
-            </div>
-        </div>
-    </div>
+					<div class="card mt-3" style="border 1px solid: black">
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+	else
+	{
+		<div class="spinner-border" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	}
+
 </div>
-
-@* <script>
-        var quantityInput = document.querySelector(".quantity-input");
-        var decreaseBtn = document.querySelector(".decrease-btn");
-        var increaseBtn = document.querySelector(".increase-btn");
-        decreaseBtn.addEventListener('click', function () {
-            var currentValue = parseInt(quantityInput.value);
-            if (currentValue > 1) {
-                quantityInput.value = currentValue - 1;
-            }
-        });
-        increaseBtn.addEventListener('click', function () {
-            var currentValue = parseInt(quantityInput.value);
-            quantityInput.value = currentValue + 1;
-        });
-
-    document.querySelectorAll('.radio-btn-point').forEach(radio => {
-        radio.addEventListener('change', () => {
-            const value = parseInt(radio.value);
-            document.querySelectorAll('.radio-label').forEach(label => {
-                const labelFor = label.getAttribute('for');
-                const labelValue = parseInt(labelFor.split('-')[1]);
-                if (labelValue <= value) {
-                    label.style.color = 'gold';
-                } else {
-                    label.style.color = 'grey';
-                }
-            });
-        });
-    });
-
-    document.querySelectorAll('.radio-btn-image').forEach(radio => {
-        radio.addEventListener('change', () => {
-            var mainImage = document.getElementById('main-image');
-            mainImage.src = "/" + radio.value;
-        });
-    });
-</script> *@
 @code {
-    private List<Cart> cartItems;
-    private List<Product> productitems;
-    private List<ProductDetails> productdetailitems;
-    private List<Sizes> sizeitems;
-    private List<Colors> coloritems;
-    private List<ImageDetails> imagedetailitems;
-    private Cart c = new Cart();
-    private Product p = new Product();
-    private ProductDetails pd = new ProductDetails();
-    private Sizes s = new Sizes();
-    private Colors cl = new Colors();
-    private ImageDetails imd = new ImageDetails();
+	[Parameter]
+	public string id { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
-            productitems = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProduct/{id}");
-            productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>("api/ProductDetail/GetProductDetails");
-            sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
-            coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
-            imagedetailitems = await httpclient.GetFromJsonAsync<List<ImageDetails>>("api/ImageDetail/GetImageDetails/{productId}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
-        await base.OnInitializedAsync();
-    }
+	private Product productitems;
+	private List<ProductDetails> productdetailitems;
+	private List<Sizes> sizeitems;
+	private List<Colors> coloritems;
+	private List<Category> categoryitems;
+	private List<Supplier> supplieritems;
+	private List<ImageDetails> imagedetailitems;
+	private Product p = new Product();
+	private ProductDetails pd = new ProductDetails();
+	private Sizes s = new Sizes();
+	private Colors cl = new Colors();
+	private Category ct = new Category();
+	private Supplier sp = new Supplier();
+	private ImageDetails imd = new ImageDetails();
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			productitems = await httpclient.GetFromJsonAsync<Product>($"api/Product/GetProduct/{id}");
+			productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>($"api/ProductDetail/GetPddtByProdId/{id}");
+			sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
+			coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
+			categoryitems = await httpclient.GetFromJsonAsync<List<Category>>("api/Category/GetCategories");
+			supplieritems = await httpclient.GetFromJsonAsync<List<Supplier>>("api/Supplier/GetSuppliers");
+			imagedetailitems = await httpclient.GetFromJsonAsync<List<ImageDetails>>($"api/GetImageDetails/{id}");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error: {ex.Message}");
+		}
+		await base.OnInitializedAsync();
+	}
 }
