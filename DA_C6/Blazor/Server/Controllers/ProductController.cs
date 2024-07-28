@@ -39,6 +39,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet("{id}")]
+        [Route("GetProduct/{id}")]
         public Product GetProduct(int id)
         {
           return product.GetProductId(id);

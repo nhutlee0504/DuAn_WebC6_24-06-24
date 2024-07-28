@@ -14,6 +14,7 @@ namespace Blazor.Server.Controllers
         public ProductDetailController(IProductDetail prodDt) => productDetail = prodDt;
 
         [HttpGet]
+        [Route("GetProductDetails")]
         public IEnumerable<ProductDetails> GetProductDetails()
         {
             return productDetail.GetProductDetails();

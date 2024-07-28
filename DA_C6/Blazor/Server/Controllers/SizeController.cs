@@ -14,6 +14,7 @@ namespace Blazor.Server.Controllers
         public SizeController(ISize s) => size = s;
 
         [HttpGet]
+        [Route("GetSizes")]
         public IEnumerable<Sizes> GetSizes()
         {
             return size.GetSizes();

@@ -1,0 +1,129 @@
+﻿.radio-btn-image {
+    display: none;
+}
+
+    .radio-btn-image + label {
+        display: inline-block;
+        cursor: pointer;
+    }
+
+        .radio-btn-image + label img {
+            border-radius: 25px;
+        }
+
+
+
+    .radio-btn-image:checked + label img {
+        font-weight: bold;
+    }
+
+    .radio-btn-image:not(:checked) + label img {
+        opacity: 0.5;
+    }
+
+
+.radio-btn-size {
+    display: none;
+}
+
+    .radio-btn-size + label {
+        display: inline-block;
+        text-align: center;
+        align-items: center;
+        align-content: center;
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+
+    .radio-btn-size:checked + label {
+        color: black;
+        border: 1px solid #0EA5E9;
+    }
+
+    .radio-btn-size:not(:checked) + label {
+        opacity: 0.5;
+        font-weight: normal;
+    }
+
+.radio-btn-point {
+    display: none;
+}
+
+.radio-label {
+    display: inline-block;
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    margin-right: 5px;
+    color: grey;
+}
+
+.radio-btn-point:checked ~ .radio-label,
+.radio-btn-point:checked ~ .radio-label ~ .radio-label {
+    color: gold;
+}
+
+.quantity-selector {
+    display: flex;
+    float: left;
+    justify-content: center;
+    text-align: center;
+    background-color: gray;
+    border-radius: 25px;
+    padding: 5px;
+}
+
+    .quantity-selector button {
+        border: 1px solid #000;
+        background: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+.quantity-input {
+    border: none;
+    background: transparent;
+    text-align: center;
+    padding: 5px 10px;
+    font-size: 15px;
+    font-weight: bold;
+    width: 50px;
+}
+
+.add-cart {
+    display: flex;
+    float: right;
+    background-color: black;
+    color: white;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    border-radius: 25px;
+    padding: 10px 15px;
+}
+
+.col-sm-3 .border {
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.col-sm-3 .container-fluid {
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.col-sm-3:hover .border {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
+}
+
+.col-sm-3:hover .container-fluid {
+    transform: translateY(-5px);
+}

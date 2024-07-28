@@ -18,6 +18,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet("{productId}")]
+        [Route("GetImageDetails/{productId}")]
         public IEnumerable<ImageDetails> GetImageDetails(int productId)
         {
             return _imageService.GetImages(productId);

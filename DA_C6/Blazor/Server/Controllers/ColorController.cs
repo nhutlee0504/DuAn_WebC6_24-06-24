@@ -14,6 +14,7 @@ namespace Blazor.Server.Controllers
         public ColorController(IColor co) => color = co;
 
         [HttpGet]
+        [Route("GetColors")]
         public IEnumerable<Colors> GetColors()
         {
             return color.GetColors();
