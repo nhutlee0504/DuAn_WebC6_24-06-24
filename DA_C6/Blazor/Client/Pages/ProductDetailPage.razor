@@ -148,7 +148,7 @@
 			coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
 			categoryitems = await httpclient.GetFromJsonAsync<List<Category>>("api/Category/GetCategories");
 			supplieritems = await httpclient.GetFromJsonAsync<List<Supplier>>("api/Supplier/GetSuppliers");
-			imagedetailitems = await httpclient.GetFromJsonAsync<List<ImageDetails>>($"api/GetImageDetails/{id}");
+			imagedetailitems = await httpclient.GetFromJsonAsync<List<ImageDetails>>($"api/ImageDetail/GetImageDetails/{id}");
 		}
 		catch (Exception ex)
 		{

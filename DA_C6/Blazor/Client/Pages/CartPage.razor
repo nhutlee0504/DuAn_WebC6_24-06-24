@@ -34,7 +34,13 @@
 											}
 										</p>
 										<div>
-											@item.Quantity
+											<div class="quantity-selector">
+												<form>
+													<button type="button" class="decrease-btn">-</button>
+													<input type="text" name="quantity" value="@item.Quantity" class="quantity-input" readonly>
+													<button type="button" class="increase-btn">+</button>
+												</form>
+											</div>
 										</div>
 									</div>
 									<div class="">

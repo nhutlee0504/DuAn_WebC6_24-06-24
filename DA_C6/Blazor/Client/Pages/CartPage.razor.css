@@ -124,3 +124,33 @@
             background-color: #0056b3;
             color: white;
         }
+
+.quantity-selector {
+    display: flex;
+    float: left;
+    justify-content: center;
+    text-align: center;
+    background-color: gray;
+    border-radius: 25px;
+    padding: 5px;
+}
+
+    .quantity-selector button {
+        border: 1px solid #000;
+        background: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+.quantity-input {
+    border: none;
+    background: transparent;
+    text-align: center;
+    padding: 5px 10px;
+    font-size: 15px;
+    font-weight: bold;
+    width: 50px;
+}
