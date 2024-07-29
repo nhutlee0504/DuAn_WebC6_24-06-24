@@ -1,0 +1,89 @@
+﻿@page "/Pages/NextRegister"
+<style>
+    .registration-form {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+</style>
+<ol class="breadcrumb bg-transparent">
+    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+    <li class="breadcrumb-item active">Đăng ký tài khoản</li>
+    <li class="breadcrumb-item active" aria-current="page">Xác nhận thông tin</li>
+</ol>
+
+
+<form asp-action="NextRegister" class="registration-form mb-4" id="frm">
+    <div class="text-center mb-5">
+        <h3>Nhập thông tin cá nhân</h3>
+    </div>
+    <input type="text" asp-for="UserName" hidden />
+    <input type="text" asp-for="Password" hidden />
+    <input type="text" asp-for="Role" value="Member" hidden />
+    <div class="form-group">
+        <label class="fw-bolder" for="hoTen">Họ và tên</label>
+        <input asp-for="Name" type="text" id="hoTen" placeholder="Họ và tên" class="form-control" required>
+        <small class="form-text text-muted">Ví dụ: Nguyễn Văn A</small>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label class="fw-bolder" for="soDienThoai">Số điện thoại</label>
+        <input asp-for="Phone" type="tel" id="soDienThoai" placeholder="Số điện thoại" class="form-control" required>
+        <small class="form-text text-muted">Ví dụ: 0987654321</small>
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label class="fw-bolder">Địa chỉ</label>
+        <input asp-for="Address" type="text" id="address" placeholder="Địa chỉ" class="form-control" required>
+        <small class="form-text text-muted">Ví dụ: Số 123, đường ABC, quận XYZ</small>
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label class="fw-bolder" for="gioiTinh">Giới tính</label>
+        <select asp-for="Gender" id="gioiTinh" class="form-control" required>
+            <option value="" selected hidden>Giới tính</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+        </select>
+        <small class="form-text text-muted">Vui lòng chọn giới tính của bạn.</small>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label class="fw-bolder" for="email">Email</label>
+        <input asp-for="Email" type="email" id="email" placeholder="Email" class="form-control" required>
+        <small class="form-text text-muted">Ví dụ: example@example.com</small>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-check mb-3">
+        <input type="checkbox" class="form-check-input" id="checkbox" required>
+        <label class="form-check-label" for="checkbox">Tôi đồng ý với <a href="#">Chính sách và điều khoản</a></label>
+        <span id="errormessage" class="text-danger"></span>
+    </div>
+    <input type="submit" class="btn btn-dark w-100 rounded-pill" value="Đăng ký tài khoản">
+</form>
+
+@code {
+
+}

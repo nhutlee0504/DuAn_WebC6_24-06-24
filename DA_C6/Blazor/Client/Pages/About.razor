@@ -1,0 +1,106 @@
+﻿@page "/Pages/About"
+@using Blazor.Shared
+@inject HttpClient Http
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<style>
+
+    .contact-form {
+        background-color: #f6f8fb;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .input-field {
+        border-radius: 10px;
+        background-color: #f6f8fb;
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+
+        .input-field:focus {
+            outline: none;
+        }
+
+    textarea {
+        height: 100px;
+    }
+
+    .submit-btn {
+        border-radius: 20px;
+        padding: 10px;
+        font-weight: bold;
+    }
+
+        .submit-btn:hover {
+            background-color: #333;
+            color: #fff;
+        }</style>
+<div class="container intro-section">
+    <div class="row">
+        <div class="col-md-6 intro-content">
+            <h3 class="font-weight-bold">Về chúng tôi</h3>
+            <p>
+                Chúng tôi không chỉ giúp bạn thiết kế các sản phẩm đặc biệt mà còn giúp bạn dễ dàng thực hiện để chia sẻ thiết kế của bạn với nhiều người cùng chí hướng hơn.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="/IMG/image.png" class="w-100" />
+        </div>
+        <div class="col-md-6">
+            <h3 class="font-weight-bold">
+                Cung cấp thời trang và sản phẩm đủ tiêu chuẩn
+            </h3>
+            <p>
+                Đã có hàng triệu người rất hài lòng với điều này. Page builder và số lượng ngày càng nhiều. Công nghệ phát triển, yêu cầu ngày càng cao. Riode đã mang lại.
+            </p>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <h3 class="font-weight-bold">
+                Cung cấp thời trang và
+                sản phẩm đủ tiêu chuẩn
+            </h3>
+            <p>
+                Đã có hàng triệu người rất hài lòng với điều này. s page builder và số lượng ngày càng nhiều. Công nghệ phát triển, yêu cầu ngày càng cao. Riode đã mang lại.
+            </p>
+        </div>
+        <div class="col-md-6">
+            <img src="/IMG/image (1).png" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <h3 class="font-weight-bolder">Hãy liên lạc với chúng tôi</h3>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h4 class="font-weight-bolder">Địa chỉ</h4>
+            <p class="mb-2">Tòa nhà Cao đẳng FPT Polytechnic Cần Thơ, đường số 22, Thường Thạnh, Cái Răng, Cần Thơ.</p>
+            <h4 class="font-weight-bolder">Email</h4>
+            <p class="mb-2">fpt@fpt.edu.vn</p>
+            <h4 class="font-weight-bold">Số điện thoại</h4>
+            <p class="mb-2">0933.345.332 </p>
+        </div>
+        <div class="col-md-6 contact-form">
+            <h4 class="font-weight-bold">Họ và tên</h4>
+            <input type="text" class="w-100 input-field" placeholder="Nhập họ và tên: (Ví dụ: Nguyễn Văn A)">
+            <h4 class="font-weight-bold">Email</h4>
+            <input type="text" class="w-100 input-field" placeholder="Nhập email: (Ví dụ: nguyenvana@example.com)">
+            <h4 class="font-weight-bold">Nội dung</h4>
+            <textarea class="w-100 input-field" placeholder="Nội dung"></textarea>
+            <button class="btn btn-dark w-50 mt-4 submit-btn">Gửi</button>
+        </div>
+    </div>
+</div>
+
+}
+
+@code {
+
+}
