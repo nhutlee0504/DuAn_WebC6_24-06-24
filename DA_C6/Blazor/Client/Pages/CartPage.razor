@@ -34,10 +34,10 @@
 											}
 										</p>
 										<div>
-											<div class="quantity-selector">
+											<div class="quantity-selector border" style="background-color: white">
 												<form>
 													<button type="button" class="decrease-btn">-</button>
-													<input type="text" name="quantity" value="@item.Quantity" class="quantity-input" readonly>
+													<input type="text" name="quantity" value="@item.Quantity" class="quantity-input" style="background-color: white" readonly>
 													<button type="button" class="increase-btn">+</button>
 												</form>
 											</div>
@@ -45,7 +45,7 @@
 									</div>
 									<div class="">
 										<a class="nav-link text-dark float-end ms-3" href="#" asp-area="" asp-controller="About" asp-action="Index">
-											<img src="/IMG/about.png" alt="Cart" style="width: 24px; height: 24px;">
+											<img src="/IMG/delete.png" alt="Cart" style="width: 24px; height: 24px;">
 										</a>
 										<p class="cart-item-price float-end text-black">
 											@{
@@ -100,7 +100,7 @@
 			}
 		}
 	</div>
-	<nav aria-label="Page navigation example">
+@* 	<nav aria-label="Page navigation example">
 		<ul class="pagination">
 			<li class="page-item"><a class="page-link" href="#">Previous</a></li>
 			<li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -108,7 +108,7 @@
 			<li class="page-item"><a class="page-link" href="#">3</a></li>
 			<li class="page-item"><a class="page-link" href="#">Next</a></li>
 		</ul>
-	</nav>
+	</nav> *@
 </div>
 
 
