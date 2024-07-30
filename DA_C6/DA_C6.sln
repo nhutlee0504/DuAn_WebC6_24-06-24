@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Shared", "Blazor\Sha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{B424B6F3-8C08-4BCB-B4F8-35E07D1B1188}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "Admin\Admin.csproj", "{959B3050-1D79-4514-B9CB-997E599DC38B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B424B6F3-8C08-4BCB-B4F8-35E07D1B1188}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B424B6F3-8C08-4BCB-B4F8-35E07D1B1188}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B424B6F3-8C08-4BCB-B4F8-35E07D1B1188}.Release|Any CPU.Build.0 = Release|Any CPU
+		{959B3050-1D79-4514-B9CB-997E599DC38B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{959B3050-1D79-4514-B9CB-997E599DC38B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{959B3050-1D79-4514-B9CB-997E599DC38B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{959B3050-1D79-4514-B9CB-997E599DC38B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
