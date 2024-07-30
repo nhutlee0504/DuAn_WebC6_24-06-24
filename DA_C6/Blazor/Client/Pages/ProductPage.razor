@@ -35,62 +35,60 @@
 
         <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
     </ol>
-</div>
-
-<div class="container">
     <div class="row mt-3">
         <div class="col-sm-3">
             <h5>Loại</h5>
-            <form method="post" id="filterByCate">
+            <form>
                 @if (categories != null)
                 {
                     @foreach (var category in categories)
                     {
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="selectedCategories" value="@category.IDCategory" id="@category.IDCategory">
-                            <label class="form-check-label" for="@category.IDCategory">
-                                @category.Name
-                            </label>
+                            <input class="form-check-input" type="checkbox" value="@category.IDCategory" id="@category.IDCategory"
+                                   @onchange="@(e => OnCategoryChanged(category.IDCategory, (bool)((ChangeEventArgs)e).Value))">
+                            <label>@category.Name</label>
                         </div>
                     }
                 }
                 else
                 {
-                    <div class="fw-bold">Loading...</div>
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 }
-                <button type="submit" class="btn btn-dark mt-3">Lọc</button>
             </form>
 
             <hr class="mt-3 mb-3">
 
             <h5>Phạm vi giá</h5>
-            <form action="/Product/FilterByPrice" method="post">
+            <form method="post">
                 <div class="input-group mb-3">
-                    <input type="number" placeholder="Thấp" class="form-control" name="priceLow" id="priceLow">
-                    <input type="number" placeholder="Cao" class="form-control" name="priceHigh" id="priceHigh">
-                        <button type="submit" class="btn btn-dark rounded-end">Lọc</button>
+                    <input type="number" placeholder="Thấp" class="form-control" @bind="lowPrice" id="priceLow" min="0">
+                    <input type="number" placeholder="Cao" class="form-control" @bind="highPrice" id="priceHigh" min="0">
+                    <button type="button" class="btn btn-dark rounded-end" @onclick="OnFilterByPrice">Lọc</button>
                 </div>
             </form>
 
             <hr class="mt-3 mb-3">
 
             <h5>Thứ tự sắp xếp</h5>
-            <div class="form-check">
                 <input class="form-check-input123" type="radio" name="sortOrder" id="priceLowToHigh" value="priceLowToHigh" @onchange="@(e => OnSortOrderChanged("priceLowToHigh"))">
                 <label class="form-check-label" for="priceLowToHigh">
                     Giá từ thấp - cao
                 </label>
-            </div>
-            <div class="form-check">
+                <br/>
                 <input class="form-check-input123" type="radio" name="sortOrder" id="priceHighToLow" value="priceHighToLow" @onchange="@(e => OnSortOrderChanged("priceHighToLow"))">
                 <label class="form-check-label" for="priceHighToLow">
                     Giá từ cao - thấp
                 </label>
-            </div>
         </div>
 
         <div class="col-sm-9">
             <div class="row">
+                @if(message != null)
+                {
+                    <div class="fw-bold" id="messagePrice">@message</div>
+                }
                 @if (products != null && categories != null)
                 {
                     @foreach (var x in products)
@@ -114,7 +112,9 @@
                 }
                 else
                 {
-                    <div class="fw-bold">Loading...</div>
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 }
             </div>
         </div>
@@ -122,5 +122,10 @@
 </div>
 
 <script>
-
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            var element = document.getElementById('messagePrice');
+            element.style.display = 'none';
+        }, 3000);
+    });
 </script>
