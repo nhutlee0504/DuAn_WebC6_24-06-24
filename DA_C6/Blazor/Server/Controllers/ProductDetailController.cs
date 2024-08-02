@@ -14,16 +14,18 @@ namespace Blazor.Server.Controllers
         public ProductDetailController(IProductDetail prodDt) => productDetail = prodDt;
 
         [HttpGet]
+        [Route("GetProductDetails")]
         public IEnumerable<ProductDetails> GetProductDetails()
         {
             return productDetail.GetProductDetails();
         }
 
 
-        [HttpGet("prodId")]
-        public IEnumerable<ProductDetails> GetPddtByProdId(int prodId)
+        [HttpGet("id")]
+        [Route("GetPddtByProdId/{id}")]
+        public IEnumerable<ProductDetails> GetPddtByProdId(int id)
         {
-            return productDetail.GetPddtByProdId(prodId);
+            return productDetail.GetPddtByProdId(id);
         }
 
         [HttpGet("{id}")]
