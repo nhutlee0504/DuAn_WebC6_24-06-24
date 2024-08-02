@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Blazor.Shared.Model;
 using Blazor.Server.Services;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace Blazor.Server.Controllers
 {
@@ -58,6 +60,45 @@ namespace Blazor.Server.Controllers
                 return null;
             account.DeleteAccount(user);     
             return NoContent();
+        }
+
+        // Trong file AccountController.cs
+        [HttpPost("Authenticate")]
+        [Route("Authenticate")]
+        public IActionResult Authenticate([FromBody] Account model)
+        {
+            // Lấy salt từ cơ sở dữ liệu hoặc sử dụng một giá trị cố định
+            string salt = "somesalt";
+
+            // Kết hợp mật khẩu người dùng với salt
+            string combinedPassword = string.Concat(model.Password, salt);
+
+            // Băm mật khẩu kết hợp
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // Băm mật khẩu kết hợp
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(combinedPassword));
+
+                // Chuyển byte[] thành string hex
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+
+                // Giá trị băm
+                string hashedPassword = builder.ToString();
+
+                // Giả sử account là một đối tượng của lớp AccountService chứa phương thức VerifyPassword
+                var authenticated = account.VerifyPassword(model.UserName, hashedPassword);
+
+                if (authenticated)
+                {
+                    return Ok(new { message = "Authentication successful" });
+                }
+
+                return BadRequest(new { message = "Authentication failed" });
+            }
         }
     }
 }
