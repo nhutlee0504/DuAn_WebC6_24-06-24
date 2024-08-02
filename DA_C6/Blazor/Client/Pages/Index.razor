@@ -1,12 +1,14 @@
 ﻿@page "/"
 @inject HttpClient http
 
+
 <!-- Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 <!-- MDB -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+
 <style>
     .features-item {
         height: 100%;
@@ -48,11 +50,11 @@
         box-sizing: border-box;
     }
 
-        .prod img {
-            max-height: 200px;
-            object-fit: cover;
-            width: 100%;
-        }
+    .prod img {
+        max-height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
 
     .custom-class-img {
         margin-top: 65.5px;
@@ -139,6 +141,7 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
 <!-- Cards -->
 <div class="container-fluid py-3">
     <div class="container py-5">
@@ -306,10 +309,12 @@
                 {
                     <div class="fw-bold">Loading...</div>
                 }
-            </div>
+
+            </div>      
         </div>
     </section>
 </div>
+
 <!-- Product -->
 <div class="container py-5">
     <h1 class="tab-content">
@@ -318,7 +323,7 @@
     </h1>
     <section style="background-color: #eee;">
         <div class="container py-3">
-            <div class="row overflow-auto">
+            <div class="row">
                 @if (products != null && categories != null)
                 {
                     @foreach (var x in products.Take(4))
@@ -331,7 +336,7 @@
                                         <i class="bi bi-bag-heart"></i>
                                     </span>
                                 </div>
-                                <img src="/@x.Image" class="card-img-top custom-class-img" alt="Ao" />
+                                <img src="@x.Image" class="card-img-top custom-class-img" alt="Ao" />
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <h5 class="mb-0">@x.Name</h5>
@@ -342,7 +347,7 @@
                                     </div>
                                     <div class="d-flex align-items-center">
 
-                                        <i class="fa fa-star text-warning me-2"></i>
+                                        <i class="fa fa-star text-warning"></i>
 
                                         <p class="text-muted mb-0">4.9 <span class="fw-bold">(98)</span></p>
 
@@ -356,6 +361,7 @@
                 {
                     <div class="fw-bold">Loading...</div>
                 }
+
             </div>
         </div>
     </section>
