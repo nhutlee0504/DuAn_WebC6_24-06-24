@@ -113,6 +113,46 @@
 				</div>
 			</div>
 		</div>
+		<section style="background-color: #eee;">
+			<div class="container py-3">
+				<h3>Gợi ý sản phẩm</h3>
+				<div class="row overflow-auto">
+					@if (productitemsmany != null && categoryitems != null)
+					{
+						@foreach (var x in productitemsmany.Take(4))
+						{
+							<div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+								<div class="card position-relative">
+									<div class="bg-info position-absolute top-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow-1-strong m-3"
+										 style="width: 35px; height: 35px;">
+										<span class="text-white mb-0 small">
+											<i class="bi bi-bag-heart"></i>
+										</span>
+									</div>
+									<img src="/@x.Image" class="card-img-top custom-class-img" alt="Ao" />
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h5 class="mb-0">@x.Name</h5>
+											<h5 class="text-dark mb-0">@x.Price.ToString("N0") đ</h5>
+										</div>
+										<div class="d-flex justify-content-between mb-0">
+											<p class="small"><a href="#!" class="text-muted">@categoryitems.FirstOrDefault(z => z.IDCategory == x.IDCategory).Name</a></p>
+										</div>
+										<div class="d-flex align-items-center">
+
+											<i class="fa fa-star text-warning me-2"></i>
+
+											<p class="text-muted mb-0">4.9 <span class="fw-bold">(98)</span></p>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+					}
+				</div>
+			</div>
+		</section>
 	}
 	else
 	{
@@ -127,6 +167,7 @@
 	public string id { get; set; }
 
 	private Product productitems;
+	private List<Product> productitemsmany;
 	private List<Cart> cartItems;
 	private List<ProductDetails> productdetailitems;
 	private List<Sizes> sizeitems;
@@ -147,6 +188,7 @@
 	{
 		try
 		{
+			productitemsmany = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
 			productitems = await httpclient.GetFromJsonAsync<Product>($"api/Product/GetProduct/{id}");
 			productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>($"api/ProductDetail/GetPddtByProdId/{id}");
 			sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");

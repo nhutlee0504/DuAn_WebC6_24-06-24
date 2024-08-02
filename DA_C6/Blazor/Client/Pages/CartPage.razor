@@ -74,14 +74,15 @@
 			<div class="cart-summary">
 				@*                 <h2 class="cart-total">Tổng đơn hàng: $339.98</h2>
 				*@
-				<button ></button>
 				<a class="btn btn-danger btn-block">Xóa giỏ hàng</a>
 				<a href="#" class="btn btn-success btn-dark">Thanh toán</a>
 			</div>
 		</div>
 	</div>
 	<hr>
+	<h3>Gợi ý sản phẩm</h3>
 	<div class="product-list">
+
 		@if(productitems != null)
 		{
 			@foreach(var item in productitems.Take(4))

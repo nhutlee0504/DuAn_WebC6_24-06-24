@@ -1,8 +1,12 @@
 ﻿@page "/"
 @inject HttpClient http
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css" rel="stylesheet" />
+<!-- Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+<!-- MDB -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
 <style>
     .features-item {
         height: 100%;
@@ -44,10 +48,14 @@
         box-sizing: border-box;
     }
 
-    .prod img {
-        max-height: 200px;
-        object-fit: cover;
-        width: 100%;
+        .prod img {
+            max-height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+    .custom-class-img {
+        margin-top: 65.5px;
     }
 
 </style>
@@ -323,7 +331,7 @@
                                         <i class="bi bi-bag-heart"></i>
                                     </span>
                                 </div>
-                                <img src="@x.Image" class="card-img-top custom-class-img" alt="Ao" />
+                                <img src="/@x.Image" class="card-img-top custom-class-img" alt="Ao" />
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <h5 class="mb-0">@x.Name</h5>
