@@ -1,132 +1,264 @@
 ﻿@page "/Pages/Profile"
+<style>
+    .breadcrumb {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0; 
+        font-size: 14px; 
+    }
+
+        .breadcrumb li {
+            display: inline;
+        }
+
+            .breadcrumb li::after {
+                content: "/";
+                padding: 0 5px;
+                color: #6c757d; /* Màu xám cho dấu phân cách */
+            }
+
+            .breadcrumb li:last-child::after {
+                content: "";
+            }
+
+        .breadcrumb a {
+            color: #007bff; /* Màu xanh dương cho liên kết */
+            text-decoration: none;
+        }
+
+            .breadcrumb a:hover {
+                text-decoration: underline;
+            }
+
+        .breadcrumb .active {
+            color: #212529; 
+            font-weight: 500; 
+            pointer-events: none; 
+
+        }
+
+    .nav-tabs .nav-link {
+        border-top: none; 
+        color:black;
+        border-bottom: 2px solid transparent;
+    }
+        .icon-nav{
+            width:15px;
+        }
+        .input-pro{
+            border-width:1px;
+            font-weight:bold;
+            padding:10px;
+            border-radius:10px;
+            width:100%;
+            font-size:15px;
+        }
+
+    hr {
+        height: 2px; 
+        border: none; 
+        background-color: black; 
+    }
+       .input-pro {
+      margin-bottom: 20px;
+    }
+    .font-weight-bolder {
+      margin-bottom: 10px;
+
+    }
+
+    .row-custom {
+        background-color: #F8F8F8;
+        border: none;
+        border-radius: 25px;
+        padding: 15px;
+    }
+
+    .img-container, .status-container, .btn-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .img-container img {
+            max-width: 100%; 
+            height: auto;
+        }
+
+        .btn-container .btn {
+            margin: 5px;
+        }
+</style>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<style>
-    .header-container {
-        padding: 20px;
-        border-radius: 10px;
-        background-color: #f8f9fa;
-    }
-
-        .header-container h5 {
-            margin-bottom: 0;
-        }
-
-        .header-container p {
-            margin-bottom: 0;
-        }
-
-    #profile-img-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    #profile-img {
-        width: 100px;
-        height: 100px;
-        cursor: pointer;
-    }
-
-    #user-info {
-        transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
-        overflow: hidden;
-        max-height: 0;
-        opacity: 0;
-        border-color: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
-        margin-top: 20px;
-    }
-
-        #user-info.show {
-            max-height: 1000px; /* Adjust this value based on content height */
-            opacity: 1;
-        }
-
-    #button-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    .btn-custom {
-        margin: 0 10px;
-        background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(139, 222, 34, 1) 0%, rgba(0, 212, 255, 1) 100%);
-        color: white;
-        font-weight: bolder;
-        border: none;
-        background-size: 200% 200%;
-        transition: background-position 0.5s ease, transform 0.3s ease;
-    }
-
-        .btn-custom:hover {
-            background-position: 100% 0;
-            color: white;
-            transform: scale(1.05);
-        }
-
-    a {
-        text-decoration: none;
-    }
-</style>
 <div class="container">
-
-    <ol class="breadcrumb bg-transparent">
-        <li class="breadcrumb-item"><a href="Home/Index">Trang chủ</a></li>
-
-        <li class="breadcrumb-item active" aria-current="page">Thông tin cá nhân</li>
-    </ol>
-</div>
-<div class="container" style="margin-bottom:300px">
-    <div id="profile-img-container" class="col-md-12">
-        <img id="profile-img" src="/IMG/logo.png" class="rounded-circle" />
-        <span class="hover-text">Thông tin cá nhân</span>
+    <div class="row">
+        <div class="profile-header">
+            <b class="font-weight-bold h2">THÔNG TIN CÁ NHÂN</b>
+            <ul class="breadcrumb">
+                <li><a href="/">Trang chủ</a></li>
+                <li class="active">Thông tin của bạn</li>
+            </ul>
+        </div>
     </div>
+    <div class="row">
+        <img src="/IMG/image 2.png" class="w-100" />
+    </div>
+</div>
 
-    <div id="user-info" class="row mt-3">
-        <ul class="list-group w-100">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bolder">Tên:</span>
-                <span>Phạm Huy</span>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <img src="/IMG/image 3 (1).png" />
+
+        </div>
+        <div class="col-md-10 mt-2">
+            <b class="h1">NEXTON STORE</b>
+            <p class="small">BROTHERHOODSTORE <img src="/IMG/Icon.png" /></p>
+        </div>
+    </div>
+    <div class="row" style="margin-top:20px">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">
+                    <img src="/IMG/Icon (1).png" class="icon-nav" />
+                    Thông tin của bạn
+                </button>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bolder">Số Điện Thoại:</span>
-                <span>0339338860</span>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="order-tab" data-bs-toggle="tab" data-bs-target="#order" type="button" role="tab" aria-controls="order" aria-selected="false">
+                    <img class="icon-nav" src="/IMG/image 4.png" alt="Alternate Text" /> Đơn hàng
+                </button>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bolder">Email:</span>
-                <span>huy@fpt.edu.vn</span>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="setting-tab" data-bs-toggle="tab" data-bs-target="#setting" type="button" role="tab" aria-controls="setting" aria-selected="false">
+                    <img class="icon-nav" src="/IMG/settings.png" alt="Alternate Text" /> Cài đặt
+                </button>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bolder">Giới tính:</span>
-                <span>Nam</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bolder">Địa chỉ:</span>
-                <span>Địa chỉ 1</span>
-            </li>
-            <div id="button-container" class="col-md-12">
-                <a asp-action="PassChange" class="btn btn-custom" asp-route-usn="">Đổi mật khẩu</a>
-                <a asp-controller="Home" asp-action="EditProfile" class="btn btn-custom">Cập nhật thông tin</a>
-                <a asp-controller="Home" asp-action="Logout" class="btn btn-custom">Đăng xuất</a>
-            </div>
         </ul>
+        <div    
+             class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <p class="font-weight-bold h3">Thông tin chung</p>
+                        <p class="small">Đây sẽ là thông sẽ công khai trên trang cá nhân</p>
+                    </div>  
+                    <div class="col-md-6">
+                        <p class="font-weight-bolder h6">Họ và tên</p>
+                        <input type="text" class="input-pro" value="PHẠM QUỐC HUY" />
+                        <p class="font-weight-bolder h6">Năm sinh</p>
+                        <input type="text" class="input-pro" value="09/08/2004" />
+                        <p class="font-weight-bolder h6">Địa chỉ</p>
+                        <input type="text" class="input-pro" value="Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam" />
+                    </div>
+                  
+                </div>
+                <div class="row mt-4">
+                    <hr/>
+                        <div class="col-md-6">
+                            <p class="font-weight-bold h3">Thông tin bảo mật</p>
+                            <p class="small">Đây sẽ là thông sẽ ẩn trên trang cá nhân</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="font-weight-bold h6">Số điện thoại</p>
+                            <input type="text" class="input-pro" value="033***433" />
+                            <p class="font-weight-bolder h6">Email</p>
+                            <input type="text" class="input-pro" value="huy***pc6@gmail.com" />
+                            <p class="font-weight-bolder h6">Mật khẩu</p>
+                            <input type="text" class="input-pro" value="*****************************" />
+                        </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
+                    <button class="btn btn-light me-md-2" style="border:none;background-color:white" type="button">Hủy</button>
+                    <button class="btn btn-dark" type="button">Cập nhật</button>
+                </div>
 
+            </div>
+            <div class="tab-pane fade" id="order" role="tabpanel" aria-labelledby="order-tab">
+                <div class="row mt-3 row-custom mb-4">
+                    <div class="col-md-2 img-container">
+                        <img src="/IMG/image 8.png" alt="Image" />
+                    </div>
+                    <div class="col-md-6" style="font-weight:bold">
+                        <p>MÃ ĐƠN HÀNG: #1000001</p>
+                        <p>Địa chỉ nhận hàng: Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam</p>
+                        <p>Tổng: 15.000.000 VND</p>
+                    </div>
+                    <div class="col-md-2 status-container">
+                        <p style="color:#FBBF24">Trạng thái: Đang chờ</p>
+                    </div>
+                    <div class="col-md-2 btn-container">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-danger" type="button">Hủy đơn</button>
+                            <button class="btn btn-dark" type="button">Chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+                  <div class="row mt-3 row-custom mb-4">
+                    <div class="col-md-2 img-container">
+                        <img src="/IMG/image 8.png" alt="Image" />
+                    </div>
+                    <div class="col-md-6" style="font-weight:bold">
+                        <p>MÃ ĐƠN HÀNG: #10000002</p>
+                        <p>Địa chỉ nhận hàng: Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam</p>
+                        <p>Tổng: 15.000.000 VND</p>
+                    </div>
+                    <div class="col-md-2 status-container">
+                        <p style="color:#FBBF24">Trạng thái: Đang chờ</p>
+                    </div>
+                    <div class="col-md-2 btn-container">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-danger" type="button">Hủy đơn</button>
+                            <button class="btn btn-dark" type="button">Chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+                  <div class="row mt-3 row-custom mb-4">
+                    <div class="col-md-2 img-container">
+                        <img src="/IMG/image 8.png" alt="Image" />
+                    </div>
+                    <div class="col-md-6" style="font-weight:bold">
+                        <p>MÃ ĐƠN HÀNG: #1000003</p>
+                        <p>Địa chỉ nhận hàng: Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam</p>
+                        <p>Tổng: 15.000.000 VND</p>
+                    </div>
+                    <div class="col-md-2 status-container">
+                        <p style="color:#FBBF24">Trạng thái: Đang chờ</p>
+                    </div>
+                    <div class="col-md-2 btn-container">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-danger" type="button">Hủy đơn</button>
+                            <button class="btn btn-dark" type="button">Chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3 row-custom mb-4">
+                    <div class="col-md-2 img-container">
+                        <img src="/IMG/image 8.png" alt="Image" />
+                    </div>
+                    <div class="col-md-6" style="font-weight:bold">
+                        <p>MÃ ĐƠN HÀNG: #1000004</p>
+                        <p>Địa chỉ nhận hàng: Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam</p>
+                        <p>Tổng: 15.000.000 VND</p>
+                    </div>
+                    <div class="col-md-2 status-container">
+                        <p style="color:#FBBF24">Trạng thái: Đang chờ</p>
+                    </div>
+                    <div class="col-md-2 btn-container">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-danger" type="button">Hủy đơn</button>
+                            <button class="btn btn-dark" type="button">Chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="setting-tab">
+                <p>Nội dung của tab Setting.</p>
+            </div>
+        </div>
     </div>
 </div>
-<script>
-    document.getElementById('profile-img').addEventListener('click', function () {
-        var userInfo = document.getElementById('user-info');
-        if (userInfo.classList.contains('show')) {
-            userInfo.classList.remove('show');
-        } else {
-            userInfo.classList.add('show');
-        }
-    });
-</script>
-
-@code {
-    // C# code here
-}
 
 @code {
 
