@@ -12,7 +12,22 @@ namespace API.Services
             context = ct;
         }
 
-        public IEnumerable<Cart> GetAllCart()
+		public Cart AddProductToCart(Cart cart)
+		{
+			try
+			{
+				context.Carts.Add(cart);
+				context.SaveChanges();
+				return cart;
+			}
+			catch (System.Exception)
+			{
+
+				return null;
+			}
+		}
+
+		public IEnumerable<Cart> GetAllCart()
         {
             return context.Carts;
         }

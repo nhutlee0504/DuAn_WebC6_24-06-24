@@ -1,6 +1,7 @@
 ﻿@page "/productdetail/{id}"
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
+@inject IJSRuntime JSRuntime
 <div class="container">
 	@if (productitems != null)
 	{
@@ -20,7 +21,7 @@
 									@foreach (var img in imagedetailitems)
 									{
 										<div class="image-option">
-											<input type="radio" id="image-@img.IDImage" name="options" value="@img.Image" class="radio-btn-image">
+											<input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image">
 											<label for="image-@img.IDImage">
 												<img src="/@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
 											</label>
@@ -64,30 +65,32 @@
 							@*color and size*@
 							<form method="post" asp-controller="Cart" asp-action="AddCart">
 								<div class="row mb-3">
-									@if(productdetailitems != null)
+									@if (productdetailitems != null)
 									{
-										@foreach(var item in productdetailitems)
+										@foreach (var item in productdetailitems)
 										{
 											<div class="col-md-2">
-												<input class="radio-btn-size" type="radio" name="name" value="" />
-												<label class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y=>y.IDColor == item.IDColor).Color">
+												<!-- Thêm thuộc tính data-color để lưu mã màu của từng item -->
+												<input class="radio-btn-size" type="radio" name="IdPDetail" id="@item.IDPDetail" value="@item.IDPDetail"/>
+												<label for="@item.IDPDetail" class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y=>y.IDColor == item.IDColor).Color">
 													@sizeitems.FirstOrDefault(y => y.IDSize == item.Size).SizeName
 												</label>
 											</div>
 										}
 									}
 								</div>
+
 								<div class="row">
 									<div class="col-sm-12 d-flex justify-content-between">
 										<div class="quantity-selector">
 											<form>
-												<button type="button" class="decrease-btn">-</button>
-												<input type="text" name="quantity" value="1" class="quantity-input" readonly>
-												<button type="button" class="increase-btn">+</button>
+												<button type="button" class="decrease-btn" @onclick="DecreaseQuantity">-</button>
+												<input type="text" name="quantity" @bind="QuantityToAdd" class="quantity-input" readonly>
+												<button type="button" class="increase-btn" @onclick="IncreaseQuantity">+</button>
 											</form>
 										</div>
 										<div>
-											<button type="submit" class="btn add-cart">
+											<button type="button" class="btn add-cart" @onclick="AddCart">
 												<i class="bi bi-bag-plus"></i>
 												<div>Thêm vào giỏ hàng</div>
 											</button>
@@ -124,6 +127,7 @@
 	public string id { get; set; }
 
 	private Product productitems;
+	private List<Cart> cartItems;
 	private List<ProductDetails> productdetailitems;
 	private List<Sizes> sizeitems;
 	private List<Colors> coloritems;
@@ -137,6 +141,7 @@
 	private Category ct = new Category();
 	private Supplier sp = new Supplier();
 	private ImageDetails imd = new ImageDetails();
+	private Cart c = new Cart();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -155,5 +160,52 @@
 			Console.WriteLine($"Error: {ex.Message}");
 		}
 		await base.OnInitializedAsync();
+	}
+
+	// Tạo một thuộc tính mới trong lớp CodeRazor:
+	private int QuantityToAdd = 1;
+
+	// Sửa phương thức IncreaseQuantity và DecreaseQuantity để cập nhật giá trị của QuantityToAdd thay vì selectedQuantity:
+	private void IncreaseQuantity()
+	{
+		QuantityToAdd++;
+	}
+
+	private void DecreaseQuantity()
+	{
+		if (QuantityToAdd > 1)
+		{
+			QuantityToAdd--;
+		}
+	}
+
+	private async Task AddCart()
+	{
+		// Lấy giá trị của IDPDetail
+		var selectedIdPDetail = await JSRuntime.InvokeAsync<string>("eval", "document.querySelector('input[name=IdPDetail]:checked').value");
+
+		// Lấy giá trị của quantity
+
+		// Kiểm tra giá trị và thực hiện xử lý tiếp theo
+		if (!string.IsNullOrEmpty(selectedIdPDetail))
+		{
+			// Tiếp tục thực hiện xử lý với selectedIdPDetail và selectedQuantity
+			c.UserName = "Admin";
+			c.IDPDetail = int.Parse(selectedIdPDetail);
+			c.Quantity = QuantityToAdd;
+
+			// Thực hiện POST request để thêm vào giỏ hàng
+			await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
+
+			// Lấy danh sách cart cập nhật
+			cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
+
+			// Chuyển hướng người dùng đến trang giỏ hàng
+			await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
+		}
+		else
+		{
+			// Xử lý khi không có giá trị được chọn
+		}
 	}
 }

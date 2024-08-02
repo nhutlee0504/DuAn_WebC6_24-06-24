@@ -9,13 +9,24 @@ namespace API.Controllers
     [ApiController]
     public class CartController : Controller
     {
-        private ICart cart;
-        public CartController(ICart acc) => cart = acc;
+        private ICart icart;
+        public CartController(ICart acc) => icart = acc;
 
         [HttpGet]
         public IEnumerable<Cart> GetAll()
         {
-            return cart.GetAllCart();
+            return icart.GetAllCart();
         }
-    }
+
+		[HttpPost]
+		public Cart Add(Cart cart)
+		{
+			return icart.AddProductToCart(new Cart
+			{
+				UserName = cart.UserName,
+                IDPDetail = cart.IDPDetail,
+                Quantity = cart.Quantity,
+			});
+		}
+	}
 }

@@ -33,18 +33,18 @@
 											<p>Kích thước - màu sắc: @size.SizeName - @color.Color</p> <!-- Hiển thị thông tin kích thước -->
 											}
 										</p>
-										<div>
-											<div class="quantity-selector border" style="background-color: white">
+										<div class="col-md-2">
+											<div class="quantity-selector">
 												<form>
-													<button type="button" class="decrease-btn">-</button>
-													<input type="text" name="quantity" value="@item.Quantity" class="quantity-input" style="background-color: white" readonly>
-													<button type="button" class="increase-btn">+</button>
+													<button type="button" class="decrease-btn" @onclick="() => DecreaseQuantity(item)">-</button>
+													<input type="text" name="quantity" value="@item.Quantity" class="quantity-input" readonly>
+													<button type="button" class="increase-btn" @onclick="() => IncreaseQuantity(item)">+</button>
 												</form>
 											</div>
 										</div>
 									</div>
 									<div class="">
-										<a class="nav-link text-dark float-end ms-3" href="#" asp-area="" asp-controller="About" asp-action="Index">
+										<a @onclick="() => RemoveItem(item.IDCart)" class="nav-link text-dark float-end ms-3">
 											<img src="/IMG/delete.png" alt="Cart" style="width: 24px; height: 24px;">
 										</a>
 										<p class="cart-item-price float-end text-black">
@@ -74,7 +74,8 @@
 			<div class="cart-summary">
 				@*                 <h2 class="cart-total">Tổng đơn hàng: $339.98</h2>
 				*@
-				<a href="#" class="btn btn-danger btn-block">Xóa giỏ hàng</a>
+				<button ></button>
+				<a class="btn btn-danger btn-block">Xóa giỏ hàng</a>
 				<a href="#" class="btn btn-success btn-dark">Thanh toán</a>
 			</div>
 		</div>
@@ -141,4 +142,55 @@
 		}
 		await base.OnInitializedAsync();
 	}
+
+	private async Task RemoveItem(int id)
+	{
+		// Gửi yêu cầu xóa sản phẩm tương ứng với cartId
+		await httpclient.DeleteAsync($"api/Cart/DeleteCart/{id}");
+
+		// Cập nhật lại danh sách sản phẩm trong giỏ hàng sau khi xóa
+		cartItems = cartItems.Where(c => c.IDCart != id).ToList();
+	}
+
+	private async Task IncreaseQuantity(Cart item)
+	{
+		item.Quantity++;
+		await UpdateCartItem(item);
+	}
+
+	private async Task DecreaseQuantity(Cart item)
+	{
+		if (item.Quantity > 1)
+		{
+			item.Quantity--;
+			await UpdateCartItem(item);
+		}
+	}
+
+	private async Task UpdateCartItem(Cart cart)
+	{
+		await httpclient.PutAsJsonAsync($"api/Cart/UpdateCart/{cart.IDCart}", cart);
+
+		var updatedItemIndex = cartItems.FindIndex(c => c.IDCart == cart.IDCart);
+		if (updatedItemIndex != -1)
+		{
+			cartItems[updatedItemIndex] = cart;
+			StateHasChanged(); // Cập nhật giao diện
+		}
+	}
+
+	// private async Task DeleteAllCart(string user)
+	// {
+	// 	// Gửi yêu cầu xóa tất cả các sản phẩm trong giỏ hàng với UserName là "Admin"
+	// 	await httpclient.DeleteAsync($"api/Cart/DeleteAllCart?user={user}");
+
+	// 	// Cập nhật lại danh sách sản phẩm trong giỏ hàng chỉ giữ lại các sản phẩm với UserName khác "Admin"
+	// 	cartItems = cartItems.Where(c => c.UserName != "Admin").ToList();
+
+	// 	// Cập nhật giao diện
+	// 	StateHasChanged();
+	// }
+
+
+
 }
