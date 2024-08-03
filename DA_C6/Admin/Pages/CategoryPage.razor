@@ -1,0 +1,30 @@
+﻿   @page "/categories"
+   @inject HttpClient httpclient
+   @using Admin.Model
+   @using System.Net.Http.Json
+
+<h3>CategoryPage</h3>
+
+@if (categoryItems != null)
+{
+    @foreach (var Item in categoryItems)
+    {
+        <p>@Item.IDCategory - @Item.Name</p>
+    }
+}
+
+@code {
+    private IEnumerable<Category> categoryItems;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            categoryItems = await httpclient.GetFromJsonAsync<IEnumerable<Category>>("api/Category/GetCategories");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        await base.OnInitializedAsync();
+    }
+}
