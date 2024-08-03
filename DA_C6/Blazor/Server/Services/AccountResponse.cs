@@ -4,6 +4,9 @@ using Blazor.Shared.Model;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
+using System;
 
 namespace Blazor.Server.Services
 {
@@ -28,8 +31,18 @@ namespace Blazor.Server.Services
                 return null;
             }
         }
+		public Account LoginAccount(string username, string password)
+		{
+			using (var md5 = MD5.Create())
+			{
+				var passBytes = Encoding.UTF8.GetBytes(password);
+				var hashBytes = md5.ComputeHash(passBytes);
+				var hashedPassword = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 
-        public void DeleteAccount(string user)
+				return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
+			}
+		}
+		public void DeleteAccount(string user)
         {
             var us = context.Accounts.Find(user);
             if (us != null)

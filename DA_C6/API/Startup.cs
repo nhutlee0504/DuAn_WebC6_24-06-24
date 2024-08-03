@@ -1,7 +1,9 @@
-using API.Data;
+﻿using API.Data;
 using API.Services;
+using Blazor.Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,9 +37,18 @@ namespace API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+			// Thêm dịch vụ InMemoryCache
+			services.AddDistributedMemoryCache(); // Cung cấp dịch vụ IDistributedCache
+			services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+			services.AddDataProtection();
+			services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(30);
+				options.Cookie.HttpOnly = true;
+				options.Cookie.IsEssential = true;
+			});
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAccount, AccountResponse>();
             services.AddScoped<IProduct, ProductResponse>();
             services.AddScoped<IProductDetail, ProductDetailResponse>();
@@ -52,6 +63,7 @@ namespace API
             services.AddScoped<IBillDetail, BillDetailResponse>();
             services.AddScoped<ISale, SaleResponse>();
             services.AddScoped<ICart, CartResponse>();
+            services.AddScoped<ISessionServices, SessionRespone>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,7 +78,8 @@ namespace API
 
             app.UseRouting();
 
-            app.UseAuthorization();
+			app.UseSession();
+			app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
