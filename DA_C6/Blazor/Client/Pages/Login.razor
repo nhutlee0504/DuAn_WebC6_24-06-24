@@ -1,10 +1,13 @@
 ﻿@page "/login"
+@using Blazor.Shared.Model
+@inject IJSRuntime JSRuntime
+@inject HttpClient httpclient
 <div class="container">
     <div class="row justify-content-center mt-5 mb-5">
         <div class="col-md-6">
             <div class="form-container p-4 rounded bg-white shadow-sm">
                 <h2 class="text-center mb-4">Đăng nhập</h2>
-                <form asp-controller="Home" asp-action="Loginktr" method="post">
+                <form asp-controller="" asp-action="" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                     <div class="mb-3">
                         <label for="UserName" class="form-label">Tên tài khoản</label>
@@ -15,16 +18,16 @@
                         <label for="password" class="form-label">Mật khẩu</label>
                         <div class="input-group">
                             <input asp-for="Password" type="password" class="form-control rounded-start" id="password" placeholder="Nhập mật khẩu">
-                            <button type="button" class="btn btn-outline-secondary rounded-end" id="togglePassword">
+                            <button type="button" class="btn btn-outline-secondary rounded-end" id="togglePassword" onclick="togglePasswordVisibility()">
                                 👁️
                             </button>
                         </div>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
-                    <button type="submit" class="btn btn-dark btn-block w-100 rounded-pill">Tiếp tục</button>
+                    <button @onclick="AttemptLogin" class="btn btn-dark btn-block w-100 rounded-pill">Tiếp tục</button>                    
                     <div class="text-center mt-4 position-relative">
-                        <span class="bg-white px-3 position-absolute" style="left: 50%; top: -10px; transform: translateX(-50%);">Hoặc</span>
                         <hr class="mt-3">
+                        <div class="position-absolute top-50 start-50 translate-middle" style="background-color: white;padding: 0 10px;">Hoặc</div>
                     </div>
                     <div class="text-center mt-3">
                         <a asp-controller="Home" asp-action="ForgotPassword" class="text-primary" href="forgotPass">Quên mật khẩu?</a>
@@ -41,18 +44,46 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const togglePassword = document.getElementById('togglePassword');
-        const password = document.getElementById('password');
+    function togglePasswordVisibility() {
+        var passwordField = document.getElementById('password');
+        var toggleBtn = document.getElementById('togglePassword');
 
-        togglePassword.addEventListener('click', function () {
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-
-            this.textContent = type === 'password' ? '👁️' : '🙈';
-        });
-    });
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleBtn.innerHTML = '🙈';
+        } else {
+            passwordField.type = 'password';
+            toggleBtn.innerHTML = '👁️';
+        }
+    }
 </script>
 @code {
+    private Account model = new Account();
+
+    private async Task AttemptLogin()
+    {
+        try
+        {
+            // Gửi yêu cầu đăng nhập đến API backend
+            var response = await httpclient.PostAsJsonAsync("api/Account/Authenticate", model);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Nếu đăng nhập thành công, chuyển hướng đến trang index
+                // NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                // Xử lý khi đăng nhập thất bại
+                await JSRuntime.InvokeVoidAsync("alert", "Đăng nhập không thành công. Vui lòng thử lại.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Xử lý các ngoại lệ
+            await JSRuntime.InvokeVoidAsync("alert", "Đã xảy ra lỗi khi đăng nhập: " + ex.Message);
+        }
+    }
+
 
 }
