@@ -3,6 +3,21 @@
 @inject HttpClient httpclient
 @inject IJSRuntime JSRuntime
 <div class="container">
+	<div class="error-message">
+		@if (!string.IsNullOrEmpty(errorMessage))
+		{
+			<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
+				@errorMessage
+			</div>
+		}
+		else
+		{
+			<div class="alert alert-success" role="alert" style="display: @(string.IsNullOrEmpty(successMessage) ? "none" : "block")">
+				<!-- Hiển thị thông báo thành công nếu có -->
+				@successMessage
+			</div>
+		}
+	</div>
 	@if (productitems != null)
 	{
 		<div class="row">
@@ -71,8 +86,8 @@
 										{
 											<div class="col-md-2">
 												<!-- Thêm thuộc tính data-color để lưu mã màu của từng item -->
-												<input class="radio-btn-size" type="radio" name="IdPDetail" id="@item.IDPDetail" value="@item.IDPDetail"/>
-												<label for="@item.IDPDetail" class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y=>y.IDColor == item.IDColor).Color">
+												<input class="radio-btn-size" type="radio" name="IdPDetail" id="@item.IDPDetail" value="@item.IDPDetail" checked="@(item == productdetailitems.FirstOrDefault())" />
+												<label for="@item.IDPDetail" class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y => y.IDColor == item.IDColor).Color">
 													@sizeitems.FirstOrDefault(y => y.IDSize == item.Size).SizeName
 												</label>
 											</div>
@@ -221,20 +236,30 @@
 		}
 	}
 
+	private string errorMessage = "";
+	private string successMessage = "";
 	private async Task AddCart()
 	{
 		// Lấy giá trị của IDPDetail
 		var selectedIdPDetail = await JSRuntime.InvokeAsync<string>("eval", "document.querySelector('input[name=IdPDetail]:checked').value");
 
-		// Lấy giá trị của quantity
-
-		// Kiểm tra giá trị và thực hiện xử lý tiếp theo
-		if (!string.IsNullOrEmpty(selectedIdPDetail))
+		// Kiểm tra số lượng đã chọn so với số lượng sản phẩm
+		var selectedProduct = productdetailitems.FirstOrDefault(x => x.IDPDetail == int.Parse(selectedIdPDetail));
+		if (selectedProduct != null && selectedProduct.Quantity < QuantityToAdd)
+		{
+			// Thông báo lỗi nếu số lượng đã chọn vượt quá số lượng sản phẩm
+			errorMessage = "Số lượng đã chọn vượt quá số lượng trong kho!";
+		}
+		else
 		{
 			// Tiếp tục thực hiện xử lý với selectedIdPDetail và selectedQuantity
+			errorMessage = ""; // Xóa thông báo lỗi nếu số lượng hợp lệ
 			c.UserName = "Admin";
 			c.IDPDetail = int.Parse(selectedIdPDetail);
 			c.Quantity = QuantityToAdd;
+
+			errorMessage = ""; // Reset thông báo lỗi
+			successMessage = "Đã thêm sản phẩm vào giỏ hàng!"; // Gán thông báo thành công
 
 			// Thực hiện POST request để thêm vào giỏ hàng
 			await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
@@ -243,11 +268,7 @@
 			cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
 
 			// Chuyển hướng người dùng đến trang giỏ hàng
-			await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
-		}
-		else
-		{
-			// Xử lý khi không có giá trị được chọn
+			// await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
 		}
 	}
 }
