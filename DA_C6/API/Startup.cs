@@ -1,6 +1,5 @@
-﻿using API.Data;
+using API.Data;
 using API.Services;
-using Blazor.Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -37,17 +36,17 @@ namespace API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
 
-			// Thêm dịch vụ InMemoryCache
-			services.AddDistributedMemoryCache(); // Cung cấp dịch vụ IDistributedCache
-			services.AddDbContext<ApplicationDbContext>(options =>
+            // Th�m d?ch v? InMemoryCache
+            services.AddDistributedMemoryCache(); // Cung c?p d?ch v? IDistributedCache
+            services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-			services.AddDataProtection();
-			services.AddSession(options =>
-			{
-				options.IdleTimeout = TimeSpan.FromMinutes(30);
-				options.Cookie.HttpOnly = true;
-				options.Cookie.IsEssential = true;
-			});
+            services.AddDataProtection();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAccount, AccountResponse>();
             services.AddScoped<IProduct, ProductResponse>();
@@ -63,7 +62,6 @@ namespace API
             services.AddScoped<IBillDetail, BillDetailResponse>();
             services.AddScoped<ISale, SaleResponse>();
             services.AddScoped<ICart, CartResponse>();
-            services.AddScoped<ISessionServices, SessionRespone>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,8 +76,8 @@ namespace API
 
             app.UseRouting();
 
-			app.UseSession();
-			app.UseAuthorization();
+            app.UseSession();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

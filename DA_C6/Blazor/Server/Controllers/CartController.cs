@@ -12,19 +12,52 @@ namespace Blazor.Server.Controllers
     [ApiController]
     public class CartController : Controller
     {
-        //private ICart cart;
-        //public CartController(ICart acc) => cart = acc;
-        private ApplicationDbContext context;
-        public CartController(ApplicationDbContext context)
-        {
-            this.context = context;
-        }
+        private ICart icart;
+        public CartController(ICart acc) => icart = acc;
+        //private ApplicationDbContext context;
+        //public CartController(ApplicationDbContext context)
+        //{
+        //    this.context = context;
+        //}
 
         [HttpGet]
         [Route("GetCarts")]
         public IEnumerable<Cart> GetCarts()
         {
-            return context.Carts;
+            return icart.GetAllCart();
         }
-    }
+
+		[HttpPost]
+        [Route("AddCart")]
+		public Cart AddCart(Cart cart)
+		{
+			return icart.AddProductToCart(new Cart
+			{
+				UserName = cart.UserName,
+				IDPDetail = cart.IDPDetail,
+				Quantity = cart.Quantity,
+			});
+		}
+
+        [HttpDelete]
+        [Route("DeleteCart/{id}")]
+        public Cart DeleteCart(int id)
+        {
+            return icart.DeleteProductFromCart(id);
+        }
+
+        [HttpPut]
+        [Route("UpdateCart/{id}")]
+        public Cart UpdateCart(int id, Cart cart)
+        {
+            return icart.UpdateProductFromCart(id, cart);
+        }
+
+		[HttpDelete]
+        [Route("Delete/{username}")]
+		public Cart Delete(string username)
+		{
+			return icart.DeleteAllCartByUsername(username);
+		}
+	}
 }

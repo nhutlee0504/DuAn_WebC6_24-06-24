@@ -40,6 +40,7 @@ namespace Blazor.Model
         public ICollection<SaleDetails> SaleDetails { get; set; }
         public ICollection<Evaluate> evaluates { get; set; }
     }
+
     public class LoginModel
     {
         public string UserName { get; set; }
@@ -53,5 +54,4 @@ namespace Blazor.Model
         public ICollection<SaleDetails> SaleDetails { get; set; }
         public ICollection<Evaluate> evaluates { get; set; }
     }
-
 }

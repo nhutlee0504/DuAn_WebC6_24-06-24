@@ -17,6 +17,7 @@ namespace Blazor.Server.Services
         {
             context = ct;
         }
+
         public Account AddAccount(Account account)
         {
             try
@@ -87,5 +88,6 @@ namespace Blazor.Server.Services
                 return null;
             }
         }
+
     }
 }

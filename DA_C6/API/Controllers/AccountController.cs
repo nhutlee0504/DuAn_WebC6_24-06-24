@@ -4,7 +4,7 @@ using API.Data;
 using API.Model;
 using API.Services;
 using System.Collections.Generic;
-using Blazor.Server.Services;
+
 
 namespace API.Controllers
 {
@@ -14,20 +14,31 @@ namespace API.Controllers
     {
         private IAccount account;
         public AccountController(IAccount acc) => account = acc;
-		[HttpPost("login")]
-		public IActionResult Login([FromBody] Account model)
-		{
-			var user = account.LoginAccount(model.UserName, model.Password);
-			if (user == null)
-			{
-				return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không đúng" });
-			}
+        [HttpGet("details/{userName}")]
+        public ActionResult<Account> GetAccountDetails(string userName)
+        {
+            var account1 = account.GetAccountById(userName);
+            if (account1 == null)
+            {
+                return NotFound();
+            }
 
-			HttpContext.Session.SetString("LoggedInUser", user.UserName);
+            return account1;
+        }
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] Account model)
+        {
+            var user = account.LoginAccount(model.UserName, model.Password);
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không đúng" });
+            }
 
-			return Ok(new { message = "Đăng nhập thành công", role = user.Role });
-		}
-		[HttpGet]
+            HttpContext.Session.SetString("LoggedInUser", user.UserName);
+
+            return Ok(new { message = "Đăng nhập thành công", role = user.Role });
+        }
+        [HttpGet]
         public IEnumerable<Account> GetAll()
         {
             return account.GetAccounts();
@@ -70,21 +81,8 @@ namespace API.Controllers
         {
             if (string.IsNullOrEmpty(user))
                 return null;
-            account.DeleteAccount(user);     
+            account.DeleteAccount(user);
             return NoContent();
-        }
-        private readonly ISessionServices _sessionServices;
-
-        public AccountController(ISessionServices sessionServices)
-        {
-            _sessionServices = sessionServices;
-        }
-
-        [HttpGet("username")]
-        public IActionResult GetUsername()
-        {
-            var username = _sessionServices.GetUsername();
-            return Ok(username);
         }
     }
 }

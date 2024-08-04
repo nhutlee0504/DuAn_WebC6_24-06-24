@@ -1,139 +1,23 @@
 ﻿@page "/productdetail/{id}"
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
-<style>
-	.radio-btn-image {
-		display: none;
-	}
-
-		.radio-btn-image + label {
-			display: inline-block;
-			cursor: pointer;
-		}
-
-			.radio-btn-image + label img {
-				border-radius: 25px;
-			}
-
-
-
-		.radio-btn-image:checked + label img {
-			font-weight: bold;
-		}
-
-		.radio-btn-image:not(:checked) + label img {
-			opacity: 0.5;
-		}
-
-
-	.radio-btn-size {
-		display: none;
-	}
-
-		.radio-btn-size + label {
-			display: inline-block;
-			text-align: center;
-			align-items: center;
-			align-content: center;
-			width: 50px;
-			height: 50px;
-			margin-right: 10px;
-			border-radius: 20px;
-			cursor: pointer;
-		}
-
-		.radio-btn-size:checked + label {
-			color: black;
-			border: 1px solid #0EA5E9;
-		}
-
-		.radio-btn-size:not(:checked) + label {
-			opacity: 0.5;
-			font-weight: normal;
-		}
-
-	.radio-btn-point {
-		display: none;
-	}
-
-	.radio-label {
-		display: inline-block;
-		text-align: center;
-		align-items: center;
-		align-content: center;
-		cursor: pointer;
-		font-size: 20px;
-		margin-right: 5px;
-		color: grey;
-	}
-
-	.radio-btn-point:checked ~ .radio-label,
-	.radio-btn-point:checked ~ .radio-label ~ .radio-label {
-		color: gold;
-	}
-
-	.quantity-selector {
-		display: flex;
-		float: left;
-		justify-content: center;
-		text-align: center;
-		background-color: gray;
-		border-radius: 25px;
-		padding: 5px;
-	}
-
-		.quantity-selector button {
-			border: 1px solid #000;
-			background: white;
-			width: 30px;
-			height: 30px;
-			border-radius: 50%;
-			font-weight: bold;
-			font-size: 20px;
-		}
-
-	.quantity-input {
-		border: none;
-		background: transparent;
-		text-align: center;
-		padding: 5px 10px;
-		font-size: 15px;
-		font-weight: bold;
-		width: 50px;
-	}
-
-	.add-cart {
-		display: flex;
-		float: right;
-		background-color: black;
-		color: white;
-		text-align: center;
-		align-items: center;
-		justify-content: center;
-		font-size: 15px;
-		border-radius: 25px;
-		padding: 10px 15px;
-	}
-
-	.col-sm-3 .border {
-		transition: box-shadow 0.3s, transform 0.3s;
-	}
-
-	.col-sm-3 .container-fluid {
-		transition: box-shadow 0.3s, transform 0.3s;
-	}
-
-	.col-sm-3:hover .border {
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-		transform: translateY(-5px);
-	}
-
-	.col-sm-3:hover .container-fluid {
-		transform: translateY(-5px);
-	}
-
-</style>
+@inject IJSRuntime JSRuntime
 <div class="container">
+	<div class="error-message">
+		@if (!string.IsNullOrEmpty(errorMessage))
+		{
+			<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
+				@errorMessage
+			</div>
+		}
+		else
+		{
+			<div class="alert alert-success" role="alert" style="display: @(string.IsNullOrEmpty(successMessage) ? "none" : "block")">
+				<!-- Hiển thị thông báo thành công nếu có -->
+				@successMessage
+			</div>
+		}
+	</div>
 	@if (productitems != null)
 	{
 		<div class="row">
@@ -152,7 +36,7 @@
 									@foreach (var img in imagedetailitems)
 									{
 										<div class="image-option">
-											<input type="radio" id="image-@img.IDImage" name="options" value="@img.Image" class="radio-btn-image">
+											<input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image">
 											<label for="image-@img.IDImage">
 												<img src="/@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
 											</label>
@@ -196,30 +80,32 @@
 							@*color and size*@
 							<form method="post" asp-controller="Cart" asp-action="AddCart">
 								<div class="row mb-3">
-									@if(productdetailitems != null)
+									@if (productdetailitems != null)
 									{
-										@foreach(var item in productdetailitems)
+										@foreach (var item in productdetailitems)
 										{
 											<div class="col-md-2">
-												<input class="radio-btn-size" type="radio" name="name" value="" />
-												<label class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y=>y.IDColor == item.IDColor).Color">
+												<!-- Thêm thuộc tính data-color để lưu mã màu của từng item -->
+												<input class="radio-btn-size" type="radio" name="IdPDetail" id="@item.IDPDetail" value="@item.IDPDetail" checked="@(item == productdetailitems.FirstOrDefault())" />
+												<label for="@item.IDPDetail" class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y => y.IDColor == item.IDColor).Color">
 													@sizeitems.FirstOrDefault(y => y.IDSize == item.Size).SizeName
 												</label>
 											</div>
 										}
 									}
 								</div>
+
 								<div class="row">
 									<div class="col-sm-12 d-flex justify-content-between">
 										<div class="quantity-selector">
 											<form>
-												<button type="button" class="decrease-btn">-</button>
-												<input type="text" name="quantity" value="1" class="quantity-input" readonly>
-												<button type="button" class="increase-btn">+</button>
+												<button type="button" class="decrease-btn" @onclick="DecreaseQuantity">-</button>
+												<input type="text" name="quantity" @bind="QuantityToAdd" class="quantity-input" readonly>
+												<button type="button" class="increase-btn" @onclick="IncreaseQuantity">+</button>
 											</form>
 										</div>
 										<div>
-											<button type="submit" class="btn add-cart">
+											<button type="button" class="btn add-cart" @onclick="AddCart">
 												<i class="bi bi-bag-plus"></i>
 												<div>Thêm vào giỏ hàng</div>
 											</button>
@@ -242,6 +128,46 @@
 				</div>
 			</div>
 		</div>
+		<section style="background-color: #eee;">
+			<div class="container py-3">
+				<h3>Gợi ý sản phẩm</h3>
+				<div class="row overflow-auto">
+					@if (productitemsmany != null && categoryitems != null)
+					{
+						@foreach (var x in productitemsmany.Take(4))
+						{
+							<div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+								<div class="card position-relative">
+									<div class="bg-info position-absolute top-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow-1-strong m-3"
+										 style="width: 35px; height: 35px;">
+										<span class="text-white mb-0 small">
+											<i class="bi bi-bag-heart"></i>
+										</span>
+									</div>
+									<img src="/@x.Image" class="card-img-top custom-class-img" alt="Ao" />
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h5 class="mb-0">@x.Name</h5>
+											<h5 class="text-dark mb-0">@x.Price.ToString("N0") đ</h5>
+										</div>
+										<div class="d-flex justify-content-between mb-0">
+											<p class="small"><a href="#!" class="text-muted">@categoryitems.FirstOrDefault(z => z.IDCategory == x.IDCategory).Name</a></p>
+										</div>
+										<div class="d-flex align-items-center">
+
+											<i class="fa fa-star text-warning me-2"></i>
+
+											<p class="text-muted mb-0">4.9 <span class="fw-bold">(98)</span></p>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+					}
+				</div>
+			</div>
+		</section>
 	}
 	else
 	{
@@ -256,6 +182,8 @@
 	public string id { get; set; }
 
 	private Product productitems;
+	private List<Product> productitemsmany;
+	private List<Cart> cartItems;
 	private List<ProductDetails> productdetailitems;
 	private List<Sizes> sizeitems;
 	private List<Colors> coloritems;
@@ -269,11 +197,13 @@
 	private Category ct = new Category();
 	private Supplier sp = new Supplier();
 	private ImageDetails imd = new ImageDetails();
+	private Cart c = new Cart();
 
 	protected override async Task OnInitializedAsync()
 	{
 		try
 		{
+			productitemsmany = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
 			productitems = await httpclient.GetFromJsonAsync<Product>($"api/Product/GetProduct/{id}");
 			productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>($"api/ProductDetail/GetPddtByProdId/{id}");
 			sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
@@ -287,5 +217,68 @@
 			Console.WriteLine($"Error: {ex.Message}");
 		}
 		await base.OnInitializedAsync();
+	}
+
+	// Tạo một thuộc tính mới trong lớp CodeRazor:
+	private int QuantityToAdd = 1;
+
+	// Sửa phương thức IncreaseQuantity và DecreaseQuantity để cập nhật giá trị của QuantityToAdd thay vì selectedQuantity:
+	private void IncreaseQuantity()
+	{
+		QuantityToAdd++;
+	}
+
+	private void DecreaseQuantity()
+	{
+		if (QuantityToAdd > 1)
+		{
+			QuantityToAdd--;
+		}
+	}
+
+	private string errorMessage = "";
+	private string successMessage = "";
+	private async Task AddCart()
+	{
+		// Lấy giá trị của IDPDetail
+		var selectedIdPDetail = await JSRuntime.InvokeAsync<string>("eval", "document.querySelector('input[name=IdPDetail]:checked').value");
+
+		// Kiểm tra số lượng đã chọn so với số lượng sản phẩm
+		var selectedProduct = productdetailitems.FirstOrDefault(x => x.IDPDetail == int.Parse(selectedIdPDetail));
+		if (selectedProduct != null && selectedProduct.Quantity < QuantityToAdd)
+		{
+			// Thông báo lỗi nếu số lượng đã chọn vượt quá số lượng sản phẩm
+			errorMessage = "Số lượng đã chọn vượt quá số lượng trong kho!";
+		}
+		else
+		{
+			// Tiếp tục thực hiện xử lý với selectedIdPDetail và selectedQuantity
+			errorMessage = ""; // Xóa thông báo lỗi nếu số lượng hợp lệ
+			var loggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+
+			if (string.IsNullOrEmpty(loggedInUser))
+			{
+				await JSRuntime.InvokeVoidAsync("window.location.assign", "/login"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
+			}
+			else
+			{
+				c.UserName = loggedInUser;
+				c.IDPDetail = int.Parse(selectedIdPDetail);
+				c.Quantity = QuantityToAdd;
+
+				errorMessage = ""; // Reset thông báo lỗi
+				successMessage = "Đã thêm sản phẩm vào giỏ hàng!"; // Gán thông báo thành công
+
+				// Thực hiện POST request để thêm vào giỏ hàng
+				await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
+
+				// Lấy danh sách cart cập nhật
+				cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
+
+				// Chuyển hướng người dùng đến trang giỏ hàng
+				// await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
+
+			}
+		}
 	}
 }

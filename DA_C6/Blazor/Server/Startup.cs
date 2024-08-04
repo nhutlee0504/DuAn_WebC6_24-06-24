@@ -41,7 +41,6 @@ namespace Blazor.Server
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<ISessionServices, SessionRespone>();
             services.AddScoped<IAccount, AccountResponse>();
             services.AddScoped<IProduct, ProductResponse>();
             services.AddScoped<IProductDetail, ProductDetailResponse>();

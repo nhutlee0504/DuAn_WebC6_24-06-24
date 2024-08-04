@@ -1,165 +1,7 @@
 ﻿@page "/cartpage"
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
-<style>
-	.cart-item {
-		display: flex;
-		align-items: center;
-		margin-bottom: 10px;
-	}
-
-		.cart-item img {
-			width: 100px;
-			height: 100px;
-			object-fit: cover;
-			margin-right: 20px;
-		}
-
-	.cart-item-info {
-		flex: 1;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.cart-item-title {
-		font-weight: bold;
-		margin-bottom: 5px;
-	}
-
-	/*.cart-item-price {
-		color: black;
-	}*/
-
-	.cart-total {
-		font-weight: bold;
-		font-size: 18px;
-		margin-top: 20px;
-	}
-
-	.cart-summary {
-		display: flex; /* Sử dụng flexbox để sắp xếp các phần tử theo hàng */
-		justify-content: space-between; /* Phân bố khoảng trống đều giữa các phần tử */
-		align-items: center; /* Canh chỉnh các phần tử theo chiều dọc */
-	}
-
-		.cart-summary a {
-			flex: 0 0 33%; /* Nút "Xóa giỏ hàng" chiếm 33.33% chiều rộng */
-			max-width: 100%; /* Đảm bảo nút không vượt quá chiều rộng container */
-		}
-
-		.cart-summary .btn-success {
-			flex: 0 0 65%; /* Nút "Thanh toán" chiếm 66.66% chiều rộng */
-			max-width: 100%; /* Đảm bảo nút không vượt quá chiều rộng container */
-		}
-
-
-	.product-list {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		margin-top: 20px;
-	}
-
-	.product-item {
-		width: calc(25% - 20px);
-		margin-bottom: 20px;
-		padding: 20px;
-		border: 1px solid #ccc;
-		border-radius: 5px;
-		text-align: center;
-	}
-
-		.product-item img {
-			width: 100%;
-			height: auto;
-			margin-bottom: 10px;
-		}
-
-		.product-item h4 {
-			font-weight: bold;
-			margin-bottom: 5px;
-		}
-
-		.product-item p {
-			margin-bottom: 10px;
-		}
-
-		.product-item .price {
-			font-size: 18px;
-			color: #007bff;
-		}
-
-		.product-item .add-to-cart-button {
-			background-color: #007bff;
-			color: white;
-			padding: 10px 20px;
-			border: none;
-			border-radius: 5px;
-			cursor: pointer;
-		}
-
-			.product-item .add-to-cart-button:hover {
-				background-color: #0056b3;
-			}
-
-	.pagination {
-		margin-top: 20px;
-	}
-
-		.pagination .page-item {
-			margin: 0 5px;
-		}
-
-		.pagination .page-link {
-			padding: 5px 10px;
-			border: 1px solid #ccc;
-			border-radius: 5px;
-			text-decoration: none;
-			color: #007bff;
-		}
-
-			.pagination .page-link.active {
-				background-color: #007bff;
-				color: white;
-			}
-
-			.pagination .page-link:hover {
-				background-color: #0056b3;
-				color: white;
-			}
-
-	.quantity-selector {
-		display: flex;
-		float: left;
-		justify-content: center;
-		text-align: center;
-		background-color: gray;
-		border-radius: 25px;
-		padding: 5px;
-	}
-
-		.quantity-selector button {
-			border: 1px solid #000;
-			background: white;
-			width: 30px;
-			height: 30px;
-			border-radius: 50%;
-			font-weight: bold;
-			font-size: 20px;
-		}
-
-	.quantity-input {
-		border: none;
-		background: transparent;
-		text-align: center;
-		padding: 5px 10px;
-		font-size: 15px;
-		font-weight: bold;
-		width: 50px;
-	}
-
-</style>
+@inject IJSRuntime JSruntime
 <div class="container">
 	<h1>Giỏ hàng</h1>
 	@*   @foreach(var item in cartItems)
@@ -171,52 +13,58 @@
 			<div class="cart-items">
 				@if (cartItems != null)
 				{
-					@foreach (var item in cartItems.Where(u => u.UserName == "Admin"))
+					@foreach (var item in cartItems.Where(u => u.UserName == LoggedInUser))
 					{
-						var prodd = productdetailitems.FirstOrDefault(pd => pd.IDPDetail == item.IDPDetail);
-						if (prodd != null)
+						@if (item != null)
 						{
-							var size = sizeitems.FirstOrDefault(s => s.IDSize == prodd.Size);
-							var color = coloritems.FirstOrDefault(cl => cl.IDColor == prodd.IDColor);
-							var product = productitems.FirstOrDefault(p => p.IDProduct == prodd.IDProduct);
-							if (product != null)
+							var prodd = productdetailitems.FirstOrDefault(pd => pd.IDPDetail == item.IDPDetail);
+							if (prodd != null)
 							{
-								<div class="cart-item mb-3">
-									<input type="checkbox" name="name" value="" class="m-3" />
-									<img src="/@product.Image" alt="Sản phẩm">
-									<div class="cart-item-info">
-										<h5 class="cart-item-title">@product.Name</h5>
-										<p>
-											@if (size != null && color != null)
-											{
-											<p>Kích thước - màu sắc: @size.SizeName - @color.Color</p> <!-- Hiển thị thông tin kích thước -->
-											}
-										</p>
-										<div>
-											<div class="quantity-selector border" style="background-color: white">
-												<form>
-													<button type="button" class="decrease-btn">-</button>
-													<input type="text" name="quantity" value="@item.Quantity" class="quantity-input" style="background-color: white" readonly>
-													<button type="button" class="increase-btn">+</button>
-												</form>
+								var size = sizeitems.FirstOrDefault(s => s.IDSize == prodd.Size);
+								var color = coloritems.FirstOrDefault(cl => cl.IDColor == prodd.IDColor);
+								var product = productitems.FirstOrDefault(p => p.IDProduct == prodd.IDProduct);
+								if (product != null)
+								{
+									<div class="cart-item mb-3">
+										<input type="checkbox" name="name" value="" class="m-3" />
+										<img src="/@product.Image" alt="Sản phẩm">
+										<div class="cart-item-info">
+											<h5 class="cart-item-title">@product.Name</h5>
+											<p>
+												@if (size != null && color != null)
+												{
+												<p>Kích thước - màu sắc: @size.SizeName - @color.Color</p> <!-- Hiển thị thông tin kích thước -->
+												}
+											</p>
+											<div class="col-md-2">
+												<div class="quantity-selector">
+													<form>
+														<button type="button" class="decrease-btn" @onclick="() => DecreaseQuantity(item)">-</button>
+														<input type="text" name="quantity" value="@item.Quantity" class="quantity-input" readonly>
+														<button type="button" class="increase-btn" @onclick="() => IncreaseQuantity(item)">+</button>
+													</form>
+												</div>
 											</div>
 										</div>
+										<div class="">
+											<a @onclick="() => RemoveItem(item.IDCart)" class="nav-link text-dark float-end ms-3">
+												<img src="/IMG/delete.png" alt="Cart" style="width: 24px; height: 24px;">
+											</a>
+											<p class="cart-item-price float-end text-black">
+												@{
+													var totalPrice = product.Price * item.Quantity; // Tính tổng giá sản phẩm
+												}
+												@totalPrice.ToString("N0") VNĐ
+											</p>
+										</div>
 									</div>
-									<div class="">
-										<a class="nav-link text-dark float-end ms-3" href="#" asp-area="" asp-controller="About" asp-action="Index">
-											<img src="/IMG/delete.png" alt="Cart" style="width: 24px; height: 24px;">
-										</a>
-										<p class="cart-item-price float-end text-black">
-											@{
-												var totalPrice = product.Price * item.Quantity; // Tính tổng giá sản phẩm
-											}
-											@totalPrice.ToString("N0") VNĐ
-										</p>
-									</div>
-								</div>
+								}
 							}
 						}
-
+						else
+						{
+							<h4>Thêm sản phẩm vào giỏ hàng của bạn</h4>
+						}
 					}
 				}
 				else
@@ -233,40 +81,42 @@
 			<div class="cart-summary">
 				@*                 <h2 class="cart-total">Tổng đơn hàng: $339.98</h2>
 				*@
-				<a href="#" class="btn btn-danger btn-block">Xóa giỏ hàng</a>
+				<a @onclick="DeleteAllCart" class="btn btn-danger btn-block">Xóa giỏ hàng</a>
 				<a href="#" class="btn btn-success btn-dark">Thanh toán</a>
 			</div>
 		</div>
 	</div>
 	<hr>
+	<h3>Gợi ý sản phẩm</h3>
 	<div class="product-list">
-		@if(productitems != null)
+
+		@if (productitems != null)
 		{
-			@foreach(var item in productitems.Take(4))
+			@foreach (var item in productitems.Take(4))
 			{
 				<div class="product-item">
 					<a href="productdetail/@item.IDProduct">
 						<img src="/@item.Image" alt="Đồng hồ">
 					</a>
-				
-						<h5>@item.Name</h5>
-						<div class="row container-fluid justify-content-center text-center">
-							<p class="font-weight-bold col-sm-8 mb-1">4.5 <i class="bi bi-star-fill"></i></p>
-							<p class="font-weight-bold col-sm-4 mb-1">@item.Price.ToString("N0")</p>
-						</div>
-				
+
+					<h5>@item.Name</h5>
+					<div class="row container-fluid justify-content-center text-center">
+						<p class="font-weight-bold col-sm-8 mb-1">4.5 <i class="bi bi-star-fill"></i></p>
+						<p class="font-weight-bold col-sm-4 mb-1">@item.Price.ToString("N0")</p>
+					</div>
+
 				</div>
 			}
 		}
 	</div>
-@* 	<nav aria-label="Page navigation example">
-		<ul class="pagination">
-			<li class="page-item"><a class="page-link" href="#">Previous</a></li>
-			<li class="page-item"><a class="page-link" href="#">1</a></li>
-			<li class="page-item"><a class="page-link" href="#">2</a></li>
-			<li class="page-item"><a class="page-link" href="#">3</a></li>
-			<li class="page-item"><a class="page-link" href="#">Next</a></li>
-		</ul>
+	@* 	<nav aria-label="Page navigation example">
+	<ul class="pagination">
+	<li class="page-item"><a class="page-link" href="#">Previous</a></li>
+	<li class="page-item"><a class="page-link" href="#">1</a></li>
+	<li class="page-item"><a class="page-link" href="#">2</a></li>
+	<li class="page-item"><a class="page-link" href="#">3</a></li>
+	<li class="page-item"><a class="page-link" href="#">Next</a></li>
+	</ul>
 	</nav> *@
 </div>
 
@@ -283,21 +133,77 @@
 	private ProductDetails pd = new ProductDetails();
 	private Sizes s = new Sizes();
 	private Colors cl = new Colors();
+	private string LoggedInUser;
 
 	protected override async Task OnInitializedAsync()
 	{
-		try
+		LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+		if (string.IsNullOrEmpty(LoggedInUser))
 		{
-			cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
-			productitems = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
-			productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>("api/ProductDetail/GetProductDetails");
-			sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
-			coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
+			await JSruntime.InvokeVoidAsync("window.location.assign", "/login"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
 		}
-		catch (Exception ex)
+		else
 		{
-			Console.WriteLine($"Error: {ex.Message}");
+			// Thực hiện tải dữ liệu và các hành động khác
+			try
+			{
+				cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
+				productitems = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
+				productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>("api/ProductDetail/GetProductDetails");
+				sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
+				coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error: {ex.Message}");
+			}
 		}
 		await base.OnInitializedAsync();
 	}
+
+	private async Task RemoveItem(int id)
+	{
+		// Gửi yêu cầu xóa sản phẩm tương ứng với cartId
+		await httpclient.DeleteAsync($"api/Cart/DeleteCart/{id}");
+
+		// Cập nhật lại danh sách sản phẩm trong giỏ hàng sau khi xóa
+		cartItems = cartItems.Where(c => c.IDCart != id).ToList();
+	}
+
+	private async Task IncreaseQuantity(Cart item)
+	{
+		item.Quantity++;
+		await UpdateCartItem(item);
+	}
+
+	private async Task DecreaseQuantity(Cart item)
+	{
+		if (item.Quantity > 1)
+		{
+			item.Quantity--;
+			await UpdateCartItem(item);
+		}
+	}
+
+	private async Task UpdateCartItem(Cart cart)
+	{
+		await httpclient.PutAsJsonAsync($"api/Cart/UpdateCart/{cart.IDCart}", cart);
+
+
+		var updatedItemIndex = cartItems.FindIndex(c => c.IDCart == cart.IDCart);
+		if (updatedItemIndex != -1)
+		{
+			cartItems[updatedItemIndex] = cart;
+			StateHasChanged(); // Cập nhật giao diện
+		}
+	}
+
+	private async Task DeleteAllCart()
+	{
+		LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+		// Gửi yêu cầu xóa toàn bộ giỏ hàng của người dùng tương ứng
+		await httpclient.DeleteAsync($"api/Cart/Delete/{LoggedInUser}");
+		cartItems = new List<Cart>();
+	}
+
 }
