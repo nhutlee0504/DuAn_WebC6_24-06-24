@@ -30,8 +30,7 @@
 								if (product != null)
 								{
 									<div class="cart-item mb-3">
-										<input type="checkbox" @onclick="() => ToggleSelectedItem(item)" class="m-3" />
-										<img src="/@product.Image" alt="Sản phẩm">
+										<input type="checkbox" name="selectedProducts" value="@item.IDCart" @onchange="() => ToggleSelectedProduct(item.IDPDetail)" />										<img src="/@product.Image" alt="Sản phẩm">
 										<div class="cart-item-info">
 											<h5 class="cart-item-title">@product.Name</h5>
 											<p>
@@ -210,29 +209,23 @@
 		cartItems = new List<Cart>();
 	}
 
-	private List<Cart> selectedItems = new List<Cart>();
-
-	private void ToggleSelectedItem(Cart item)
+	private List<int> selectedCartIds = new List<int>();
+	private void ToggleSelectedProduct(int cartId)
 	{
-		if (selectedItems.Contains(item))
+		if (selectedCartIds.Contains(cartId))
 		{
-			selectedItems.Remove(item);
+			selectedCartIds.Remove(cartId);
 		}
 		else
 		{
-			selectedItems.Add(item);
+			selectedCartIds.Add(cartId);
 		}
 	}
 
-	private async Task ChuyenSanPhamSangThanhToan()
+	private void ChuyenSanPhamSangThanhToan()
 	{
-		// Chuyển danh sách sản phẩm đã chọn sang trang thanh toán
-		var queryParams = new Dictionary<string, string>
-	{
-		{ "selectedItems", JsonSerializer.Serialize(selectedItems) }
-	};
-		var url = QueryHelpers.AddQueryString("/checkout", queryParams);
-		NavigationManager.NavigateTo(url, true);
+		// Chuyển hướng đến trang Checkout với danh sách ID của các sản phẩm trong giỏ hàng
+		NavigationManager.NavigateTo($"/checkout/{JsonSerializer.Serialize(selectedCartIds)}");
 	}
 
 
