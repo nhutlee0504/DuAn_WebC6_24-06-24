@@ -43,8 +43,8 @@
                 {
                     @foreach (var category in categories)
                     {
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="@category.IDCategory" id="@category.IDCategory"
+                        <div>
+                            <input class="form-check-input123" type="checkbox" value="@category.IDCategory" id="@category.IDCategory"
                                    @onchange="@(e => OnCategoryChanged(category.IDCategory, (bool)((ChangeEventArgs)e).Value))">
                             <label>@category.Name</label>
                         </div>

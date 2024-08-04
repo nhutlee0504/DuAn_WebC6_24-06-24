@@ -61,6 +61,7 @@ namespace Blazor.Client.Pages
                     message = "Không tìm thấy sản phẩm trong khoản giá";
                     await Task.Delay(3000);
                     message = null;
+                    products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
                 }
                 StateHasChanged();
             }

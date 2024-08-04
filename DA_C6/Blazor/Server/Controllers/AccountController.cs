@@ -5,6 +5,7 @@ using Blazor.Shared.Model;
 using Blazor.Server.Services;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Routing;
 
 namespace Blazor.Server.Controllers
 {
@@ -16,12 +17,14 @@ namespace Blazor.Server.Controllers
         public AccountController(IAccount acc) => account = acc;
 
         [HttpGet]
+        [Route("GetAll")]
         public IEnumerable<Account> GetAll()
         {
             return account.GetAccounts();
         }
 
         [HttpPost]
+        [Route("Add")]
         public Account Add(Account acc)
         {
             return account.AddAccount(new Account
@@ -46,6 +49,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpPut("{user}")]
+        [Route("/{user}")]
         public Account Update(Account acc, string user)
         {
             if (string.IsNullOrEmpty(user))
@@ -58,7 +62,7 @@ namespace Blazor.Server.Controllers
         {
             if (string.IsNullOrEmpty(user))
                 return null;
-            account.DeleteAccount(user);     
+            account.DeleteAccount(user);
             return NoContent();
         }
 
@@ -81,7 +85,7 @@ namespace Blazor.Server.Controllers
 
                 // Chuyển byte[] thành string hex
                 StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
+                for (int i = 0; i < bytes.Length && i < 16; i++)
                 {
                     builder.Append(bytes[i].ToString("x2"));
                 }
