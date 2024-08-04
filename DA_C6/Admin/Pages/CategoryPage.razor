@@ -1,0 +1,20 @@
+﻿@page "/CatePage"
+@using Admin.Data
+@inject CategoryResponse catere
+<h3>CategoryPage</h3>
+
+@if(cateitems!= null)
+{
+    @foreach(var x in cateitems)
+    {
+        <p> @x.IDCategory</p>
+    }
+}
+
+@code {
+    IEnumerable<Category> cateitems;
+    protected override async Task OnInitializedAsync()
+    {
+        cateitems = await Task.Run(() => catere.GetCategories());
+    }
+}
