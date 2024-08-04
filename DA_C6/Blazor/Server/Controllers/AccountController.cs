@@ -82,33 +82,5 @@ namespace Blazor.Server.Controllers
             return NoContent();
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] Shared.Model.LoginModel model)
-        {
-            try
-            {
-                // Băm mật khẩu kết hợp
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(combinedPassword));
-
-                // Chuyển byte[] thành string hex
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length && i < 16; i++)
-                {
-                    return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không đúng" });
-                }
-
-                HttpContext.Session.SetString("LoggedInUser", user.UserName);
-                HttpContext.Session.SetString("UserRole", user.Role); 
-                Console.WriteLine($"Login successful for user: {user.UserName}");
-
-                return Ok(new { message = "Đăng nhập thành công", role = user.Role });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error. Please try again later.");
-            }
-        }
-
-
     }
 }
