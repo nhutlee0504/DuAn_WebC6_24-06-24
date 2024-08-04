@@ -14,6 +14,17 @@ namespace API.Controllers
     {
         private IAccount account;
         public AccountController(IAccount acc) => account = acc;
+        [HttpGet("details/{userName}")]
+        public ActionResult<Account> GetAccountDetails(string userName)
+        {
+            var account1 = account.GetAccountById(userName);
+            if (account1 == null)
+            {
+                return NotFound();
+            }
+
+            return account1;
+        }
         [HttpPost("login")]
         public IActionResult Login([FromBody] Account model)
         {

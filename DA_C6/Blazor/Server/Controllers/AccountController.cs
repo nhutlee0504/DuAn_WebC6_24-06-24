@@ -9,6 +9,8 @@ using System;
 using static Blazor.Model.Account;
 using Blazor.Model;
 using Account = Blazor.Shared.Model.Account;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Blazor.Server.Controllers
 {
@@ -24,7 +26,17 @@ namespace Blazor.Server.Controllers
         {
             return account.GetAccounts();
         }
+        [HttpGet("details/{userName}")]
+        public ActionResult<Account> GetAccountDetails(string userName)
+        {
+            var account1 = account.GetAccountById(userName);
+            if (account1 == null)
+            {
+                return NotFound();
+            }
 
+            return account1;
+        }
         [HttpPost]
         public Account Add(Account acc)
         {
@@ -78,6 +90,7 @@ namespace Blazor.Server.Controllers
                 }
 
                 HttpContext.Session.SetString("LoggedInUser", user.UserName);
+                HttpContext.Session.SetString("UserRole", user.Role); 
                 Console.WriteLine($"Login successful for user: {user.UserName}");
 
                 return Ok(new { message = "Đăng nhập thành công", role = user.Role });
@@ -87,5 +100,7 @@ namespace Blazor.Server.Controllers
                 return StatusCode(500, "Internal server error. Please try again later.");
             }
         }
+
+
     }
 }

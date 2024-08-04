@@ -16,7 +16,19 @@ namespace API.Services
         {
             context = ct;
         }
-        public Account AddAccount(Account account)
+
+		public Account LoginAccount(string username, string password)
+		{
+			using (var md5 = MD5.Create())
+			{
+				var passBytes = Encoding.UTF8.GetBytes(password);
+				var hashBytes = md5.ComputeHash(passBytes);
+				var hashedPassword = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+				return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
+			}
+		}
+		public Account AddAccount(Account account)
         {
             try
             {
@@ -77,16 +89,5 @@ namespace API.Services
             }
         }
 
-        public Account LoginAccount(string username, string password)
-        {
-            using (var md5 = MD5.Create())
-            {
-                var passBytes = Encoding.UTF8.GetBytes(password);
-                var hashBytes = md5.ComputeHash(passBytes);
-                var hashedPassword = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-
-                return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
-            }
-        }
     }
 }
