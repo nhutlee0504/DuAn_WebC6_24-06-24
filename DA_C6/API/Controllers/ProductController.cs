@@ -4,6 +4,7 @@ using API.Data;
 using API.Model;
 using API.Services;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace API.Controllers
 {
@@ -43,7 +44,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public Product GetProduct(int id)
         {
-          return product.GetProductId(id);
+            return product.GetProductId(id);
         }
 
         [HttpPut("{id}")]

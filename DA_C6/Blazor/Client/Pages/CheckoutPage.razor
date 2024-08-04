@@ -1,5 +1,8 @@
 ﻿@page "/checkout"
-
+@using Blazor.Shared.Model
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.WebUtilities
+@using System.Text.Json
 <style>
     .breadcrumb-item a{
         color: #6c757d;
@@ -63,7 +66,7 @@
             <div class="container">
                 <h2>Sản phẩm</h2>
                 <hr/>
-                <div class="row">
+               @*  <div class="row">
                     <div class="col-sm-4">
                         <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
                     </div>
@@ -76,10 +79,10 @@
                         </div>
                     </div>
                     <hr  class="m-3"/>
-                </div>
+                </div> *@
 
                 @*  s *@
-                <div class="row">
+              @*   <div class="row">
                     <div class="col-sm-4">
                         <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
                     </div>
@@ -92,7 +95,32 @@
                         </div>
                     </div>
                     <hr class="m-3" />
-                </div>
+                </div> *@
+                @if (selectedItems != null && selectedItems.Count > 0)
+                {
+                    @foreach (var item in selectedItems)
+                    {
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
+                            </div>
+                        @*     <div class="col-sm-8 flex-column">
+                                <p class="font-weight-bold">@item.Name</p>
+                                <p>@item.Size/@item.Color</p>
+                                <div class="row">
+                                    <div class="col-sm-6 font-weight-bold">@item.Quantity</div>
+                                    <div class="col-sm-6">@(item.Price * item.Quantity).ToString("N0")</div>
+                                </div>
+                            </div> *@
+                            <hr class="m-3" />
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Không có sản phẩm nào được chọn.</p>
+                }
+
                 @*  s *@
 
                 <div class="row">
@@ -116,5 +144,15 @@
     </div>
 </div>
 
+@code{
+    private List<Cart> selectedItems = new List<Cart>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (QueryHelpers.ParseQuery(NavigationManager.Uri).TryGetValue("selectedItems", out var selectedItemsJson))
+        {
+            selectedItems = JsonSerializer.Deserialize<List<Cart>>(selectedItemsJson);
+        }
+    }
+}
 

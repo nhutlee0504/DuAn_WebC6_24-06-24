@@ -2,6 +2,10 @@
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
 @inject IJSRuntime JSruntime
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.WebUtilities
+@using System.Text.Json
+
 <div class="container">
 	<h1>Giỏ hàng</h1>
 	@*   @foreach(var item in cartItems)
@@ -26,7 +30,7 @@
 								if (product != null)
 								{
 									<div class="cart-item mb-3">
-										<input type="checkbox" name="name" value="" class="m-3" />
+										<input type="checkbox" @onclick="() => ToggleSelectedItem(item)" class="m-3" />
 										<img src="/@product.Image" alt="Sản phẩm">
 										<div class="cart-item-info">
 											<h5 class="cart-item-title">@product.Name</h5>
@@ -82,7 +86,7 @@
 				@*                 <h2 class="cart-total">Tổng đơn hàng: $339.98</h2>
 				*@
 				<a @onclick="DeleteAllCart" class="btn btn-danger btn-block">Xóa giỏ hàng</a>
-				<a href="#" class="btn btn-success btn-dark">Thanh toán</a>
+				<a @onclick="ChuyenSanPhamSangThanhToan" class="btn btn-dark btn-block">Thanh toán</a>
 			</div>
 		</div>
 	</div>
@@ -205,5 +209,31 @@
 		await httpclient.DeleteAsync($"api/Cart/Delete/{LoggedInUser}");
 		cartItems = new List<Cart>();
 	}
+
+	private List<Cart> selectedItems = new List<Cart>();
+
+	private void ToggleSelectedItem(Cart item)
+	{
+		if (selectedItems.Contains(item))
+		{
+			selectedItems.Remove(item);
+		}
+		else
+		{
+			selectedItems.Add(item);
+		}
+	}
+
+	private async Task ChuyenSanPhamSangThanhToan()
+	{
+		// Chuyển danh sách sản phẩm đã chọn sang trang thanh toán
+		var queryParams = new Dictionary<string, string>
+	{
+		{ "selectedItems", JsonSerializer.Serialize(selectedItems) }
+	};
+		var url = QueryHelpers.AddQueryString("/checkout", queryParams);
+		NavigationManager.NavigateTo(url, true);
+	}
+
 
 }

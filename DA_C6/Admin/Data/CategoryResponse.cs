@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Admin.Data;
-using Admin.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
-namespace Admin.Services
+namespace Admin.Data
 {
     public class CategoryResponse : ICategory
     {
@@ -14,19 +10,19 @@ namespace Admin.Services
 
         public Category AddCategory(Category category)
         {
-            context.Categories.Add(category);
+            context.categories.Add(category);
             context.SaveChanges();
             return category;
         }
 
         public IEnumerable<Category> GetCategories()
         {
-            return context.Categories;
+            return context.categories;
         }
 
         public Category GetCategoryById(int id)
         {
-            return context.Categories.FirstOrDefault(x => x.IDCategory == id);
+            return context.categories.FirstOrDefault(x => x.IDCategory == id);
         }
 
         public Category UpdateCategory(int id, Category category)
