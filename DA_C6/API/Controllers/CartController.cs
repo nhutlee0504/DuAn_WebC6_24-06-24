@@ -28,5 +28,11 @@ namespace API.Controllers
                 Quantity = cart.Quantity,
 			});
 		}
+
+        [HttpDelete]
+        public Cart Delete(string username)
+        {
+            return icart.DeleteAllCartByUsername(username);
+        }
 	}
 }

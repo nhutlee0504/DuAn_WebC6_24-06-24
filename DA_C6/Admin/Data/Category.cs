@@ -1,9 +1,7 @@
-﻿using Admin.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Admin.Model
+namespace Admin.Data
 {
     public class Category
     {
@@ -13,6 +11,6 @@ namespace Admin.Model
         [Required]
         public string Name { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        //public ICollection<Product> Products { get; set; }
     }
 }

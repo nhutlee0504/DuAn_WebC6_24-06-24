@@ -1,5 +1,57 @@
 ﻿@page "/Pages/Profile"
+@using Blazor.Shared.Model
+@inject IJSRuntime JSRuntime
+@inject HttpClient HttpClient
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading.Tasks
 <style>
+    .pagination-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 10px; /* Khoảng cách giữa các nút */
+    }
+
+    .page-button {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .page-button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+
+        .page-button.active {
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            border-radius: 50%; /* Hình vòng tròn */
+        }
+
+        .page-button:hover:not(:disabled) {
+            background-color: darkgray;
+        }
+
+    .content-container {
+        width: 100%;
+        transition: transform 0.3s ease-out;
+    }
+
+        .content-container.transition-out {
+            transform: translateX(-100%);
+        }
     .breadcrumb {
         list-style: none;
         padding: 0;
@@ -89,8 +141,15 @@
             margin: 5px;
         }
 </style>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
 <div class="container">
     <div class="row">
         <div class="profile-header">
@@ -101,9 +160,6 @@
             </ul>
         </div>
     </div>
-    <div class="row">
-        <img src="/IMG/image 2.png" class="w-100" />
-    </div>
 </div>
 
 <div class="container">
@@ -113,11 +169,11 @@
 
         </div>
         <div class="col-md-10 mt-2">
-            <b class="h1">NEXTON STORE</b>
+            <p class="h1">@account.Name</p>
             <p class="small">BROTHERHOODSTORE <img src="/IMG/Icon.png" /></p>
         </div>
     </div>
-    <div class="row" style="margin-top:20px">
+    <div class="row mb-3" style="margin-top:20px">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">
@@ -140,116 +196,82 @@
              class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <div class="row mt-4">
-                    <div class="col-md-6">
-                        <p class="font-weight-bold h3">Thông tin chung</p>
-                        <p class="small">Đây sẽ là thông sẽ công khai trên trang cá nhân</p>
-                    </div>  
-                    <div class="col-md-6">
-                        <p class="font-weight-bolder h6">Họ và tên</p>
-                        <input type="text" class="input-pro" value="PHẠM QUỐC HUY" />
-                        <p class="font-weight-bolder h6">Năm sinh</p>
-                        <input type="text" class="input-pro" value="09/08/2004" />
-                        <p class="font-weight-bolder h6">Địa chỉ</p>
-                        <input type="text" class="input-pro" value="Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam" />
-                    </div>
-                  
-                </div>
-                <div class="row mt-4">
-                    <hr/>
-                        <div class="col-md-6">
-                            <p class="font-weight-bold h3">Thông tin bảo mật</p>
-                            <p class="small">Đây sẽ là thông sẽ ẩn trên trang cá nhân</p>
+                            <div class="col-md-6">
+                                <p class="font-weight-bold h3">Thông tin chung</p>
+                                <p class="small">Đây sẽ là thông tin công khai trên trang cá nhân</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="font-weight-bolder h6">Họ và tên</p>
+                                <input type="text" class="input-pro" @bind="account.Name" />
+                                <p class="font-weight-bolder h6">Địa chỉ</p>
+                                <input type="text" class="input-pro" @bind="account.Address" />
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <p class="font-weight-bold h6">Số điện thoại</p>
-                            <input type="text" class="input-pro" value="033***433" />
-                            <p class="font-weight-bolder h6">Email</p>
-                            <input type="text" class="input-pro" value="huy***pc6@gmail.com" />
-                            <p class="font-weight-bolder h6">Mật khẩu</p>
-                            <input type="text" class="input-pro" value="*****************************" />
+                        <div class="row mt-4">
+                            <hr />
+                            <div class="col-md-6">
+                                <p class="font-weight-bold h3">Thông tin bảo mật</p>
+                                <p class="small">Đây sẽ là thông tin ẩn trên trang cá nhân</p>
+                            </div>
+                            <div class="col-md-6">
+                        <p class="font-weight-bold h6">Số điện thoại</p>
+                        <input type="text" class="input-pro" value="@GetMaskedPhone(account.Phone)" />
+                        <p class="font-weight-bolder h6">Email</p>
+                        <input type="text" class="input-pro" value="@GetMaskedEmail(account.Email)" />
+                                <p class="font-weight-bolder h6">Mật khẩu</p>
+                                <input type="password" class="input-pro" value="******************" />
+                            </div>
                         </div>
-                </div>
-                <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
-                    <button class="btn btn-light me-md-2" style="border:none;background-color:white" type="button">Hủy</button>
-                    <button class="btn btn-dark" type="button">Cập nhật</button>
-                </div>
+                        <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
+                            <button class="btn btn-light me-md-2" style="border:none;background-color:white" type="button">Hủy</button>
+                            <button class="btn btn-dark" type="button">Cập nhật</button>
+                        </div>
+                   
+                
 
             </div>
             <div class="tab-pane fade" id="order" role="tabpanel" aria-labelledby="order-tab">
-                <div class="row mt-3 row-custom mb-4">
-                    <div class="col-md-2 img-container">
-                        <img src="/IMG/image 8.png" alt="Image" />
+                <div class="pagination-container">
+                    <div class="content-container" id="contentContainer">
+                        @if (bills != null && bills.Any())
+                        {
+                            @foreach (var bill in bills)
+                            {
+                                <div class="row mt-3 row-custom mb-4">
+                                    <div class="col-md-2 img-container">
+                                        <img src="/IMG/image 8.png" alt="Image" />
+                                    </div>
+                                    <div class="col-md-6" style="font-weight:bold">
+                                        <p>MÃ ĐƠN HÀNG: @bill.IDBill</p>
+                                        <p>Ngày đặt hàng: @bill.OrderDate.ToString("dd/MM/yyyy")</p> <!-- Định dạng ngày tháng -->
+                                        <p>Tổng: @bill.TotalAmount.ToString("N0") VND</p>
+                                    </div>
+                                    <div class="col-md-2 status-container">
+                                        <p style="color:#FBBF24">Trạng thái: @bill.Status</p>
+                                    </div>
+                                    <div class="col-md-2 btn-container">
+                                        <div class="d-grid gap-2 d-md-block">
+                                            <button class="btn btn-danger" type="button">Hủy đơn</button>
+                                            <button class="btn btn-dark" type="button">Chi tiết</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>Không có đơn hàng nào</p>
+                        }
                     </div>
-                    <div class="col-md-6" style="font-weight:bold">
-                        <p>MÃ ĐƠN HÀNG: #1000001</p>
-                        <p>Địa chỉ nhận hàng: Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam</p>
-                        <p>Tổng: 15.000.000 VND</p>
-                    </div>
-                    <div class="col-md-2 status-container">
-                        <p style="color:#FBBF24">Trạng thái: Đang chờ</p>
-                    </div>
-                    <div class="col-md-2 btn-container">
-                        <div class="d-grid gap-2 d-md-block">
-                            <button class="btn btn-danger" type="button">Hủy đơn</button>
-                            <button class="btn btn-dark" type="button">Chi tiết</button>
-                        </div>
-                    </div>
-                </div>
-                  <div class="row mt-3 row-custom mb-4">
-                    <div class="col-md-2 img-container">
-                        <img src="/IMG/image 8.png" alt="Image" />
-                    </div>
-                    <div class="col-md-6" style="font-weight:bold">
-                        <p>MÃ ĐƠN HÀNG: #10000002</p>
-                        <p>Địa chỉ nhận hàng: Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam</p>
-                        <p>Tổng: 15.000.000 VND</p>
-                    </div>
-                    <div class="col-md-2 status-container">
-                        <p style="color:#FBBF24">Trạng thái: Đang chờ</p>
-                    </div>
-                    <div class="col-md-2 btn-container">
-                        <div class="d-grid gap-2 d-md-block">
-                            <button class="btn btn-danger" type="button">Hủy đơn</button>
-                            <button class="btn btn-dark" type="button">Chi tiết</button>
-                        </div>
-                    </div>
-                </div>
-                  <div class="row mt-3 row-custom mb-4">
-                    <div class="col-md-2 img-container">
-                        <img src="/IMG/image 8.png" alt="Image" />
-                    </div>
-                    <div class="col-md-6" style="font-weight:bold">
-                        <p>MÃ ĐƠN HÀNG: #1000003</p>
-                        <p>Địa chỉ nhận hàng: Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam</p>
-                        <p>Tổng: 15.000.000 VND</p>
-                    </div>
-                    <div class="col-md-2 status-container">
-                        <p style="color:#FBBF24">Trạng thái: Đang chờ</p>
-                    </div>
-                    <div class="col-md-2 btn-container">
-                        <div class="d-grid gap-2 d-md-block">
-                            <button class="btn btn-danger" type="button">Hủy đơn</button>
-                            <button class="btn btn-dark" type="button">Chi tiết</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-3 row-custom mb-4">
-                    <div class="col-md-2 img-container">
-                        <img src="/IMG/image 8.png" alt="Image" />
-                    </div>
-                    <div class="col-md-6" style="font-weight:bold">
-                        <p>MÃ ĐƠN HÀNG: #1000004</p>
-                        <p>Địa chỉ nhận hàng: Đ. Số 22, Thường Thạnh, Cái Răng, Cần Thơ 900000, Việt Nam</p>
-                        <p>Tổng: 15.000.000 VND</p>
-                    </div>
-                    <div class="col-md-2 status-container">
-                        <p style="color:#FBBF24">Trạng thái: Đang chờ</p>
-                    </div>
-                    <div class="col-md-2 btn-container">
-                        <div class="d-grid gap-2 d-md-block">
-                            <button class="btn btn-danger" type="button">Hủy đơn</button>
-                            <button class="btn btn-dark" type="button">Chi tiết</button>
-                        </div>
+                    <div class="pagination">
+                        <button @onclick="PreviousPage" disabled="@(!HasPreviousPage)" class="page-button">Lùi</button>
+                        @for (int i = 1; i <= TotalPages; i++)
+                        {
+                            <button @onclick="() => LoadPage(i)" class="page-button @(i == CurrentPage ? "active" : "")">
+                                @i
+                            </button>
+                        }
+                        <button @onclick="NextPage" disabled="@(!HasNextPage)" class="page-button">Tiến</button>
                     </div>
                 </div>
             </div>
@@ -261,5 +283,128 @@
 </div>
 
 @code {
+    private Account account = new Account();
+    private string errorMessage;
+    private string LoggedInUser;
+    private IEnumerable<Bill> bills;
+    private int CurrentPage = 1;
+    private int TotalPages;
+    private int PageSize = 4;
+    private bool HasPreviousPage => CurrentPage > 1;
+    private bool HasNextPage => CurrentPage < TotalPages;
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+
+            if (!string.IsNullOrEmpty(LoggedInUser))
+            {
+                account = await HttpClient.GetFromJsonAsync<Account>($"api/account/details/{LoggedInUser}");
+                await LoadPage(CurrentPage);
+            }
+            else
+            {
+                errorMessage = "Không tìm thấy thông tin đăng nhập.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Lỗi khi lấy thông tin tài khoản: {ex.Message}";
+        }
+    }
+
+    private async Task PreviousPage()
+    {
+        if (HasPreviousPage)
+        {
+            CurrentPage--;
+            await LoadPage(CurrentPage);
+        }
+    }
+
+    private async Task NextPage()
+    {
+        if (HasNextPage)
+        {
+            CurrentPage++;
+            await LoadPage(CurrentPage);
+        }
+    }
+
+    private async Task LoadPage(int pageNumber)
+    {
+        try
+        {
+            LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+
+            if (!string.IsNullOrEmpty(LoggedInUser))
+            {
+                var response = await HttpClient.GetFromJsonAsync<PagedResponse<Bill>>($"/api/bill/paged?username={LoggedInUser}&pageNumber={pageNumber}&pageSize={PageSize}");
+
+                if (response != null)
+                {
+                    var contentContainer = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "contentContainer");
+                    await contentContainer.InvokeVoidAsync("classList.add", "transition-out");
+
+                    bills = response.Data;
+                    TotalPages = response.TotalPages;
+                    CurrentPage = response.CurrentPage;
+
+                    await Task.Delay(300); // Đợi hiệu ứng kết thúc
+                    await contentContainer.InvokeVoidAsync("classList.remove", "transition-out");
+                }
+                else
+                {
+                    errorMessage = "Không tìm thấy đơn hàng.";
+                }
+            }
+            else
+            {
+                errorMessage = "Không tìm thấy thông tin đăng nhập.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Lỗi khi tải trang: {ex.Message}";
+        }
+    }
+
+    private string GetMaskedPhone(string phone)
+    {
+        if (string.IsNullOrEmpty(phone) || phone.Length < 4)
+        {
+            return phone;
+        }
+
+        int maskLength = phone.Length - 4;
+        return new string('*', maskLength) + phone.Substring(maskLength);
+    }
+
+    private string GetMaskedEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email) || !email.Contains('@'))
+        {
+            return email;
+        }
+
+        var parts = email.Split('@');
+        if (parts[0].Length < 3)
+        {
+            return email;
+        }
+
+        int maskLength = parts[0].Length - 3;
+        string maskedLocalPart = parts[0].Substring(0, 1) + new string('*', maskLength) + parts[0].Substring(parts[0].Length - 2, 2);
+        return maskedLocalPart + "@" + parts[1];
+    }
+
+    public class PagedResponse<T>
+    {
+        public IEnumerable<T> Data { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+    }
+    
 }

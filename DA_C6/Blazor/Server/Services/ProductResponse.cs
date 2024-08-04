@@ -34,6 +34,7 @@ namespace Blazor.Server.Services
             return context.Products.FirstOrDefault(x => x.IDProduct == id);
         }
 
+
         public IEnumerable<Product> GetProducts()
         {
             return context.Products;
