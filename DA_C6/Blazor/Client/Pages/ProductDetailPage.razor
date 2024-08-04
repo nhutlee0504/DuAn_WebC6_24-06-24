@@ -254,7 +254,8 @@
 		{
 			// Tiếp tục thực hiện xử lý với selectedIdPDetail và selectedQuantity
 			errorMessage = ""; // Xóa thông báo lỗi nếu số lượng hợp lệ
-			c.UserName = "Admin";
+			var loggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+			c.UserName = loggedInUser;
 			c.IDPDetail = int.Parse(selectedIdPDetail);
 			c.Quantity = QuantityToAdd;
 

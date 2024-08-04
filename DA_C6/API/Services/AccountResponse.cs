@@ -3,6 +3,9 @@ using API.Data;
 using API.Model;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System;
 
 namespace API.Services
 {
@@ -71,6 +74,18 @@ namespace API.Services
             {
 
                 return null;
+            }
+        }
+
+        public Account LoginAccount(string username, string password)
+        {
+            using (var md5 = MD5.Create())
+            {
+                var passBytes = Encoding.UTF8.GetBytes(password);
+                var hashBytes = md5.ComputeHash(passBytes);
+                var hashedPassword = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+                return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
             }
         }
     }
