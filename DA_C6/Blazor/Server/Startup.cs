@@ -22,6 +22,8 @@ namespace Blazor.Server
 
         public IConfiguration Configuration { get; }
 
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             // Thêm dịch vụ InMemoryCache
@@ -38,9 +40,7 @@ namespace Blazor.Server
             services.AddRazorPages();
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            // Đăng ký các dịch vụ
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<ISessionServices, SessionRespone>();
             services.AddScoped<IAccount, AccountResponse>();
             services.AddScoped<IProduct, ProductResponse>();
@@ -51,12 +51,19 @@ namespace Blazor.Server
             services.AddScoped<IColor, ColorResponse>();
             services.AddScoped<ISupplier, SupplierResponse>();
             services.AddScoped<IEvaluate, EvaluateResponse>();
+            services.AddScoped<ICategory, CategoryResponse>();
             services.AddScoped<IBill, BillResponse>();
             services.AddScoped<IBillDetail, BillDetailResponse>();
             services.AddScoped<ISale, SaleResponse>();
             services.AddScoped<ICart, CartResponse>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+
+
+
         }
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -67,19 +74,18 @@ namespace Blazor.Server
             else
             {
                 app.UseExceptionHandler("/Error");
-                app.UseHsts();
             }
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseRouting();
             app.UseSession();
+            app.UseBlazorFrameworkFiles();
+            app.UseStaticFiles();
+            app.UseHttpsRedirection();
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                endpoints.MapFallbackToPage("/_Host"); // Định tuyến đến trang chủ của Blazor Server
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }

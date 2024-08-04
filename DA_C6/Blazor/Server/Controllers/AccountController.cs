@@ -13,19 +13,7 @@ namespace Blazor.Server.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly ISessionServices _sessionServices;
-
-        public AccountController(ISessionServices sessionServices)
-        {
-            _sessionServices = sessionServices;
-        }
-
-        [HttpGet("username")]
-        public IActionResult GetUsername()
-        {
-            var username = _sessionServices.GetUsername();
-            return Ok(username);
-        }
+        
         private readonly IAccount account;
 
         public AccountController(IAccount acc) => account = acc;
