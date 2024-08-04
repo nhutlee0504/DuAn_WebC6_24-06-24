@@ -30,18 +30,6 @@ namespace Blazor.Server.Services
 			}
 		}
 
-		public Cart DeleteAllCart(string user)
-		{
-			var timsp = context.Carts.Find(user);
-			if (timsp != null)
-			{
-				context.Carts.Remove(timsp);
-				context.SaveChanges();
-				return timsp;
-			}
-			return null;
-		}
-
 		public Cart DeleteProductFromCart(int id)
 		{
 			var cartItem = context.Carts.Find(id);
@@ -59,9 +47,7 @@ namespace Blazor.Server.Services
             return context.Carts;
         }
 
-		[HttpPut]
-		[Route("UpdateCart/{id}")]
-		public Cart UpdateCart(int id, Cart cart)
+		public Cart UpdateProductFromCart(int id, Cart cart)
 		{
 			try
 			{
@@ -81,9 +67,16 @@ namespace Blazor.Server.Services
 			}
 		}
 
-		public Cart UpdateProductFromCart(int id, Cart cart)
+		public Cart DeleteAllCartByUsername(string username)
 		{
-			throw new System.NotImplementedException();
+			var cartsToRemove = context.Carts.Where(c => c.UserName == username).ToList();
+			if (cartsToRemove != null)
+			{
+				context.Carts.RemoveRange(cartsToRemove);
+				context.SaveChanges();
+				return cartsToRemove.FirstOrDefault(); // Trả về một đối tượng Cart nếu có
+			}
+			return null; // Trả về null nếu không có sản phẩm nào được xóa
 		}
 	}
 }

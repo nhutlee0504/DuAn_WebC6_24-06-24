@@ -13,6 +13,6 @@ namespace Blazor.Server.Services
 
         public Cart UpdateProductFromCart(int id, Cart cart);
 
-        public Cart DeleteAllCart(string user);
+        public Cart DeleteAllCartByUsername(string username);
 	}
 }
