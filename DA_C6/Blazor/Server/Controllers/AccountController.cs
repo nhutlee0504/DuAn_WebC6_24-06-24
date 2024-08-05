@@ -42,6 +42,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet("{user}")]
+        [Route("GetUser/{user}")]
         public Account GetUser(string user)
         {
             if (string.IsNullOrEmpty(user))

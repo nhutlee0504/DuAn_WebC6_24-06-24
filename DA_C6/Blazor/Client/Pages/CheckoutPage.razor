@@ -1,9 +1,10 @@
-﻿@page "/checkout/{selectedCartIdsJson}"
+﻿@page "/checkout"
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Text.Json
+@inject IJSRuntime JSruntime
 <style>
     .breadcrumb-item a{
         color: #6c757d;
@@ -23,6 +24,7 @@
                     <i class="bi bi-person-circle"></i>
                     Thông tin liên hệ
                 </div>
+
                 <div class="card-body">
                     <div class="form-section">
                         <div class="row">
@@ -67,137 +69,109 @@
             <div class="container">
                 <h2>Sản phẩm</h2>
                 <hr/>
-
-                @if (selectedCartIds != null && cartItems != null)
+                @if (selectedIDPDetails != null && selectedIDPDetails.Any())
                 {
-                    @foreach (var cartId in selectedCartIds)
+                    @foreach (var idpDetail in selectedIDPDetails)
                     {
-                        <p>@cartId.ToString()</p>
-                        var cartItem = cartItems.FirstOrDefault(c => c.IDCart == cartId);
-                        if (cartItem != null)
+                        var timspc = cartItems.FirstOrDefault(x => x.IDPDetail == idpDetail && x.UserName == LoggedInUser);
+                        @if (timspc != null)
                         {
-                            var prodd = productdetailitems.FirstOrDefault(pd => pd.IDPDetail == cartItem.IDPDetail);
-                            if (prodd != null)
+                            var timspd = productdetailitems.FirstOrDefault(x => x.IDPDetail == timspc.IDPDetail);
+                            @if (timspd != null)
                             {
-                                var product = productitems.FirstOrDefault(p => p.IDProduct == prodd.IDProduct);
-                                if (product != null)
+                                var timspp = productitems.FirstOrDefault(x => x.IDProduct == timspd.IDProduct);
+                                @if (timspp != null)
                                 {
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            <img src="/@product.Image" alt="Alternate Text" class="mw-100" />
+                                            <img src="/@timspp.Image" alt="Alternate Text" class="mw-100" />
                                         </div>
                                         <div class="col-sm-8 flex-column">
-                                            <p class="font-weight-bold">@product.Name</p>
-                                            <p>Kích thước - Màu sắc</p>
+                                            <p class="font-weight-bold">@timspp.Name</p>
+                                            <p>@coloritems.FirstOrDefault(x=>x.IDColor == timspd.IDColor).Color - @sizeitems.FirstOrDefault(x=>x.IDSize == timspd.Size).SizeName</p>
                                             <div class="row">
-                                                <div class="col-sm-6 font-weight-bold">@cartItem.Quantity</div>
-                                                <div class="col-sm-6">@(product.Price * cartItem.Quantity).ToString("N0") VNĐ</div>
+                                                <div class="col-sm-6 text-primary font-weight-bold">(@timspc.Quantity)</div>
+                                                <div class="col-sm-6">@((timspc.Quantity * timspp.Price).ToString("N0"))đ</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <hr class="m-3" />
                                 }
                             }
                         }
                     }
                 }
 
-
-
-               @*  <div class="row">
-                    <div class="col-sm-4">
-                        <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
-                    </div>
-                    <div class="col-sm-8 flex-column">
-                        <p class="font-weight-bold">Áo cầu lông 1</p>
-                        <p>Xanh/M</p>
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold">1</div>
-                            <div class="col-sm-6">200.000</div>
-                        </div>
-                    </div>
-                    <hr  class="m-3"/>
-                </div> *@
-
-                @*  s *@
-              @*   <div class="row">
-                    <div class="col-sm-4">
-                        <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
-                    </div>
-                    <div class="col-sm-8 flex-column">
-                        <p class="font-weight-bold">Áo cầu lông 1</p>
-                        <p>Xanh/M</p>
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold">1</div>
-                            <div class="col-sm-6">200.000</div>
-                        </div>
-                    </div>
-                    <hr class="m-3" />
-                </div> *@
-                @*  s *@
-
-              @*   <div class="row">
+                <div class="row">
                     <div class="col-sm-4 font-weight-bold">Tổng cộng</div>
-                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">400.000</div>
+                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">@TotalPrice.ToString("N0")đ</div>
                 </div>
                 <div class="row">
                     <div class="col-sm-4 font-weight-bold">Phí vận chuyển</div>
-                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">30.000</div>
+                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">@ShippingFee.ToString("N0")đ</div>
                 </div>
 
                 <div class="row mt-3 mb-3">
                     <h5 class="col-sm-4 font-weight-bold">Tổng tiền</h5>
-                    <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">430.000</h5>
+                    <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">@AllPrice.ToString("N0")đ</h5>
                 </div>
                 <div class="row mt-3">
                     <input type="submit" class="btn btn-dark rounded-pill" value="Xác nhận" />
-                </div> *@
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 @code {
-    [Parameter]
-    public string selectedCartIdsJson { get; set; }
-
-    private List<int> selectedCartIds = new List<int>();
     private List<Cart> cartItems;
     private List<Product> productitems;
     private List<ProductDetails> productdetailitems;
-    private decimal totalAmount = 0;
-
-    protected override async void OnInitialized()
+    private List<Colors> coloritems;
+    private List<Sizes> sizeitems;
+    private decimal TotalPrice = 0;
+    private decimal ShippingFee = 0;
+    private decimal AllPrice = 0;
+    private string LoggedInUser;
+    private List<int> selectedIDPDetails;
+    protected override async Task OnInitializedAsync()
     {
-        selectedCartIds = JsonSerializer.Deserialize<List<int>>(selectedCartIdsJson);
+        LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+        var serializedValues = await JSruntime.InvokeAsync<string>("localStorage.getItem", "SelectedIDPDetails");
+        selectedIDPDetails = JsonSerializer.Deserialize<List<int>>(serializedValues);
 
-        try
+        if (selectedIDPDetails != null && selectedIDPDetails.Any())
         {
+
             cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
             productitems = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
             productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>("api/ProductDetail/GetProductDetails");
+            coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
+            sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
 
-            // Tính tổng giá trị đơn hàng
-            foreach (var cartId in selectedCartIds)
+
+            foreach (var idpDetail in selectedIDPDetails)
             {
-                var cartItem = cartItems.FirstOrDefault(c => c.IDCart == cartId);
-                if (cartItem != null)
+                var timspc = cartItems.FirstOrDefault(x => x.IDPDetail == idpDetail && x.UserName == LoggedInUser);
+                if (timspc != null)
                 {
-                    var prodd = productdetailitems.FirstOrDefault(pd => pd.IDPDetail == cartItem.IDPDetail);
-                    if (prodd != null)
+                    var timspd = productdetailitems.FirstOrDefault(x => x.IDPDetail == timspc.IDPDetail);
+                    if (timspd != null)
                     {
-                        var product = productitems.FirstOrDefault(p => p.IDProduct == prodd.IDProduct);
-                        if (product != null)
+                        var timspp = productitems.FirstOrDefault(x => x.IDProduct == timspd.IDProduct);
+                        if (timspp != null)
                         {
-                            totalAmount += product.Price * cartItem.Quantity;
+                            TotalPrice += (timspc.Quantity * timspp.Price);
+                            // Hiển thị chi tiết sản phẩm tương ứng
                         }
+                        ShippingFee = TotalPrice * 0.1m;
+                        AllPrice = ShippingFee + TotalPrice;
                     }
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
+
+            // Thực hiện lấy thông tin sản phẩm từ danh sách selectedIDPDetails và hiển thị chúng trên trang checkout
+            // Ví dụ:
+            // productdetails = await GetProductDetails(selectedIDPDetails);
         }
     }
 }
