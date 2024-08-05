@@ -4,12 +4,15 @@ using Blazor.Shared.Model;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Blazor.Server.Services
 {
     public interface IBill
     {
         public IEnumerable<Bill> GetAllBill();
+
+        Task<IEnumerable<Bill>> GetUserBillsAsync(string username, int pageNumber, int pageSize);
 
         public Bill GetBillId(int id);
     }

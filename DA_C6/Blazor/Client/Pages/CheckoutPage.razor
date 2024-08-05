@@ -6,7 +6,7 @@
 @using System.Text.Json
 @inject IJSRuntime JSruntime
 <style>
-    .breadcrumb-item a{
+    .breadcrumb-item a {
         color: #6c757d;
         text-decoration: none;
     }
@@ -65,13 +65,13 @@
                     </div>
                 </div>
             }
-        
+
         </div>
 
         <div class="col-sm-6">
             <div class="container">
                 <h2>Sản phẩm</h2>
-                <hr/>
+                <hr />
                 @if (selectedIDPDetails != null && selectedIDPDetails.Any())
                 {
                     @foreach (var idpDetail in selectedIDPDetails)
@@ -85,19 +85,20 @@
                                 var timspp = productitems.FirstOrDefault(x => x.IDProduct == timspd.IDProduct);
                                 @if (timspp != null)
                                 {
-                                    <div class="row">
+                                    <div class="row mt-3 mb-3">
                                         <div class="col-sm-4">
                                             <img src="/@timspp.Image" alt="Alternate Text" class="mw-100" />
                                         </div>
                                         <div class="col-sm-8 flex-column">
                                             <p class="font-weight-bold">@timspp.Name</p>
-                                            <p>@coloritems.FirstOrDefault(x=>x.IDColor == timspd.IDColor).Color - @sizeitems.FirstOrDefault(x=>x.IDSize == timspd.Size).SizeName</p>
+                                            <p>@coloritems.FirstOrDefault(x => x.IDColor == timspd.IDColor).Color - @sizeitems.FirstOrDefault(x => x.IDSize == timspd.Size).SizeName</p>
                                             <div class="row">
-                                                <div class="col-sm-6 text-primary font-weight-bold">(@timspc.Quantity)</div>
+                                                <div class="col-sm-6 font-weight-bold">(@timspc.Quantity)</div>
                                                 <div class="col-sm-6">@((timspc.Quantity * timspp.Price).ToString("N0"))đ</div>
                                             </div>
                                         </div>
                                     </div>
+                                    <hr>
                                 }
                             }
                         }
@@ -117,7 +118,7 @@
                     <h5 class="col-sm-4 font-weight-bold">Tổng tiền</h5>
                     <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">@AllPrice.ToString("N0")đ</h5>
                 </div>
-                <div class="row mt-3">
+                <div class="row mt-3 mb-3">
                     <input type="submit" class="btn btn-dark rounded-pill" value="Xác nhận" />
                 </div>
             </div>
@@ -168,7 +169,7 @@
                             TotalPrice += (timspc.Quantity * timspp.Price);
                             // Hiển thị chi tiết sản phẩm tương ứng
                         }
-                        ShippingFee = TotalPrice * 0.1m;
+                        ShippingFee = TotalPrice * 0.03m;
                         AllPrice = ShippingFee + TotalPrice;
                     }
                 }
@@ -180,4 +181,5 @@
         }
     }
 }
+
 

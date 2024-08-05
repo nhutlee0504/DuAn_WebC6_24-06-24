@@ -22,6 +22,7 @@ namespace Blazor.Server.Controllers
         public AccountController(IAccount acc) => account = acc;
 
         [HttpGet]
+        [Route("GetAll")]
         public IEnumerable<Account> GetAll()
         {
             return account.GetAccounts();
@@ -38,6 +39,7 @@ namespace Blazor.Server.Controllers
             return account1;
         }
         [HttpPost]
+        [Route("Add")]
         public Account Add(Account acc)
         {
             return account.AddAccount(new Account
@@ -54,6 +56,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet("{user}")]
+        [Route("GetUser/{user}")]
         public Account GetUser(string user)
         {
             if (string.IsNullOrEmpty(user))
@@ -62,6 +65,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpPut("{user}")]
+        [Route("Update/{user}")]
         public Account Update(Account acc, string user)
         {
             if (string.IsNullOrEmpty(user))
