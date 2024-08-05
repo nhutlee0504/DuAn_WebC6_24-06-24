@@ -4,6 +4,8 @@ using API.Model;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace API.Services
 {
@@ -17,7 +19,12 @@ namespace API.Services
             context.SaveChanges();
             return product;
         }
-
+        public async Task<IEnumerable<Product>> SearchProductsByNameAsync(string name)
+        {
+            return await context.Products
+                                 .Where(p => p.Name.Contains(name))
+                                 .ToListAsync();
+        }
         public void Delete(int id)
         {
             var prod = context.Products.FirstOrDefault(x => x.IDProduct == id);

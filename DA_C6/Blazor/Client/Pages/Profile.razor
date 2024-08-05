@@ -5,7 +5,9 @@
 @using System.Collections.Generic
 @using System.Linq
 @using System.Threading.Tasks
+@inject NavigationManager NavigationManager
 <style>
+
     .pagination-container {
         display: flex;
         flex-direction: column;
@@ -202,9 +204,9 @@
                             </div>
                             <div class="col-md-6">
                                 <p class="font-weight-bolder h6">Họ và tên</p>
-                                <input type="text" class="input-pro" @bind="account.Name" />
+                                <input type="text" class="input-pro" @bind="account.Name" readonly />
                                 <p class="font-weight-bolder h6">Địa chỉ</p>
-                                <input type="text" class="input-pro" @bind="account.Address" />
+                        <input type="text" class="input-pro" @bind="account.Address" readonly />
                             </div>
                         </div>
                         <div class="row mt-4">
@@ -215,11 +217,11 @@
                             </div>
                             <div class="col-md-6">
                         <p class="font-weight-bold h6">Số điện thoại</p>
-                        <input type="text" class="input-pro" value="@GetMaskedPhone(account.Phone)" />
+                        <input type="text" class="input-pro" value="@GetMaskedPhone(account.Phone)" readonly />
                         <p class="font-weight-bolder h6">Email</p>
-                        <input type="text" class="input-pro" value="@GetMaskedEmail(account.Email)" />
+                        <input type="text" class="input-pro" value="@GetMaskedEmail(account.Email)" readonly />
                                 <p class="font-weight-bolder h6">Mật khẩu</p>
-                                <input type="password" class="input-pro" value="******************" />
+                        <input type="password" class="input-pro" value="******************" readonly />
                             </div>
                         </div>
                         <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
@@ -243,7 +245,8 @@
                                     </div>
                                     <div class="col-md-6" style="font-weight:bold">
                                         <p>MÃ ĐƠN HÀNG: @bill.IDBill</p>
-                                        <p>Ngày đặt hàng: @bill.OrderDate.ToString("dd/MM/yyyy")</p> <!-- Định dạng ngày tháng -->
+                                        <p>Ngày đặt hàng: @bill.OrderDate.ToString("dd/MM/yyyy")</p> 
+                                        <p>Địa chỉ nhận hàng: @account.Address</p>
                                         <p>Tổng: @bill.TotalAmount.ToString("N0") VND</p>
                                     </div>
                                     <div class="col-md-2 status-container">
@@ -252,7 +255,7 @@
                                     <div class="col-md-2 btn-container">
                                         <div class="d-grid gap-2 d-md-block">
                                             <button class="btn btn-danger" type="button">Hủy đơn</button>
-                                            <button class="btn btn-dark" type="button">Chi tiết</button>
+                                            <button class="btn btn-dark" type="button" @onclick="() => NavigateToBillDetails(bill.IDBill)">Chi tiết</button>
                                         </div>
                                     </div>
                                 </div>
@@ -276,13 +279,46 @@
                 </div>
             </div>
             <div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="setting-tab">
-                <p>Nội dung của tab Setting.</p>
+                <h3 class="mt-4">Tùy chọn hiển thị</h3>
+                <div class="form-group">
+                    <label for="theme">Chế độ giao diện</label>
+                    <select id="theme" class="form-control mb-2" style="border-color:black; border-width:2px;">
+                        <option value="light">Sáng</option>
+                        <option value="dark">Tối</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="language">Ngôn ngữ</label>
+                    <select id="language" class="form-control mb-2" style="border-color:black; border-width:2px;">
+                        <option value="vi">Tiếng Việt</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">Lưu thay đổi</button>
+
+                <h3 class="mt-4">Thông báo</h3>
+                <div class="form-check">
+                    <input type="checkbox" id="emailNotifications" class="form-check-input" />
+                    <label for="emailNotifications" class="form-check-label">Nhận thông báo qua email</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="smsNotifications" class="form-check-input" />
+                    <label for="smsNotifications" class="form-check-label">Nhận thông báo qua SMS</label>
+                </div>
+                <button class="btn btn-primary">Lưu thay đổi</button>
+
+                <h3 class="mt-4">Bảo mật</h3>
+                <button class="btn btn-danger">Xóa tài khoản</button>
             </div>
         </div>
     </div>
 </div>
 
 @code {
+    private void NavigateToBillDetails(int billId)
+    {
+        NavigationManager.NavigateTo($"/billdetails/{billId}");
+    }
     private Account account = new Account();
     private string errorMessage;
     private string LoggedInUser;
@@ -352,7 +388,7 @@
                     TotalPages = response.TotalPages;
                     CurrentPage = response.CurrentPage;
 
-                    await Task.Delay(300); // Đợi hiệu ứng kết thúc
+                    await Task.Delay(300);
                     await contentContainer.InvokeVoidAsync("classList.remove", "transition-out");
                 }
                 else
