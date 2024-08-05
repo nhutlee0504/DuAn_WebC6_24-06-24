@@ -148,7 +148,7 @@
 
                 if (response.IsSuccessStatusCode)
                 {                    
-                    await js.InvokeVoidAsync("sessionStorage.setItem", "LoggedInUser", account.UserName);
+                    await js.InvokeVoidAsync("setLocalStorageItem", "LoggedInUser", account.UserName);
                     navigation.NavigateTo("/");
                 }
             }
@@ -160,3 +160,9 @@
         }
     }
 }
+
+<script>
+    function setLocalStorageItem(key, value) {
+        localStorage.setItem(key, value);
+    }
+</script>
