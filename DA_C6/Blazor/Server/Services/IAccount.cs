@@ -14,7 +14,6 @@ namespace Blazor.Server.Services
         public Account AddAccount(Account account);
         public Account UpdateAccount(string user, Account account);
         public void DeleteAccount(string user);
-        bool Authenticate(string username, string password);
-        bool VerifyPassword(string userName, string hashedPassword);
+        public Account LoginAccount(string username, string password);
     }
 }

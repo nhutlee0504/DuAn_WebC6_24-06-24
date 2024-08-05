@@ -15,16 +15,37 @@ namespace Blazor.Server.Controllers
     {
         private IAccount account;
         public AccountController(IAccount acc) => account = acc;
+        [HttpGet("details/{userName}")]
+        public ActionResult<Account> GetAccountDetails(string userName)
+        {
+            var account1 = account.GetAccountById(userName);
+            if (account1 == null)
+            {
+                return NotFound();
+            }
 
+            return account1;
+        }
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] Account model)
+        {
+            var user = account.LoginAccount(model.UserName, model.Password);
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không đúng" });
+            }
+
+            HttpContext.Session.SetString("LoggedInUser", user.UserName);
+
+            return Ok(new { message = "Đăng nhập thành công", role = user.Role });
+        }
         [HttpGet]
-        [Route("GetAll")]
         public IEnumerable<Account> GetAll()
         {
             return account.GetAccounts();
         }
 
         [HttpPost]
-        [Route("Add")]
         public Account Add(Account acc)
         {
             return account.AddAccount(new Account
@@ -41,7 +62,6 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet("{user}")]
-        [Route("GetUser/{user}")]
         public Account GetUser(string user)
         {
             if (string.IsNullOrEmpty(user))
@@ -50,8 +70,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpPut("{user}")]
-        [Route("Update/{user}")]
-        public Account Update(string user, Account acc)
+        public Account Update(Account acc, string user)
         {
             if (string.IsNullOrEmpty(user))
                 return null;
@@ -65,45 +84,6 @@ namespace Blazor.Server.Controllers
                 return null;
             account.DeleteAccount(user);
             return NoContent();
-        }
-
-        // Trong file AccountController.cs
-        [HttpPost("Authenticate")]
-        [Route("Authenticate")]
-        public IActionResult Authenticate([FromBody] Account model)
-        {
-            // Lấy salt từ cơ sở dữ liệu hoặc sử dụng một giá trị cố định
-            string salt = "somesalt";
-
-            // Kết hợp mật khẩu người dùng với salt
-            string combinedPassword = string.Concat(model.Password, salt);
-
-            // Băm mật khẩu kết hợp
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                // Băm mật khẩu kết hợp
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(combinedPassword));
-
-                // Chuyển byte[] thành string hex
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length && i < 16; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-
-                // Giá trị băm
-                string hashedPassword = builder.ToString();
-
-                // Giả sử account là một đối tượng của lớp AccountService chứa phương thức VerifyPassword
-                var authenticated = account.VerifyPassword(model.UserName, hashedPassword);
-
-                if (authenticated)
-                {
-                    return Ok(new { message = "Authentication successful" });
-                }
-
-                return BadRequest(new { message = "Authentication failed" });
-            }
         }
     }
 }

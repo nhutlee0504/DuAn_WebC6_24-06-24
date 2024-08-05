@@ -5,6 +5,7 @@ using API.Model;
 using API.Services;
 using System.Collections.Generic;
 
+
 namespace API.Controllers
 {
     [Route("api/[controller]")]
@@ -13,7 +14,30 @@ namespace API.Controllers
     {
         private IAccount account;
         public AccountController(IAccount acc) => account = acc;
+        [HttpGet("details/{userName}")]
+        public ActionResult<Account> GetAccountDetails(string userName)
+        {
+            var account1 = account.GetAccountById(userName);
+            if (account1 == null)
+            {
+                return NotFound();
+            }
 
+            return account1;
+        }
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] Account model)
+        {
+            var user = account.LoginAccount(model.UserName, model.Password);
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không đúng" });
+            }
+
+            HttpContext.Session.SetString("LoggedInUser", user.UserName);
+
+            return Ok(new { message = "Đăng nhập thành công", role = user.Role });
+        }
         [HttpGet]
         public IEnumerable<Account> GetAll()
         {
@@ -57,7 +81,7 @@ namespace API.Controllers
         {
             if (string.IsNullOrEmpty(user))
                 return null;
-            account.DeleteAccount(user);     
+            account.DeleteAccount(user);
             return NoContent();
         }
     }

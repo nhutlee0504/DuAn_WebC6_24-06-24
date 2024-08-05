@@ -17,7 +17,6 @@ namespace Blazor.Server.Services
         {
             context = ct;
         }
-
         public Account AddAccount(Account account)
         {
             try
@@ -32,31 +31,8 @@ namespace Blazor.Server.Services
                 return null;
             }
         }
-		public Account LoginAccount(string username, string password)
-		{
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] inputBytes = Encoding.UTF8.GetBytes(password);
-                byte[] hashBytes = sha256.ComputeHash(inputBytes);
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length && i < 16; i++)
-                {
-                    sb.Append(hashBytes[i].ToString("x2"));
-                }
-                var hashedPassword = sb.ToString();
-                return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
-            }
 
-   //         using (var md5 = MD5.Create())
-			//{
-			//	var passBytes = Encoding.UTF8.GetBytes(password);
-			//	var hashBytes = md5.ComputeHash(passBytes);
-			//	var hashedPassword = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-
-			//	return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
-			//}
-		}
-		public void DeleteAccount(string user)
+        public void DeleteAccount(string user)
         {
             var us = context.Accounts.Find(user);
             if (us != null)
@@ -74,6 +50,23 @@ namespace Blazor.Server.Services
         public IEnumerable<Account> GetAccounts()
         {
             return context.Accounts;
+        }
+
+        public Account LoginAccount(string username, string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(password);
+                byte[] hashBytes = sha256.ComputeHash(inputBytes);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length && i < 16; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("x2"));
+                }
+                var hashedPassword = sb.ToString();
+
+                return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
+            }
         }
 
         public Account UpdateAccount(string user, Account account)
@@ -100,16 +93,6 @@ namespace Blazor.Server.Services
 
                 return null;
             }
-        }
-
-        public bool Authenticate(string username, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VerifyPassword(string userName, string hashedPassword)
-        {
-            throw new NotImplementedException();
         }
     }
 }
