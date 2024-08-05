@@ -1,0 +1,40 @@
+﻿@page "/UpdateSize/{id:int}"
+@using Admin.Services
+@using Admin.Model
+@inject SizeResponse SizeService
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Sizes size = new Sizes();
+    protected override async Task OnInitializedAsync()
+    {
+        size = await Task.Run(() => SizeService.GetSizeId(id));
+    }
+
+    private void UpdateSizes()
+    {
+        SizeService.UpdateSizes(id, size);
+        Navigation.NavigateTo("/SizePage");
+    }
+
+    private void NavigateToCategoryPage()
+    {
+
+        Navigation.NavigateTo("/SizePage");
+
+    }
+}
+
+<h3>Cập nhật loại sản phẩm mới</h3>
+
+<div>
+    <label for="SizeName">Name:</label>
+    <input type="text" id="categoryName" @bind="size.SizeName" />
+</div>
+<div>
+    <button type="button" class="btn btn-primary" @onclick="UpdateSizes">Cập nhật</button>
+
+    <button type="button" class="btn btn-primary" @onclick="NavigateToCategoryPage">Quay về danh sách</button>
+</div>
+

@@ -1,0 +1,59 @@
+﻿@page "/CatePage"
+@using Admin.Services
+@using Admin.Model
+@inject CategoryResponse catere
+@inject NavigationManager Navigation
+
+<div class="row d-flex align-items-center">
+    <div class="col d-flex justify-content-start">
+        <h2>Danh sách loại sản phẩm</h2>
+    </div>
+    <div class="col d-flex justify-content-end">
+        <button type="button" class="btn btn-primary" @onclick="NavigateToAddPage">Thêm loại sản phẩm</button>
+    </div>
+</div>
+@if (cateitems == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-hover" style="margin-top: 20px">
+        <thead>
+            <tr>
+                <th>Loại sản phẩm</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @foreach (var x in cateitems)
+            {
+                <tr>
+                    <td>@x.Name</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-success" @onclick="() => NavigateToUpdatePage(x.IDCategory)">Cập nhật</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    IEnumerable<Category> cateitems;
+    protected override async Task OnInitializedAsync()
+    {
+        cateitems = await Task.Run(() => catere.GetCategories());
+    }
+
+    private void NavigateToAddPage()
+    {
+        Navigation.NavigateTo("/AddCate");
+    }
+
+    private void NavigateToUpdatePage(int id)
+    {
+
+        Navigation.NavigateTo($"/UpdateCate/{id}");
+
+    }
+}

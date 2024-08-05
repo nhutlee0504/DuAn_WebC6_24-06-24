@@ -1,0 +1,69 @@
+﻿@page "/SupplierPage"
+@using Admin.Services
+@using Admin.Model
+@inject SupplierResponse sup
+
+@inject NavigationManager Navigation
+
+<div class="row d-flex align-items-center">
+    <div class="col d-flex justify-content-start">
+        <h2>Danh sách nhà cung ứng</h2>
+    </div>
+    <div class="col d-flex justify-content-end">
+        <button type="button" class="btn btn-primary" @onclick="NavigateToAddSup">Thêm nhà cung ứng</button>
+    </div>
+</div>
+
+
+@if (supitems == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-hover" style="margin-top: 20px">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @foreach (var x in supitems)
+            {
+                <tr>
+                    <td>@x.Name</td>
+                    <td>@x.Email</td>
+                    <td>@x.Phone</td>
+                    <td>@x.Address</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-success" @onclick="() => NavigateToUpdateSup(x.IDSupplier)">Cập nhật</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    IEnumerable<Supplier> supitems;
+    protected override async Task OnInitializedAsync()
+    {
+        supitems = await Task.Run(() => sup.GetSuppliers());
+    }
+
+    private void NavigateToAddSup()
+    {
+        Navigation.NavigateTo("/AddSup");
+    }
+
+    private void NavigateToUpdateSup(int id)
+    {
+        Navigation.NavigateTo($"/UpdateSup/{id}");
+    }
+}
+
+
