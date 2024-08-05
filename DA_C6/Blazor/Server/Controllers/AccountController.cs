@@ -5,12 +5,7 @@ using Blazor.Shared.Model;
 using Blazor.Server.Services;
 using System.Text;
 using System.Security.Cryptography;
-using System;
-using static Blazor.Model.Account;
-using Blazor.Model;
-using Account = Blazor.Shared.Model.Account;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Routing;
 
 namespace Blazor.Server.Controllers
 {
@@ -22,22 +17,14 @@ namespace Blazor.Server.Controllers
         public AccountController(IAccount acc) => account = acc;
 
         [HttpGet]
+        [Route("GetAll")]
         public IEnumerable<Account> GetAll()
         {
             return account.GetAccounts();
         }
-        [HttpGet("details/{userName}")]
-        public ActionResult<Account> GetAccountDetails(string userName)
-        {
-            var account1 = account.GetAccountById(userName);
-            if (account1 == null)
-            {
-                return NotFound();
-            }
 
-            return account1;
-        }
         [HttpPost]
+        [Route("Add")]
         public Account Add(Account acc)
         {
             return account.AddAccount(new Account
@@ -76,33 +63,47 @@ namespace Blazor.Server.Controllers
         {
             if (string.IsNullOrEmpty(user))
                 return null;
-            account.DeleteAccount(user);     
+            account.DeleteAccount(user);
             return NoContent();
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] Shared.Model.LoginModel model)
+        // Trong file AccountController.cs
+        [HttpPost("Authenticate")]
+        [Route("Authenticate")]
+        public IActionResult Authenticate([FromBody] Account model)
         {
-            try
+            // Lấy salt từ cơ sở dữ liệu hoặc sử dụng một giá trị cố định
+            string salt = "somesalt";
+
+            // Kết hợp mật khẩu người dùng với salt
+            string combinedPassword = string.Concat(model.Password, salt);
+
+            // Băm mật khẩu kết hợp
+            using (SHA256 sha256Hash = SHA256.Create())
             {
-                var user = account.LoginAccount(model.UserName, model.Password);
-                if (user == null)
+                // Băm mật khẩu kết hợp
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(combinedPassword));
+
+                // Chuyển byte[] thành string hex
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length && i < 16; i++)
                 {
-                    return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không đúng" });
+                    builder.Append(bytes[i].ToString("x2"));
                 }
 
-                HttpContext.Session.SetString("LoggedInUser", user.UserName);
-                HttpContext.Session.SetString("UserRole", user.Role); 
-                Console.WriteLine($"Login successful for user: {user.UserName}");
+                // Giá trị băm
+                string hashedPassword = builder.ToString();
 
-                return Ok(new { message = "Đăng nhập thành công", role = user.Role });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error. Please try again later.");
+                // Giả sử account là một đối tượng của lớp AccountService chứa phương thức VerifyPassword
+                var authenticated = account.VerifyPassword(model.UserName, hashedPassword);
+
+                if (authenticated)
+                {
+                    return Ok(new { message = "Authentication successful" });
+                }
+
+                return BadRequest(new { message = "Authentication failed" });
             }
         }
-
-
     }
 }

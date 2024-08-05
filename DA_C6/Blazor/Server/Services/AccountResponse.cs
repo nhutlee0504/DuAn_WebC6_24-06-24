@@ -102,5 +102,14 @@ namespace Blazor.Server.Services
             }
         }
 
+        public bool Authenticate(string username, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool VerifyPassword(string userName, string hashedPassword)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

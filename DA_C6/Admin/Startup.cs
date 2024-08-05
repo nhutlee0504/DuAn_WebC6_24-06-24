@@ -1,4 +1,5 @@
 using Admin.Data;
+using Admin.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -29,27 +30,26 @@ namespace Admin
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
-			//services.AddControllersWithViews();
-			//services.AddRazorPages();
+			services.AddControllersWithViews();
+			services.AddRazorPages();
 
 			services.AddDbContext<ApplicationDbContext>(options =>
 		  options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<Data.CategoryResponse>();
-
-			//services.AddScoped<IAccount, AccountResponse>();
-			//services.AddScoped<IProduct, ProductResponse>();
-			//services.AddScoped<IProductDetail, ProductDetailResponse>();
-			//services.AddScoped<IImage, ImageResponse>();
-			//services.AddScoped<ICategory,CategoryResponse>();
-			//services.AddScoped<ISize, SizeResponse>();
-			//services.AddScoped<IColor, ColorResponse>();
-			//services.AddScoped<ISupplier, SupplierResponse>();
-			//services.AddScoped<IEvaluate, EvaluateResponse>();
-			//services.AddScoped<IBill, BillResponse>();
-			//services.AddScoped<IBillDetail, BillDetailResponse>();
-			//services.AddScoped<ISale, SaleResponse>();
-			//services.AddScoped<ICart, CartResponse>();
+			services.AddScoped<IAccount, AccountResponse>();
+			services.AddScoped<IProduct, ProductResponse>();
+			services.AddScoped<IProductDetail, ProductDetailResponse>();
+			services.AddScoped<IImage, ImageResponse>();
+			services.AddScoped<ICategory, CategoryResponse>();
+			services.AddScoped<ISize, SizeResponse>();
+			services.AddScoped<IColor, ColorResponse>();
+			services.AddScoped<ISupplier, SupplierResponse>();
+			services.AddScoped<IEvaluate, EvaluateResponse>();
+			services.AddScoped<ICategory, CategoryResponse>();
+			services.AddScoped<IBill, BillResponse>();
+			services.AddScoped<IBillDetail, BillDetailResponse>();
+			services.AddScoped<ISale, SaleResponse>();
+			services.AddScoped<ICart, CartResponse>();
 		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,4 +1,12 @@
-﻿@page "/Pages/NextRegister"
+﻿@page "/Pages/NextRegister/{Username}/{Password}"
+@using Blazor.Shared.Model
+@using System.Net.Http.Json
+@using System.Security.Cryptography
+@using System.Text
+@inject HttpClient http
+@inject IJSRuntime js
+@inject NavigationManager navigation
+
 <style>
     .registration-form {
         max-width: 400px;
@@ -24,66 +32,131 @@
         border-radius: 5px;
     }
 </style>
+
 <ol class="breadcrumb bg-transparent">
     <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
     <li class="breadcrumb-item active">Đăng ký tài khoản</li>
     <li class="breadcrumb-item active" aria-current="page">Xác nhận thông tin</li>
 </ol>
 
+<EditForm Model="@account" @onclick="SubmitForm">
+    <DataAnnotationsValidator />
+    <div class="registration-form mb-4" id="frm">
+        <div class="text-center mb-5">
+            <h3>Nhập thông tin cá nhân</h3>
+        </div>
 
-<form asp-action="NextRegister" class="registration-form mb-4" id="frm">
-    <div class="text-center mb-5">
-        <h3>Nhập thông tin cá nhân</h3>
-    </div>
-    <input type="text" asp-for="UserName" hidden />
-    <input type="text" asp-for="Password" hidden />
-    <input type="text" asp-for="Role" value="Member" hidden />
-    <div class="form-group">
-        <label class="fw-bolder" for="hoTen">Họ và tên</label>
-        <input asp-for="Name" type="text" id="hoTen" placeholder="Họ và tên" class="form-control" required>
-        <small class="form-text text-muted">Ví dụ: Nguyễn Văn A</small>
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <InputText @bind-Value="account.UserName" id="username" class="form-control" readonly hidden />
+            <InputText @bind-Value="account.Password" id="password" class="form-control" readonly hidden />
+            <InputText @bind-Value="account.Role" id="password" class="form-control" readonly hidden />
+        </div>
 
-    <div class="form-group">
-        <label class="fw-bolder" for="soDienThoai">Số điện thoại</label>
-        <input asp-for="Phone" type="tel" id="soDienThoai" placeholder="Số điện thoại" class="form-control" required>
-        <small class="form-text text-muted">Ví dụ: 0987654321</small>
-        <span asp-validation-for="Phone" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label class="fw-bolder" for="hoTen">Họ và tên</label>
+            <InputText @bind-Value="account.Name" placeholder="Họ và tên" class="form-control" />
+            <small class="form-text text-muted">Ví dụ: Nguyễn Văn A</small>
+            <ValidationMessage For="@(() => account.Name)" />
+        </div>
 
-    <div class="form-group">
-        <label class="fw-bolder">Địa chỉ</label>
-        <input asp-for="Address" type="text" id="address" placeholder="Địa chỉ" class="form-control" required>
-        <small class="form-text text-muted">Ví dụ: Số 123, đường ABC, quận XYZ</small>
-        <span asp-validation-for="Address" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label class="fw-bolder" for="soDienThoai">Số điện thoại</label>
+            <InputText @bind-Value="@account.Phone" type="tel" placeholder="Số điện thoai" class="form-control" />
+            <small class="form-text text-muted">Ví dụ: 0987654321</small>
+            <ValidationMessage For="@(() => account.Phone)" />
+        </div>
 
-    <div class="form-group">
-        <label class="fw-bolder" for="gioiTinh">Giới tính</label>
-        <select asp-for="Gender" id="gioiTinh" class="form-control" required>
-            <option value="" selected hidden>Giới tính</option>
-            <option value="Nam">Nam</option>
-            <option value="Nữ">Nữ</option>
-        </select>
-        <small class="form-text text-muted">Vui lòng chọn giới tính của bạn.</small>
-        <span asp-validation-for="Gender" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label class="fw-bolder">Địa chỉ</label>
+            <InputText @bind-Value="account.Address" placeholder="Địa chỉ" class="form-control" />
+            <small class="form-text text-muted">Ví dụ: Số 123, đường ABC, quận XYZ</small>
+            <ValidationMessage For="@(() => account.Address)" />
+        </div>
 
-    <div class="form-group">
-        <label class="fw-bolder" for="email">Email</label>
-        <input asp-for="Email" type="email" id="email" placeholder="Email" class="form-control" required>
-        <small class="form-text text-muted">Ví dụ: example@example.com</small>
-        <span asp-validation-for="Email" class="text-danger"></span>
+        <div class="form-group">
+            <label class="fw-bolder" for="gioiTinh">Giới tính</label>
+            <InputSelect @bind-Value="account.Gender" id="gioiTinh" class="form-control">
+                <option value="" hidden>Giới tính</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+            </InputSelect>
+            <small class="form-text text-muted">Vui lòng chọn giới tính của bạn.</small>
+            <ValidationMessage For="@(() => account.Gender)" />
+        </div>
+
+        <div class="form-group">
+            <label class="fw-bolder" for="email">Email</label>
+            <InputText @bind-Value="@account.Email" type="email" placeholder="Email" class="form-control" />
+            <small class="form-text text-muted">Ví dụ: example@example.com</small>
+            <ValidationMessage For="@(() => account.Email)" />
+            @if (errorEmailExit != null)
+            {
+                <br/>
+                <span class="text-danger">@errorEmailExit</span>
+            }
+        </div>
+        <div class="form-check mb-3">
+            <input type="checkbox" @bind-value="checKed" class="form-check-input" id="checkbox">
+            <label class="form-check-label" for="checkbox">Tôi đồng ý với <a href="#">Chính sách và điều khoản</a></label>
+            @if (errorCheck != null)
+            {
+                <br />
+                <span class="text-danger">@errorCheck</span>
+            }
+        </div>
+        <div>
+            <button type="submit" class="btn btn-dark w-100 rounded-pill">Đăng ký tài khoản</button>
+        </div>
     </div>
-    <div class="form-check mb-3">
-        <input type="checkbox" class="form-check-input" id="checkbox" required>
-        <label class="form-check-label" for="checkbox">Tôi đồng ý với <a href="#">Chính sách và điều khoản</a></label>
-        <span id="errormessage" class="text-danger"></span>
-    </div>
-    <input type="submit" class="btn btn-dark w-100 rounded-pill" value="Đăng ký tài khoản">
-</form>
+</EditForm>
 
 @code {
+    [Parameter]
+    public string Username { get; set; }
+    [Parameter]
+    public string Password { get; set; }
+    private Account account = new Account();
+    private string errorEmailExit = null;
+    private bool checKed = false;
+    private string errorCheck = null;
 
+    protected override void OnParametersSet()
+    {
+        account.UserName = Username;
+        account.Password = Password;
+        account.Role = "Member";
+    }
+
+    private async Task SubmitForm()
+    {
+        var emailExit = (await http.GetFromJsonAsync<List<Account>>("api/Account/GetAll")).FirstOrDefault(x => x.Email == account.Email);
+        if (string.IsNullOrEmpty(account.Name) || string.IsNullOrEmpty(account.Phone) || string.IsNullOrEmpty(account.Address) || string.IsNullOrEmpty(account.Gender) || string.IsNullOrEmpty(account.Email))
+        {
+
+        }
+        else if (emailExit != null)
+            errorEmailExit = "Email đã tồn tại";
+        else if (checKed == false)
+            errorCheck = "Vui lòng xác nhận đồng ý";
+        else
+        {
+            try
+            {
+                errorCheck = null;
+                errorEmailExit = null;
+                var response = await http.PostAsJsonAsync("api/Account/Add", account);
+
+                if (response.IsSuccessStatusCode)
+                {                    
+                    await js.InvokeVoidAsync("Lo.setItem", "LoggedInUser", account.UserName);
+                    navigation.NavigateTo("/");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error:{ex}");
+            }
+
+        }
+    }
 }

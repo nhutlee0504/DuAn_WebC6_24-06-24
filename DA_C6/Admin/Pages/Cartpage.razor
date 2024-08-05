@@ -1,0 +1,35 @@
+﻿@page "/cp"
+@using Admin.Model
+@using System.Net.Http
+@using System.Net.Http.Json
+
+<h3>Cartpage</h3>
+@if (cateitems != null)
+{
+    @foreach (var item in cateitems)
+    {
+        <p>@item.IDCategory - @item.Name</p>
+    }
+}
+else
+{
+    <p> Lỗi </p>
+}
+
+@code {
+    private IEnumerable<Category> cateitems;
+    private HttpClient httpClient;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            httpClient = new HttpClient();
+            cateitems = await httpClient.GetFromJsonAsync<IEnumerable<Category>>("api/Category/GetCategories");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Lỗi: {ex.Message}");
+        }
+    }
+}

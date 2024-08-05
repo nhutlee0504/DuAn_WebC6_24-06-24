@@ -46,18 +46,11 @@ namespace Blazor.Server.Controllers
             return icart.DeleteProductFromCart(id);
         }
 
-        [HttpPut]
-        [Route("UpdateCart/{id}")]
-        public Cart UpdateCart(int id, Cart cart)
+        [HttpDelete]
+        [Route("DeleteAllCart/{user}")]
+        public Cart DeleteAllCart(string user)
         {
-            return icart.UpdateProductFromCart(id, cart);
+            return icart.DeleteAllCart(user);
         }
-
-		[HttpDelete]
-        [Route("Delete/{username}")]
-		public Cart Delete(string username)
-		{
-			return icart.DeleteAllCartByUsername(username);
-		}
 	}
 }
