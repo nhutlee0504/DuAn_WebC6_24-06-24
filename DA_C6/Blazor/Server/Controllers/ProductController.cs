@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Blazor.Shared.Model;
 using Blazor.Server.Services;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Blazor.Server.Controllers
 {
@@ -15,6 +17,19 @@ namespace Blazor.Server.Controllers
         {
             product = prod;
         }
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Product>>> SearchProductsByName(string name)
+        {
+            var products = await product.SearchProductsByNameAsync(name);
+
+            if (products == null || !products.Any())
+            {
+                return NotFound("No products found with the specified name.");
+            }
+
+            return Ok(products);
+        }
+
 
         [HttpGet]
         [Route("GetProducts")]

@@ -4,6 +4,8 @@ using API.Data;
 using API.Model;
 using API.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace API.Controllers
 {
@@ -17,6 +19,18 @@ namespace API.Controllers
         {
             product = prod;
             image = img;
+        }
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Product>>> SearchProductsByName(string name)
+        {
+            var products = await product.SearchProductsByNameAsync(name);
+
+            if (products == null || !products.Any())
+            {
+                return NotFound("No products found with the specified name.");
+            }
+
+            return Ok(products);
         }
 
         [HttpGet]
