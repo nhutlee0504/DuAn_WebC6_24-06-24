@@ -5,7 +5,12 @@ using Blazor.Shared.Model;
 using Blazor.Server.Services;
 using System.Text;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Routing;
+using System;
+using static Blazor.Model.Account;
+using Blazor.Model;
+using Account = Blazor.Shared.Model.Account;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Blazor.Server.Controllers
 {
@@ -15,6 +20,12 @@ namespace Blazor.Server.Controllers
     {
         private IAccount account;
         public AccountController(IAccount acc) => account = acc;
+
+        [HttpGet]
+        public IEnumerable<Account> GetAll()
+        {
+            return account.GetAccounts();
+        }
         [HttpGet("details/{userName}")]
         public ActionResult<Account> GetAccountDetails(string userName)
         {
@@ -26,25 +37,6 @@ namespace Blazor.Server.Controllers
 
             return account1;
         }
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] Account model)
-        {
-            var user = account.LoginAccount(model.UserName, model.Password);
-            if (user == null)
-            {
-                return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không đúng" });
-            }
-
-            HttpContext.Session.SetString("LoggedInUser", user.UserName);
-
-            return Ok(new { message = "Đăng nhập thành công", role = user.Role });
-        }
-        [HttpGet]
-        public IEnumerable<Account> GetAll()
-        {
-            return account.GetAccounts();
-        }
-
         [HttpPost]
         public Account Add(Account acc)
         {
@@ -85,5 +77,30 @@ namespace Blazor.Server.Controllers
             account.DeleteAccount(user);
             return NoContent();
         }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] Shared.Model.LoginModel model)
+        {
+            try
+            {
+                var user = account.LoginAccount(model.UserName, model.Password);
+                if (user == null)
+                {
+                    return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không đúng" });
+                }
+
+                HttpContext.Session.SetString("LoggedInUser", user.UserName);
+                HttpContext.Session.SetString("UserRole", user.Role);
+                Console.WriteLine($"Login successful for user: {user.UserName}");
+
+                return Ok(new { message = "Đăng nhập thành công", role = user.Role });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error. Please try again later.");
+            }
+        }
+
+
     }
 }

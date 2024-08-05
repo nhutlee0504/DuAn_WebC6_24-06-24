@@ -42,4 +42,6 @@ namespace Blazor.Shared.Model
         public ICollection<SaleDetails> SaleDetails { get; set; }
         public ICollection<Evaluate> evaluates { get; set; }
     }
+
+
 }
