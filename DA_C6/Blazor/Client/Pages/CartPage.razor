@@ -15,6 +15,10 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="cart-items">
+				@if (acc != null)
+				{
+					<p>@acc.Gender</p>
+				}
 				@if (cartItems != null)
 				{
 					@foreach (var item in cartItems.Where(u => u.UserName == LoggedInUser))
@@ -141,6 +145,7 @@
 	private Sizes s = new Sizes();
 	private Colors cl = new Colors();
 	private string LoggedInUser;
+	private Account acc;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -159,6 +164,8 @@
 				productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>("api/ProductDetail/GetProductDetails");
 				sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
 				coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
+				acc = await httpclient.GetFromJsonAsync<Account>($"api/Account/GetUser/{LoggedInUser}");
+
 			}
 			catch (Exception ex)
 			{

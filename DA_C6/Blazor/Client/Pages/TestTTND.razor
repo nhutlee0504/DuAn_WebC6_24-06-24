@@ -1,0 +1,51 @@
+﻿@page "/testttnd"
+@using Blazor.Shared.Model
+@inject HttpClient httpclient
+@inject IJSRuntime JSruntime
+@inject NavigationManager NavigationManager
+<h3>TestTTND</h3>
+
+@if (acc != null)
+{
+    <p>
+        <strong>Tên người dùng:</strong>
+        <input type="text" @bind="acc.UserName" />
+    </p>
+    <p>
+        <strong>Email:</strong>
+        <input type="text" @bind="acc.Email" />
+    </p>
+    <p>
+        <strong>Số điện thoại:</strong>
+        <input type="text" @bind="acc.Phone" />
+    </p>
+    <button class="btn btn-primary" @onclick="UpdateUserInfo">Cập nhật thông tin</button>
+}
+else
+{
+    <p>Không tìm thấy thông tin tài khoản.</p>
+}
+
+@code {
+    private Account acc;
+    private string LoggedInUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+        acc = await httpclient.GetFromJsonAsync<Account>($"api/Account/GetUser/{LoggedInUser}");
+    }
+
+    private async Task UpdateUserInfo()
+    {
+        var response = await httpclient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", acc);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("testttnd", forceLoad: true);
+        }
+        else
+        {
+            // Xử lý khi cập nhật không thành công
+        }
+    }
+}

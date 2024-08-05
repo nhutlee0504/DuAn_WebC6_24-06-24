@@ -19,50 +19,53 @@
     </ol>
     <div class="row">
         <div class="col-sm-6 d-flex flex-column">
-            <div class="card">
-                <div class="card-header bg-white">
-                    <i class="bi bi-person-circle"></i>
-                    Thông tin liên hệ
-                </div>
-
-                <div class="card-body">
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Số điện thoại</label>
-                                <input class="rounded border border-secondary" type="text" readonly />
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Email</label>
-                                <br />
-                                <input class="rounded border border-secondary" type="text" readonly />
+            @if (acc != null)
+            {
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <i class="bi bi-person-circle"></i>
+                        Thông tin liên hệ
+                    </div>
+                    <div class="card-body">
+                        <div class="form-section">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-bold">Số điện thoại</label>
+                                    <input class="rounded border border-secondary" type="text" value="@acc.Phone" readonly />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-bold">Email</label>
+                                    <br />
+                                    <input class="rounded border border-secondary" type="text" value="@acc.Email" readonly />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card mt-5">
-                <div class="card-header bg-white">
-                    <img src="IMG/shipperaddress.png" alt="Alternate Text" />
-                    Địa chỉ giao hàng
-                </div>
-                <div class="card-body">
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Họ tên</label>
-                                <br />
-                                <input class="rounded border border-secondary" type="text" readonly />
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Địa chỉ</label>
-                                <br />
-                                <input class="rounded border border-secondary" type="text" readonly />
+                <div class="card mt-5">
+                    <div class="card-header bg-white">
+                        <img src="IMG/shipperaddress.png" alt="Alternate Text" />
+                        Địa chỉ giao hàng
+                    </div>
+                    <div class="card-body">
+                        <div class="form-section">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-bold">Họ tên</label>
+                                    <br />
+                                    <input class="rounded border border-secondary" type="text" value="@acc.Name" readonly />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-bold">Địa chỉ</label>
+                                    <br />
+                                    <input class="rounded border border-secondary" type="text" value="@acc.Address" readonly />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+        
         </div>
 
         <div class="col-sm-6">
@@ -133,11 +136,13 @@
     private decimal AllPrice = 0;
     private string LoggedInUser;
     private List<int> selectedIDPDetails;
+    private Account acc;
     protected override async Task OnInitializedAsync()
     {
         LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
         var serializedValues = await JSruntime.InvokeAsync<string>("localStorage.getItem", "SelectedIDPDetails");
         selectedIDPDetails = JsonSerializer.Deserialize<List<int>>(serializedValues);
+        acc = await httpclient.GetFromJsonAsync<Account>($"api/Account/GetUser/{LoggedInUser}");
 
         if (selectedIDPDetails != null && selectedIDPDetails.Any())
         {

@@ -63,7 +63,8 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpPut("{user}")]
-        public Account Update(Account acc, string user)
+        [Route("Update/{user}")]
+        public Account Update(string user, Account acc)
         {
             if (string.IsNullOrEmpty(user))
                 return null;
