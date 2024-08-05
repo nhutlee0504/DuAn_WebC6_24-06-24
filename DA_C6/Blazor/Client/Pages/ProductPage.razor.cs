@@ -15,19 +15,45 @@ namespace Blazor.Client.Pages
         private int lowPrice;
         private int highPrice;
         private string message = null;
+        private Dictionary<int, string> qrCodeUrls = new Dictionary<int, string>();
+
         protected override async Task OnInitializedAsync()
         {
             try
             {
                 products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
                 categories = await http.GetFromJsonAsync<List<Category>>("api/category/getcategories");
+                await LoadQRCodeUrls();
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine($"Error: {ex.Message}");
             }
             await base.OnInitializedAsync();
+        }
+
+        private async Task LoadQRCodeUrls()
+        {
+            foreach (var product in products)
+            {
+                var qrCodeData = $"Sản phẩm: {product.Name} - Giá: {product.Price.ToString("N0")} đồng";
+                var qrCodeUrl = await GetQRCodeAsync(qrCodeData);
+                qrCodeUrls[product.IDProduct] = qrCodeUrl;
+            }
+        }
+
+        private async Task<string> GetQRCodeAsync(string data)
+        {
+            try
+            {
+                var response = await http.GetStringAsync($"api/qrcode/generate?data={Uri.EscapeDataString(data)}");
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching QR code: {ex.Message}");
+                return null;
+            }
         }
 
         private async Task OnCategoryChanged(int IDCategory, bool isChecked)
@@ -44,10 +70,12 @@ namespace Blazor.Client.Pages
             if (selectedCategories.Count > 0)
             {
                 products = (await http.GetFromJsonAsync<List<Product>>("api/product/getproducts")).Where(x => selectedCategories.Contains(x.IDCategory)).ToList();
+                await LoadQRCodeUrls(); 
             }
             else
             {
                 products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+                await LoadQRCodeUrls(); 
             }
         }
 
@@ -63,10 +91,13 @@ namespace Blazor.Client.Pages
                     message = null;
                     products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
                 }
-                StateHasChanged();
+                await LoadQRCodeUrls(); 
             }
             else
+            {
                 products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+                await LoadQRCodeUrls(); 
+            }
         }
 
         private async Task OnSortOrderChanged(string value)
@@ -81,10 +112,10 @@ namespace Blazor.Client.Pages
                 {
                     products = products.OrderByDescending(p => p.Price).ToList();
                 }
+                await LoadQRCodeUrls(); 
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }

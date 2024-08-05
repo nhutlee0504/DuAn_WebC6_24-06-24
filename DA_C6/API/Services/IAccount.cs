@@ -13,6 +13,5 @@ namespace API.Services
         public Account AddAccount(Account account);
         public Account UpdateAccount(string user, Account account);
         public void DeleteAccount(string user);
-        public Account LoginAccount(string username, string password);
     }
 }

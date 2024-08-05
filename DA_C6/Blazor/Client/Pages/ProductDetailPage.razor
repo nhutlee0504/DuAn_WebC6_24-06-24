@@ -254,31 +254,21 @@
 		{
 			// Tiếp tục thực hiện xử lý với selectedIdPDetail và selectedQuantity
 			errorMessage = ""; // Xóa thông báo lỗi nếu số lượng hợp lệ
-			var loggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+			c.UserName = "Admin";
+			c.IDPDetail = int.Parse(selectedIdPDetail);
+			c.Quantity = QuantityToAdd;
 
-			if (string.IsNullOrEmpty(loggedInUser))
-			{
-				await JSRuntime.InvokeVoidAsync("window.location.assign", "/login"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
-			}
-			else
-			{
-				c.UserName = loggedInUser;
-				c.IDPDetail = int.Parse(selectedIdPDetail);
-				c.Quantity = QuantityToAdd;
+			errorMessage = ""; // Reset thông báo lỗi
+			successMessage = "Đã thêm sản phẩm vào giỏ hàng!"; // Gán thông báo thành công
 
-				errorMessage = ""; // Reset thông báo lỗi
-				successMessage = "Đã thêm sản phẩm vào giỏ hàng!"; // Gán thông báo thành công
+			// Thực hiện POST request để thêm vào giỏ hàng
+			await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
 
-				// Thực hiện POST request để thêm vào giỏ hàng
-				await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
+			// Lấy danh sách cart cập nhật
+			cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
 
-				// Lấy danh sách cart cập nhật
-				cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
-
-				// Chuyển hướng người dùng đến trang giỏ hàng
-				// await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
-
-			}
+			// Chuyển hướng người dùng đến trang giỏ hàng
+			// await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage"); // Thay đổi "/cart" thành đường dẫn của trang giỏ hàng thực sự trong ứng dụng của bạn
 		}
 	}
 }

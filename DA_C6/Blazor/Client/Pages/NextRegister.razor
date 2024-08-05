@@ -147,7 +147,8 @@
                 var response = await http.PostAsJsonAsync("api/Account/Add", account);
 
                 if (response.IsSuccessStatusCode)
-                {
+                {                    
+                    await js.InvokeVoidAsync("sessionStorage.setItem", "LoggedInUser", account.UserName);
                     navigation.NavigateTo("/");
                 }
             }

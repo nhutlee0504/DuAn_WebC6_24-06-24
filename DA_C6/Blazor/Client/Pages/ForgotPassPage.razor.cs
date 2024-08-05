@@ -41,7 +41,7 @@ namespace Blazor.Client.Pages
         {
             try
             {
-                var acc = accounts.SingleOrDefault(a => a.Email == account.Email);
+                var acc = (await http.GetFromJsonAsync<List<Account>>("api/account/getall")).SingleOrDefault(a => a.Email == account.Email);
                 if (string.IsNullOrEmpty(account.Email)) { }
                 else if (acc != null)
                 {
@@ -50,7 +50,7 @@ namespace Blazor.Client.Pages
                     await SendEmailAsync(account.Email, "Mật khẩu mới", emailMessage);
 
                     acc.Password = GetHash(account.Password);
-                    var response = await http.PatchAsync($"api/Account/{acc.UserName}", new StringContent(JsonSerializer.Serialize(acc), Encoding.UTF8, "application/json"));
+                    var response = await http.PutAsJsonAsync($"api/account/update/{acc.UserName}", acc);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -60,7 +60,7 @@ namespace Blazor.Client.Pages
                     else
                     {
                         messageSuccess = null;
-                        messageError = "Không thể cập nhật mật khẩu. Vui lòng thử lại sau.";
+                        messageError = "Không thể cập nhật mật khẩu";
                     }
                 }
                 else

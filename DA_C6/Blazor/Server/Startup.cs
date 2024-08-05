@@ -1,14 +1,12 @@
-﻿using Blazor.Server.Data;
+using Blazor.Server.Data;
 using Blazor.Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 using System.Linq;
 
 namespace Blazor.Server
@@ -26,21 +24,13 @@ namespace Blazor.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // Thêm dịch vụ InMemoryCache
-            services.AddDistributedMemoryCache(); // Cung cấp dịch vụ IDistributedCache
-            services.AddDataProtection();
-            services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });
-            services.AddHttpContextAccessor();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+          options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IAccount, AccountResponse>();
             services.AddScoped<IProduct, ProductResponse>();
             services.AddScoped<IProductDetail, ProductDetailResponse>();
@@ -55,11 +45,6 @@ namespace Blazor.Server
             services.AddScoped<IBillDetail, BillDetailResponse>();
             services.AddScoped<ISale, SaleResponse>();
             services.AddScoped<ICart, CartResponse>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,10 +59,10 @@ namespace Blazor.Server
             {
                 app.UseExceptionHandler("/Error");
             }
-            app.UseSession();
+
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
-            app.UseHttpsRedirection();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>

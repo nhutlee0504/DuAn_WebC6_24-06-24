@@ -2,7 +2,6 @@ using API.Data;
 using API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,18 +35,9 @@ namespace API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
 
-            // Thêm d?ch v? InMemoryCache
-            services.AddDistributedMemoryCache(); // Cung c?p d?ch v? IDistributedCache
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDataProtection();
-            services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddScoped<IAccount, AccountResponse>();
             services.AddScoped<IProduct, ProductResponse>();
             services.AddScoped<IProductDetail, ProductDetailResponse>();
@@ -76,7 +66,6 @@ namespace API
 
             app.UseRouting();
 
-            app.UseSession();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
