@@ -1,0 +1,35 @@
+﻿@page "/AddColor"
+@using Admin.Services
+@using Admin.Model
+@inject ColorResponse col
+@inject NavigationManager Navigation
+
+<h3>Thêm màu sắc</h3>
+
+<EditForm Model="@newCol" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="name" class="form-label">Tên loại sản phẩm</label>
+        <InputText class="form-control" id="name" @bind-Value="newCol.Color" />
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Thêm</button>
+        <button type="button" class="btn btn-primary" @onclick="NavigateToCategoryPage">Quay về danh sách</button>
+    </div>
+    
+</EditForm>
+@code {
+    private Colors newCol = new Colors();
+
+    private async Task HandleValidSubmit()
+    {
+        await Task.Run(() => col.AddColor(newCol));
+        Navigation.NavigateTo("/ColorPage");
+    }
+
+    private void NavigateToCategoryPage()
+    {
+        Navigation.NavigateTo("/ColorPage");
+    }
+}

@@ -1,0 +1,62 @@
+﻿@page "/ColorPage"
+@using Admin.Services
+@using Admin.Model
+@inject ColorResponse col
+
+@inject NavigationManager Navigation
+
+<div class="row d-flex align-items-center">
+    <div class="col d-flex justify-content-start">
+        <h2>Danh sách màu sắc</h2>
+    </div>
+    <div class="col d-flex justify-content-end">
+        <button type="button" class="btn btn-primary" @onclick="NavigateToAddCol">Thêm màu sắc</button>
+    </div>
+</div>
+
+
+@if (colitems == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-hover" style="margin-top: 20px">
+        <thead>
+            <tr>
+                <th>Màu</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @foreach (var x in colitems)
+            {
+                <tr>
+                    <td>@x.Color</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-success" @onclick="() => NavigateToUpdateCol(x.IDColor)">Cập nhật</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    IEnumerable<Colors> colitems;
+    protected override async Task OnInitializedAsync()
+    {
+        colitems = await Task.Run(() => col.GetColors());
+    }
+
+    private void NavigateToAddCol()
+    {
+        Navigation.NavigateTo("/AddColor");
+    }
+
+    private void NavigateToUpdateCol(int id)
+    {
+        Navigation.NavigateTo($"/UpdateColor/{id}");
+    }
+}
+
+

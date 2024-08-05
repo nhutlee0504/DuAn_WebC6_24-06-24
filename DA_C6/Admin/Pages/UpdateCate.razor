@@ -1,0 +1,39 @@
+﻿@page "/UpdateCate/{id:int}"
+@using Admin.Services
+@using Admin.Model
+@inject CategoryResponse CategoryService
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Category category = new Category();
+    protected override async Task OnInitializedAsync()
+    {
+        category = await Task.Run(() => CategoryService.GetCategoryById(id));
+    }
+
+    private void UpdateCategory()
+    {
+        CategoryService.UpdateCategory(id, category);
+        Navigation.NavigateTo("/CatePage");
+    }
+
+    private void NavigateToCategoryPage()
+    {
+
+        Navigation.NavigateTo("/CatePage");
+
+    }
+}
+
+<h3>Cập nhật loại sản phẩm mới</h3>
+
+<div>
+    <label for="categoryName">Name:</label>
+    <input type="text" id="categoryName" @bind="category.Name" />
+</div>
+<div>
+    <button type="button" class="btn btn-primary" @onclick="UpdateCategory">Cập nhật</button>
+
+    <button type="button" class="btn btn-primary" @onclick="NavigateToCategoryPage">Quay về danh sách</button>
+</div>
