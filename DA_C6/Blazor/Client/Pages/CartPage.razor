@@ -30,7 +30,13 @@
 								if (product != null)
 								{
 									<div class="cart-item mb-3">
-										<input type="checkbox" name="selectedProducts" value="@item.IDCart" @onchange="() => ToggleSelectedProduct(item.IDPDetail)" />										<img src="/@product.Image" alt="Sản phẩm">
+@* 										var prodd = productdetailitems.FirstOrDefault(pd => pd.IDPDetail == item.IDPDetail);
+										// Rest of your existing code... *@
+										<div class="cart-item mb-3">
+											<input type="checkbox" name="selectedProducts" value="@item.IDPDetail" @onchange="e => UpdateSelectedIDPDetails(e, item.IDPDetail)" />
+											<!-- Rest of your existing code... -->
+										</div>
+										<img src="/@product.Image" alt="Sản phẩm">
 										<div class="cart-item-info">
 											<h5 class="cart-item-title">@product.Name</h5>
 											<p>
@@ -85,7 +91,7 @@
 				@*                 <h2 class="cart-total">Tổng đơn hàng: $339.98</h2>
 				*@
 				<a @onclick="DeleteAllCart" class="btn btn-danger btn-block">Xóa giỏ hàng</a>
-				<a @onclick="ChuyenSanPhamSangThanhToan" class="btn btn-dark btn-block">Thanh toán</a>
+				<a @onclick="ProceedToCheckout" class="btn btn-dark btn-block">Thanh toán</a>
 			</div>
 		</div>
 	</div>
@@ -209,24 +215,31 @@
 		cartItems = new List<Cart>();
 	}
 
-	private List<int> selectedCartIds = new List<int>();
-	private void ToggleSelectedProduct(int cartId)
+	private List<int> selectedIDPDetails = new List<int>();
+
+	private async Task ProceedToCheckout()
 	{
-		if (selectedCartIds.Contains(cartId))
+		await SaveToLocalStorage(selectedIDPDetails);
+		NavigationManager.NavigateTo("/checkout");
+	}
+
+	private void UpdateSelectedIDPDetails(ChangeEventArgs e, int idPDetail)
+	{
+		bool isSelected = Convert.ToBoolean(e.Value);
+		if (isSelected)
 		{
-			selectedCartIds.Remove(cartId);
+			selectedIDPDetails.Add(idPDetail);
 		}
 		else
 		{
-			selectedCartIds.Add(cartId);
+			selectedIDPDetails.Remove(idPDetail);
 		}
 	}
 
-	private void ChuyenSanPhamSangThanhToan()
+	private async Task SaveToLocalStorage(List<int> idPDetailValues)
 	{
-		// Chuyển hướng đến trang Checkout với danh sách ID của các sản phẩm trong giỏ hàng
-		NavigationManager.NavigateTo($"/checkout/{JsonSerializer.Serialize(selectedCartIds)}");
+		var serializedValues = JsonSerializer.Serialize(idPDetailValues);
+		await JSruntime.InvokeVoidAsync("localStorage.setItem", "SelectedIDPDetails", serializedValues);
 	}
-
 
 }
