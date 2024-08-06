@@ -189,7 +189,7 @@
                     <p>@_successMessage</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Về Trang Chủ</button>
+                    <button @onclick="home" type="button" class="btn btn-primary">Về Trang Chủ</button>
                 </div>
             </div>
         </div>
@@ -244,42 +244,45 @@
             }
         }
     }
-        private bool _isPaymentSuccessful;
-        private string _successMessage;
+    private bool _isPaymentSuccessful;
+    private string _successMessage;
 
-        private async Task HandlePayment()
-        {
-            var paymentRequest = new PaymentRequest
+    private async Task HandlePayment()
+    {
+        var paymentRequest = new PaymentRequest
             {
                 Username = LoggedInUser,
                 SelectedProducts = selectedIDPDetails,
                 TotalPrice = TotalPrice
             };
 
-            try
-            {
-                var response = await httpclient.PostAsJsonAsync("api/bill/pay", paymentRequest);
+        try
+        {
+            var response = await httpclient.PostAsJsonAsync("api/bill/pay", paymentRequest);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    _isPaymentSuccessful = true;
-                    _successMessage = "Thanh toán thành công!";
-                    StateHasChanged(); // Cập nhật giao diện người dùng
-                }
-                else
-                {
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình thanh toán: {errorMessage}");
-                }
-            }
-            catch (Exception ex)
+            if (response.IsSuccessStatusCode)
             {
-                // Log the exception or display a more detailed error message
-                await JSRuntime.InvokeVoidAsync("alert", $"Lỗi không mong muốn: {ex.Message}");
+                _isPaymentSuccessful = true;
+                _successMessage = "Thanh toán thành công!";
+                StateHasChanged(); // Cập nhật giao diện người dùng
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình thanh toán: {errorMessage}");
             }
         }
-   
+        catch (Exception ex)
+        {
+            // Log the exception or display a more detailed error message
+            await JSRuntime.InvokeVoidAsync("alert", $"Lỗi không mong muốn: {ex.Message}");
+        }
+    }
 
+    private async Task home()
+    {
+        NavigationManager.NavigateTo("/", forceLoad: true);
+    }
 
 
     public class PaymentRequest

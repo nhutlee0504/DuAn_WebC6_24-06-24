@@ -4,98 +4,98 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 <div class="container">
-    <div class="row justify-content-center mt-5 mb-5">
-        <div class="col-md-6">
-            <div class="form-container p-4 rounded bg-white shadow-sm">
-                <h2 class="text-center mb-4">Đăng nhập</h2>
-                @if (!string.IsNullOrEmpty(successMessage))
-                {
-                    <div class="alert alert-success" role="alert">
-                        @successMessage
-                    </div>
-                }
-                @if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    <div class="alert alert-danger" role="alert">
-                        @errorMessage
-                    </div>
-                }
+	<div class="row justify-content-center mt-5 mb-5">
+		<div class="col-md-6">
+			<div class="form-container p-4 rounded bg-white shadow-sm">
+				<h2 class="text-center mb-4">Đăng nhập</h2>
+				@if (!string.IsNullOrEmpty(successMessage))
+				{
+					<div class="alert alert-success" role="alert">
+						@successMessage
+					</div>
+				}
+				@if (!string.IsNullOrEmpty(errorMessage))
+				{
+					<div class="alert alert-danger" role="alert">
+						@errorMessage
+					</div>
+				}
 
-                <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
+				<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+					<DataAnnotationsValidator />
+					<ValidationSummary />
 
-                    <div class="mb-3">
-                        <label for="UserName" class="form-label">Tên tài khoản</label>
-                        <InputText id="UserName" class="form-control rounded-pill" @bind-Value="loginModel.UserName" placeholder="Nhập tên tài khoản" />
-                        <ValidationMessage For="@(() => loginModel.UserName)" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Password" class="form-label">Mật khẩu</label>
-                        <div class="input-group">
-                            <InputText id="Password" type="password" class="form-control rounded-start" @bind-Value="loginModel.Password" placeholder="Nhập mật khẩu" />
-                            <button type="button" class="btn btn-outline-secondary rounded-end" id="togglePassword">
-                                👁️
-                            </button>
-                        </div>
-                        <ValidationMessage For="@(() => loginModel.Password)" />
-                    </div>
-                    <button type="submit" class="btn btn-dark btn-block w-100 rounded-pill">Tiếp tục</button>
-                    <div class="text-center mt-4 position-relative">
-                        <span class="bg-white px-3 position-absolute" style="left: 50%; top: -10px; transform: translateX(-50%);">Hoặc</span>
-                        <hr class="mt-3">
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="forgotPass" class="text-primary">Quên mật khẩu?</a>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="signinGoogle" class="btn btn-light btn-block rounded-pill border w-100">Đăng nhập bằng Google</a>
-                    </div>
-                    <div class="text-center mt-3">
-                        /-strong/-heart:>:o:-((:-hBạn mới biết đến NEXTON? <a class="text-primary" href="Pages/Register">Đăng ký tài khoản</a>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
+					<div class="mb-3">
+						<label for="UserName" class="form-label">Tên tài khoản</label>
+						<InputText id="UserName" class="form-control rounded-pill" @bind-Value="loginModel.UserName" placeholder="Nhập tên tài khoản" />
+						<ValidationMessage For="@(() => loginModel.UserName)" />
+					</div>
+					<div class="mb-3">
+						<label for="Password" class="form-label">Mật khẩu</label>
+						<div class="input-group">
+							<InputText id="Password" type="password" class="form-control rounded-start" @bind-Value="loginModel.Password" placeholder="Nhập mật khẩu" />
+							<button type="button" class="btn btn-outline-secondary rounded-end" id="togglePassword">
+								👁️
+							</button>
+						</div>
+						<ValidationMessage For="@(() => loginModel.Password)" />
+					</div>
+					<button type="submit" class="btn btn-dark btn-block w-100 rounded-pill">Tiếp tục</button>
+					<div class="text-center mt-4 position-relative">
+						<span class="bg-white px-3 position-absolute" style="left: 50%; top: -10px; transform: translateX(-50%);">Hoặc</span>
+						<hr class="mt-3">
+					</div>
+					<div class="text-center mt-3">
+						<a href="forgotPass" class="text-primary">Quên mật khẩu?</a>
+					</div>
+					<div class="text-center mt-3">
+						<a href="signinGoogle" class="btn btn-light btn-block rounded-pill border w-100">Đăng nhập bằng Google</a>
+					</div>
+					<div class="text-center mt-3">
+						hBạn mới biết đến NEXTON? <a class="text-primary" href="Pages/Register">Đăng ký tài khoản</a>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
 </div>
 
 @code {
-    public class AccountLogin
-    {
-        public string UserName { get; set; }
-        public string Password { get; set; }
-    }
+	public class AccountLogin
+	{
+		public string UserName { get; set; }
+		public string Password { get; set; }
+	}
 
-    private AccountLogin loginModel = new AccountLogin();
-    private string errorMessage;
-    private string successMessage;
+	private AccountLogin loginModel = new AccountLogin();
+	private string errorMessage;
+	private string successMessage;
 
-    private async Task HandleLogin()
-    {
-        try
-        {
-            var response = await HttpClient.PostAsJsonAsync("api/account/login", loginModel);
+	private async Task HandleLogin()
+	{
+		try
+		{
+			var response = await HttpClient.PostAsJsonAsync("api/account/login", loginModel);
 
-            if (response.IsSuccessStatusCode)
-            {
-                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "LoggedInUser", loginModel.UserName);
-                successMessage = "Đăng nhập thành công!";
-                errorMessage = null;
-                NavigationManager.NavigateTo("/", forceLoad: true);
-            }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                errorMessage = $"Lỗi đăng nhập: {errorContent}";
-                successMessage = null;
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = "Đã xảy ra lỗi: " + ex.Message;
-            successMessage = null;
-        }
-    }
+			if (response.IsSuccessStatusCode)
+			{
+				await JSRuntime.InvokeVoidAsync("localStorage.setItem", "LoggedInUser", loginModel.UserName);
+				successMessage = "Đăng nhập thành công!";
+				errorMessage = null;
+				NavigationManager.NavigateTo("/", forceLoad: true);
+			}
+			else
+			{
+				var errorContent = await response.Content.ReadAsStringAsync();
+				errorMessage = $"Lỗi đăng nhập: {errorContent}";
+				successMessage = null;
+			}
+		}
+		catch (Exception ex)
+		{
+			errorMessage = "Đã xảy ra lỗi: " + ex.Message;
+			successMessage = null;
+		}
+	}
 }
 }
