@@ -27,17 +27,17 @@ namespace Blazor.Server.Controllers
             return icart.GetAllCart();
         }
 
-		[HttpPost]
+        [HttpPost]
         [Route("AddCart")]
-		public Cart AddCart(Cart cart)
-		{
-			return icart.AddProductToCart(new Cart
-			{
-				UserName = cart.UserName,
-				IDPDetail = cart.IDPDetail,
-				Quantity = cart.Quantity,
-			});
-		}
+        public Cart AddCart(Cart cart)
+        {
+            return icart.AddProductToCart(new Cart
+            {
+                UserName = cart.UserName,
+                IDPDetail = cart.IDPDetail,
+                Quantity = cart.Quantity,
+            });
+        }
 
         [HttpDelete]
         [Route("DeleteCart/{id}")]
@@ -46,11 +46,20 @@ namespace Blazor.Server.Controllers
             return icart.DeleteProductFromCart(id);
         }
 
-        [HttpDelete]
-        [Route("DeleteAllCart/{user}")]
-        public Cart DeleteAllCart(string user)
+        [HttpPut]
+        [Route("UpdateCart/{id}")]
+        public Cart UpdateCart(int id, Cart cart)
         {
-            return icart.DeleteAllCart(user);
+            return icart.UpdateProductFromCart(id, cart);
         }
-	}
+
+        [HttpDelete]
+        [Route("Delete/{username}")]
+        public Cart Delete(string username)
+        {
+            return icart.DeleteAllCartByUsername(username);
+        }
+    }
 }
+
+

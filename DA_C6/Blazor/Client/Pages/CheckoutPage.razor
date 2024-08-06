@@ -1,7 +1,12 @@
 ﻿@page "/checkout"
-
+@using Blazor.Shared.Model
+@inject HttpClient httpclient
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.WebUtilities
+@using System.Text.Json
+@inject IJSRuntime JSruntime
 <style>
-    .breadcrumb-item a{
+    .breadcrumb-item a {
         color: #6c757d;
         text-decoration: none;
     }
@@ -14,101 +19,106 @@
     </ol>
     <div class="row">
         <div class="col-sm-6 d-flex flex-column">
-            <div class="card">
-                <div class="card-header bg-white">
-                    <i class="bi bi-person-circle"></i>
-                    Thông tin liên hệ
-                </div>
-                <div class="card-body">
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Số điện thoại</label>
-                                <input class="rounded border border-secondary" type="text" readonly />
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Email</label>
-                                <br />
-                                <input class="rounded border border-secondary" type="text" readonly />
+            @if (acc != null)
+            {
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <i class="bi bi-person-circle"></i>
+                        Thông tin liên hệ
+                    </div>
+                    <div class="card-body">
+                        <div class="form-section">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-bold">Số điện thoại</label>
+                                    <input class="rounded border border-secondary" type="text" value="@acc.Phone" readonly />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-bold">Email</label>
+                                    <br />
+                                    <input class="rounded border border-secondary" type="text" value="@acc.Email" readonly />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card mt-5">
-                <div class="card-header bg-white">
-                    <img src="IMG/shipperaddress.png" alt="Alternate Text" />
-                    Địa chỉ giao hàng
-                </div>
-                <div class="card-body">
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Họ tên</label>
-                                <br />
-                                <input class="rounded border border-secondary" type="text" readonly />
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Địa chỉ</label>
-                                <br />
-                                <input class="rounded border border-secondary" type="text" readonly />
+                <div class="card mt-5">
+                    <div class="card-header bg-white">
+                        <img src="IMG/shipperaddress.png" alt="Alternate Text" />
+                        Địa chỉ giao hàng
+                    </div>
+                    <div class="card-body">
+                        <div class="form-section">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-bold">Họ tên</label>
+                                    <br />
+                                    <input class="rounded border border-secondary" type="text" value="@acc.Name" readonly />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-bold">Địa chỉ</label>
+                                    <br />
+                                    <input class="rounded border border-secondary" type="text" value="@acc.Address" readonly />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+
         </div>
 
         <div class="col-sm-6">
             <div class="container">
                 <h2>Sản phẩm</h2>
-                <hr/>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
-                    </div>
-                    <div class="col-sm-8 flex-column">
-                        <p class="font-weight-bold">Áo cầu lông 1</p>
-                        <p>Xanh/M</p>
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold">1</div>
-                            <div class="col-sm-6">200.000</div>
-                        </div>
-                    </div>
-                    <hr  class="m-3"/>
-                </div>
-
-                @*  s *@
-                <div class="row">
-                    <div class="col-sm-4">
-                        <img src="Image_Product/anh1.png" alt="Alternate Text" class="mw-100" />
-                    </div>
-                    <div class="col-sm-8 flex-column">
-                        <p class="font-weight-bold">Áo cầu lông 1</p>
-                        <p>Xanh/M</p>
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold">1</div>
-                            <div class="col-sm-6">200.000</div>
-                        </div>
-                    </div>
-                    <hr class="m-3" />
-                </div>
-                @*  s *@
+                <hr />
+                @if (selectedIDPDetails != null && selectedIDPDetails.Any())
+                {
+                    @foreach (var idpDetail in selectedIDPDetails)
+                    {
+                        var timspc = cartItems.FirstOrDefault(x => x.IDPDetail == idpDetail && x.UserName == LoggedInUser);
+                        @if (timspc != null)
+                        {
+                            var timspd = productdetailitems.FirstOrDefault(x => x.IDPDetail == timspc.IDPDetail);
+                            @if (timspd != null)
+                            {
+                                var timspp = productitems.FirstOrDefault(x => x.IDProduct == timspd.IDProduct);
+                                @if (timspp != null)
+                                {
+                                    <div class="row mt-3 mb-3">
+                                        <div class="col-sm-4">
+                                            <img src="/@timspp.Image" alt="Alternate Text" class="mw-100" />
+                                        </div>
+                                        <div class="col-sm-8 flex-column">
+                                            <p class="font-weight-bold">@timspp.Name</p>
+                                            <p>@coloritems.FirstOrDefault(x => x.IDColor == timspd.IDColor).Color - @sizeitems.FirstOrDefault(x => x.IDSize == timspd.Size).SizeName</p>
+                                            <div class="row">
+                                                <div class="col-sm-6 font-weight-bold">(@timspc.Quantity)</div>
+                                                <div class="col-sm-6">@((timspc.Quantity * timspp.Price).ToString("N0"))đ</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                }
+                            }
+                        }
+                    }
+                }
 
                 <div class="row">
                     <div class="col-sm-4 font-weight-bold">Tổng cộng</div>
-                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">400.000</div>
+                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">@TotalPrice.ToString("N0")đ</div>
                 </div>
                 <div class="row">
                     <div class="col-sm-4 font-weight-bold">Phí vận chuyển</div>
-                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">30.000</div>
+                    <div class="col-sm-8 font-weight-bold d-flex justify-content-end">@ShippingFee.ToString("N0")đ</div>
                 </div>
 
                 <div class="row mt-3 mb-3">
                     <h5 class="col-sm-4 font-weight-bold">Tổng tiền</h5>
-                    <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">430.000</h5>
+                    <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">@AllPrice.ToString("N0")đ</h5>
                 </div>
-                <div class="row mt-3">
+                <div class="row mt-3 mb-3">
                     <input type="submit" class="btn btn-dark rounded-pill" value="Xác nhận" />
                 </div>
             </div>
@@ -116,5 +126,60 @@
     </div>
 </div>
 
+@code {
+    private List<Cart> cartItems;
+    private List<Product> productitems;
+    private List<ProductDetails> productdetailitems;
+    private List<Colors> coloritems;
+    private List<Sizes> sizeitems;
+    private decimal TotalPrice = 0;
+    private decimal ShippingFee = 0;
+    private decimal AllPrice = 0;
+    private string LoggedInUser;
+    private List<int> selectedIDPDetails;
+    private Account acc;
+    protected override async Task OnInitializedAsync()
+    {
+        LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+        var serializedValues = await JSruntime.InvokeAsync<string>("localStorage.getItem", "SelectedIDPDetails");
+        selectedIDPDetails = JsonSerializer.Deserialize<List<int>>(serializedValues);
+        acc = await httpclient.GetFromJsonAsync<Account>($"api/Account/GetUser/{LoggedInUser}");
+
+        if (selectedIDPDetails != null && selectedIDPDetails.Any())
+        {
+
+            cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
+            productitems = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
+            productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>("api/ProductDetail/GetProductDetails");
+            coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
+            sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
+
+
+            foreach (var idpDetail in selectedIDPDetails)
+            {
+                var timspc = cartItems.FirstOrDefault(x => x.IDPDetail == idpDetail && x.UserName == LoggedInUser);
+                if (timspc != null)
+                {
+                    var timspd = productdetailitems.FirstOrDefault(x => x.IDPDetail == timspc.IDPDetail);
+                    if (timspd != null)
+                    {
+                        var timspp = productitems.FirstOrDefault(x => x.IDProduct == timspd.IDProduct);
+                        if (timspp != null)
+                        {
+                            TotalPrice += (timspc.Quantity * timspp.Price);
+                            // Hiển thị chi tiết sản phẩm tương ứng
+                        }
+                        ShippingFee = TotalPrice * 0.03m;
+                        AllPrice = ShippingFee + TotalPrice;
+                    }
+                }
+            }
+
+            // Thực hiện lấy thông tin sản phẩm từ danh sách selectedIDPDetails và hiển thị chúng trên trang checkout
+            // Ví dụ:
+            // productdetails = await GetProductDetails(selectedIDPDetails);
+        }
+    }
+}
 
 

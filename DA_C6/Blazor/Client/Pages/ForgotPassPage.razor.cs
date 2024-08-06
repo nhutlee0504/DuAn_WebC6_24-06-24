@@ -15,15 +15,17 @@ using static System.Net.WebRequestMethods;
 using Microsoft.JSInterop;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Blazor.Client.Pages
 {
     public partial class ForgotPassPage
     {
         private List<Account> accounts;
-        private Account account = new Account();
+        private string Email;
         private string messageSuccess = null;
         private string messageError = null;
+        private string errorValid;
 
         protected override async Task OnInitializedAsync()
         {
@@ -41,30 +43,35 @@ namespace Blazor.Client.Pages
         {
             try
             {
-                var acc = (await http.GetFromJsonAsync<List<Account>>("api/account/getall")).SingleOrDefault(a => a.Email == account.Email);
-                if (string.IsNullOrEmpty(account.Email)) { }
+                var emailRegex = new Regex(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");
+                var acc = accounts.SingleOrDefault(a => a.Email == Email);
+                if (string.IsNullOrEmpty(Email))
+                {
+                    errorValid = "Vui lòng nhập Email";
+                }
+                else if (!emailRegex.IsMatch(Email))
+                {
+                    errorValid = "Email không hợp lệ";
+                }
                 else if (acc != null)
                 {
                     var newPassword = GenerateRandomPassword();
                     var emailMessage = $"Mật khẩu mới là: {newPassword}";
-                    await SendEmailAsync(account.Email, "Mật khẩu mới", emailMessage);
+                    await SendEmailAsync(Email, "[NEXTON] Mật khẩu mới", emailMessage);
 
-                    acc.Password = GetHash(account.Password);
+                    acc.Password = GetHash(newPassword);
                     var response = await http.PutAsJsonAsync($"api/account/update/{acc.UserName}", acc);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        messageSuccess = "Mật khẩu mới đã gửi đến Email của bạn";
+                        messageSuccess = "Mật khẩu mới đã được gửi đến Email";
                         messageError = null;
-                    }
-                    else
-                    {
-                        messageSuccess = null;
-                        messageError = "Không thể cập nhật mật khẩu";
+                        errorValid = null;
                     }
                 }
                 else
                 {
+                    errorValid = null;
                     messageSuccess = null;
                     messageError = "Email không tồn tại";
                 }

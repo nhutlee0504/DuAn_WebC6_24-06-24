@@ -3,6 +3,7 @@ using API.Data;
 using API.Model;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace API.Services
 {
@@ -11,6 +12,7 @@ namespace API.Services
         public IEnumerable<Product> GetProducts();
 
         public Product GetProductId(int id);
+        Task<IEnumerable<Product>> SearchProductsByNameAsync(string name);
 
         public Product Add(Product product);
 

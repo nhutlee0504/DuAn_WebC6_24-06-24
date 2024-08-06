@@ -13,12 +13,10 @@ namespace Blazor.Controllers
     {
         private IBillDetail bid;
         public BillDetailController(IBillDetail s) => bid = s;
-        [HttpGet("{id}")]
-        public IActionResult GetBillDetails(int id)
+		[HttpGet("details/{id}")]
+		public IActionResult GetBillDetails(int id)
         {
-            var billDetails = bid.GetBillDetails(id); // Lấy danh sách BillDetails từ dịch vụ hoặc repository
-
-            // Kiểm tra nếu không tìm thấy hóa đơn
+            var billDetails = bid.GetBillDetails(id);
             if (billDetails == null)
             {
                 return NotFound();
@@ -26,7 +24,6 @@ namespace Blazor.Controllers
 
             try
             {
-                // Tạo một view model để chứa các thông tin cần thiết để hiển thị
                 var viewModel = billDetails.Select(bd => new
                 {
                     bd.IDBDetail,
@@ -44,11 +41,11 @@ namespace Blazor.Controllers
                     }
                 });
 
-                return Ok(viewModel); // Trả về thông tin hóa đơn dưới dạng JSON
+                return Ok(viewModel);
             }
             catch (Exception ex)
             {
-                // Xử lý ngoại lệ nếu có lỗi xảy ra
+                
                 return StatusCode(500, $"Internal server error: {ex}");
             }
         }

@@ -3,6 +3,9 @@ using API.Data;
 using API.Model;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace API.Services
 {
@@ -46,6 +49,23 @@ namespace API.Services
         public IEnumerable<Account> GetAccounts()
         {
             return context.Accounts;
+        }
+
+        public Account LoginAccount(string username, string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(password);
+                byte[] hashBytes = sha256.ComputeHash(inputBytes);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length && i < 16; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("x2"));
+                }
+                var hashedPassword = sb.ToString();
+
+                return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
+            }        
         }
 
         public Account UpdateAccount(string user, Account account)

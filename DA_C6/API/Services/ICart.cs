@@ -8,5 +8,8 @@ namespace API.Services
         public IEnumerable<Cart> GetAllCart();
 
         public Cart AddProductToCart(Cart cart);
+
+        public Cart DeleteAllCartByUsername(string username);
+
     }
 }

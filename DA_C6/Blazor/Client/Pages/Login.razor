@@ -1,89 +1,101 @@
 ﻿@page "/login"
 @using Blazor.Shared.Model
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
-@inject HttpClient httpclient
 <div class="container">
     <div class="row justify-content-center mt-5 mb-5">
         <div class="col-md-6">
             <div class="form-container p-4 rounded bg-white shadow-sm">
                 <h2 class="text-center mb-4">Đăng nhập</h2>
-                <form asp-controller="" asp-action="" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="alert alert-success" role="alert">
+                        @successMessage
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @errorMessage
+                    </div>
+                }
+
+                <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
                     <div class="mb-3">
                         <label for="UserName" class="form-label">Tên tài khoản</label>
-                        <input asp-for="UserName" type="text" class="form-control rounded-pill" id="UserName" placeholder="Nhập tên tài khoản">
-                        <span asp-validation-for="UserName" class="text-danger"></span>
+                        <InputText id="UserName" class="form-control rounded-pill" @bind-Value="loginModel.UserName" placeholder="Nhập tên tài khoản" />
+                        <ValidationMessage For="@(() => loginModel.UserName)" />
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Mật khẩu</label>
+                        <label for="Password" class="form-label">Mật khẩu</label>
                         <div class="input-group">
-                            <input asp-for="Password" type="password" class="form-control rounded-start" id="password" placeholder="Nhập mật khẩu">
-                            <button type="button" class="btn btn-outline-secondary rounded-end" id="togglePassword" onclick="togglePasswordVisibility()">
+                            <InputText id="Password" type="password" class="form-control rounded-start" @bind-Value="loginModel.Password" placeholder="Nhập mật khẩu" />
+                            <button type="button" class="btn btn-outline-secondary rounded-end" id="togglePassword">
                                 👁️
                             </button>
                         </div>
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <ValidationMessage For="@(() => loginModel.Password)" />
                     </div>
-                    <button @onclick="AttemptLogin" class="btn btn-dark btn-block w-100 rounded-pill">Tiếp tục</button>                    
+                    <button type="submit" class="btn btn-dark btn-block w-100 rounded-pill">Tiếp tục</button>
                     <div class="text-center mt-4 position-relative">
+                        <span class="bg-white px-3 position-absolute" style="left: 50%; top: -10px; transform: translateX(-50%);">Hoặc</span>
                         <hr class="mt-3">
-                        <div class="position-absolute top-50 start-50 translate-middle" style="background-color: white;padding: 0 10px;">Hoặc</div>
                     </div>
                     <div class="text-center mt-3">
-                        <a asp-controller="Home" asp-action="ForgotPassword" class="text-primary" href="forgotPass">Quên mật khẩu?</a>
+                        <a href="forgotPass" class="text-primary">Quên mật khẩu?</a>
                     </div>
                     <div class="text-center mt-3">
-                        <a asp-action="SigninGoogle" asp-controller="Home" class="btn btn-light btn-block rounded-pill border w-100">Đăng nhập bằng Google</a>
+                        <a href="signinGoogle" class="btn btn-light btn-block rounded-pill border w-100">Đăng nhập bằng Google</a>
                     </div>
                     <div class="text-center mt-3">
-                        Bạn mới biết đến NEXTON? <a class="text-primary" href="/Pages/Register">Đăng ký tài khoản</a>
+                        /-strong/-heart:>:o:-((:-hBạn mới biết đến NEXTON? <a class="text-primary" href="Pages/Register">Đăng ký tài khoản</a>
                     </div>
-                </form>
+                </EditForm>
             </div>
         </div>
     </div>
 </div>
-<script>
-    function togglePasswordVisibility() {
-        var passwordField = document.getElementById('password');
-        var toggleBtn = document.getElementById('togglePassword');
 
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            toggleBtn.innerHTML = '🙈';
-        } else {
-            passwordField.type = 'password';
-            toggleBtn.innerHTML = '👁️';
-        }
-    }
-</script>
 @code {
-    private Account model = new Account();
+    public class AccountLogin
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
+    }
 
-    private async Task AttemptLogin()
+    private AccountLogin loginModel = new AccountLogin();
+    private string errorMessage;
+    private string successMessage;
+
+    private async Task HandleLogin()
     {
         try
         {
-            // Gửi yêu cầu đăng nhập đến API backend
-            var response = await httpclient.PostAsJsonAsync("api/Account/Authenticate", model);
+            var response = await HttpClient.PostAsJsonAsync("api/account/login", loginModel);
 
             if (response.IsSuccessStatusCode)
             {
-                // Nếu đăng nhập thành công, chuyển hướng đến trang index
-                // NavigationManager.NavigateTo("/");
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "LoggedInUser", loginModel.UserName);
+                successMessage = "Đăng nhập thành công!";
+                errorMessage = null;
+                NavigationManager.NavigateTo("/", forceLoad: true);
             }
             else
             {
-                // Xử lý khi đăng nhập thất bại
-                await JSRuntime.InvokeVoidAsync("alert", "Đăng nhập không thành công. Vui lòng thử lại.");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Lỗi đăng nhập: {errorContent}";
+                successMessage = null;
             }
         }
         catch (Exception ex)
         {
-            // Xử lý các ngoại lệ
-            await JSRuntime.InvokeVoidAsync("alert", "Đã xảy ra lỗi khi đăng nhập: " + ex.Message);
+            errorMessage = "Đã xảy ra lỗi: " + ex.Message;
+            successMessage = null;
         }
     }
-
-
+}
 }

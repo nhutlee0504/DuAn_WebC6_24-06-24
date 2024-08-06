@@ -27,12 +27,26 @@ namespace Blazor.Shared.Model
 
 
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại"), Column(TypeName = "varchar(12)")]
-        [Phone(ErrorMessage = "Số điện thoại không đúng định dạng"), RegularExpression(@"^(0\d{9}|84\d{9})$", ErrorMessage = "Số điện thoại không đúng định dạng")]
+        [RegularExpression(@"^(0\d{9}|84\d{9})$", ErrorMessage = "Số điện thoại không đúng định dạng")]
         public string Phone { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ"), Column(TypeName = "ntext")]
         public string Address { get; set; }
 
+        public ICollection<Cart> carts { get; set; }
+
+        public ICollection<History> histories { get; set; }
+
+        public ICollection<Bill> bills { get; set; }
+
+        public ICollection<SaleDetails> SaleDetails { get; set; }
+        public ICollection<Evaluate> evaluates { get; set; }
+    }
+
+    public class LoginModel
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
         public ICollection<Cart> carts { get; set; }
 
         public ICollection<History> histories { get; set; }

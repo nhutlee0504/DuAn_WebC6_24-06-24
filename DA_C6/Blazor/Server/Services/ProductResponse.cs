@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading.Tasks;
 
 namespace Blazor.Server.Services
 {
@@ -33,7 +34,12 @@ namespace Blazor.Server.Services
         {
             return context.Products.FirstOrDefault(x => x.IDProduct == id);
         }
-
+        public async Task<IEnumerable<Product>> SearchProductsByNameAsync(string name)
+        {
+            return await context.Products
+                                 .Where(p => p.Name.Contains(name))
+                                 .ToListAsync();
+        }
         public IEnumerable<Product> GetProducts()
         {
             return context.Products;
