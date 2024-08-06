@@ -5,16 +5,66 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Text.Json
 @inject IJSRuntime JSruntime
+@inject IJSRuntime JSRuntime
 <style>
     .breadcrumb-item a {
         color: #6c757d;
         text-decoration: none;
     }
+
+    .form-section input {
+        border-radius: 0.5rem; 
+        border: 2px solid #6c757d; 
+        padding: 0.5rem; 
+        font-size: 1rem; 
+    }
+
+        .form-section input:read-only {
+            background-color: #f8f9fa;
+            color: #495057; 
+        }
+
+    .form-section .fw-bold {
+        font-weight: 700; 
+    }
+    .modal {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+}
+.modal-dialog {
+    margin: 1.75rem auto;
+}
+.modal-content {
+    background: #fff;
+    border-radius: 0.3rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.modal-header, .modal-body, .modal-footer {
+    padding: 1rem;
+}
+.modal-title {
+    margin: 0;
+}
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+}
+
 </style>
-<div class="container">
+
+
+<div class="container" style="margin-bottom: 200px">
     <h1>Thanh toán</h1>
     <ol class="breadcrumb bg-transparent">
         <li class="breadcrumb-item"><a href="">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="">Giỏ hàng</a></li>
         <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
     </ol>
     <div class="row">
@@ -31,12 +81,12 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="fw-bold">Số điện thoại</label>
-                                    <input class="rounded border border-secondary" type="text" value="@acc.Phone" readonly />
+                                    <input class="form-control" type="text" value="@acc.Phone" readonly />
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="fw-bold">Email</label>
                                     <br />
-                                    <input class="rounded border border-secondary" type="text" value="@acc.Email" readonly />
+                                    <input class="form-control" type="text" value="@acc.Email" readonly />
                                 </div>
                             </div>
                         </div>
@@ -53,12 +103,12 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="fw-bold">Họ tên</label>
                                     <br />
-                                    <input class="rounded border border-secondary" type="text" value="@acc.Name" readonly />
+                                    <input class="form-control" type="text" value="@acc.Name" readonly />
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="fw-bold">Địa chỉ</label>
                                     <br />
-                                    <input class="rounded border border-secondary" type="text" value="@acc.Address" readonly />
+                                    <input class="form-control" type="text" value="@acc.Address" readonly />
                                 </div>
                             </div>
                         </div>
@@ -119,12 +169,32 @@
                     <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">@AllPrice.ToString("N0")đ</h5>
                 </div>
                 <div class="row mt-3 mb-3">
-                    <input type="submit" class="btn btn-dark rounded-pill" value="Xác nhận" />
+                    <input type="submit" class="btn btn-dark rounded-pill" value="Xác nhận" @onclick="HandlePayment" />
                 </div>
             </div>
         </div>
     </div>
 </div>
+<!-- Modal -->
+@if (_isPaymentSuccessful)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block; padding-right: 17px;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thông Báo</h5>
+                    <button type="button" class="btn-close" @onclick="() => _isPaymentSuccessful = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p>@_successMessage</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Về Trang Chủ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     private List<Cart> cartItems;
@@ -138,6 +208,7 @@
     private string LoggedInUser;
     private List<int> selectedIDPDetails;
     private Account acc;
+
     protected override async Task OnInitializedAsync()
     {
         LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
@@ -147,13 +218,11 @@
 
         if (selectedIDPDetails != null && selectedIDPDetails.Any())
         {
-
             cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
             productitems = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
             productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>("api/ProductDetail/GetProductDetails");
             coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
             sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
-
 
             foreach (var idpDetail in selectedIDPDetails)
             {
@@ -167,19 +236,57 @@
                         if (timspp != null)
                         {
                             TotalPrice += (timspc.Quantity * timspp.Price);
-                            // Hiển thị chi tiết sản phẩm tương ứng
                         }
                         ShippingFee = TotalPrice * 0.03m;
                         AllPrice = ShippingFee + TotalPrice;
                     }
                 }
             }
-
-            // Thực hiện lấy thông tin sản phẩm từ danh sách selectedIDPDetails và hiển thị chúng trên trang checkout
-            // Ví dụ:
-            // productdetails = await GetProductDetails(selectedIDPDetails);
         }
     }
-}
+        private bool _isPaymentSuccessful;
+        private string _successMessage;
 
+        private async Task HandlePayment()
+        {
+            var paymentRequest = new PaymentRequest
+            {
+                Username = LoggedInUser,
+                SelectedProducts = selectedIDPDetails,
+                TotalPrice = TotalPrice
+            };
+
+            try
+            {
+                var response = await httpclient.PostAsJsonAsync("api/bill/pay", paymentRequest);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _isPaymentSuccessful = true;
+                    _successMessage = "Thanh toán thành công!";
+                    StateHasChanged(); // Cập nhật giao diện người dùng
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình thanh toán: {errorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or display a more detailed error message
+                await JSRuntime.InvokeVoidAsync("alert", $"Lỗi không mong muốn: {ex.Message}");
+            }
+        }
+   
+
+
+
+    public class PaymentRequest
+    {
+        public string Username { get; set; }
+        public List<int> SelectedProducts { get; set; }
+        public decimal TotalPrice { get; set; }
+    }
+}
 

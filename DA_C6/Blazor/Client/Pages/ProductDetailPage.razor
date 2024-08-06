@@ -2,7 +2,23 @@
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
 @inject IJSRuntime JSRuntime
-@inject NavigationManager NavigationManager
+<style>
+	.alert {
+		border-radius: 0.5rem; 
+		padding: 1rem;
+		font-size: 1rem; 
+		margin-bottom: 1rem; 
+	}
+
+	.alert-danger {
+		background-color: #dc3545;
+		color: #ffffff; 
+	}
+
+	.alert-success {
+		background-color: #28a745; 
+		color: #ffffff;
+	}</style>
 <div class="container">
 	<div class="error-message">
 		@if (!string.IsNullOrEmpty(errorMessage))
@@ -145,7 +161,7 @@
 											<i class="bi bi-bag-heart"></i>
 										</span>
 									</div>
-									<a @onclick="@(async () => await NPD(x.IDProduct))">
+									<a href="productdetail/@x.IDProduct">
 										<img src="/@x.Image" class="card-img-top custom-class-img" alt="Ao" />
 									</a>
 									<div class="card-body">
@@ -268,10 +284,5 @@
 
 			}
 		}
-	}
-
-	private async Task NPD(int id)
-	{
-		NavigationManager.NavigateTo($"productdetail/{id}", forceLoad: true);
 	}
 }

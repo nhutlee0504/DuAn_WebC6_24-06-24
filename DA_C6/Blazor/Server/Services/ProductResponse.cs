@@ -34,11 +34,9 @@ namespace Blazor.Server.Services
         {
             return context.Products.FirstOrDefault(x => x.IDProduct == id);
         }
-        public async Task<IEnumerable<Product>> SearchProductsByNameAsync(string name)
+        public IEnumerable<Product> SearchProductsByNameAsync(string name)
         {
-            return await context.Products
-                                 .Where(p => p.Name.Contains(name))
-                                 .ToListAsync();
+            return context.Products.Where(p => p.Name.Contains(name)).ToList();
         }
         public IEnumerable<Product> GetProducts()
         {
