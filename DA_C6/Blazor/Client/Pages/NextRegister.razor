@@ -77,7 +77,8 @@
             <label class="fw-bolder" for="gioiTinh">Giới tính</label>
             <InputSelect @bind-Value="account.Gender" id="gioiTinh" class="form-control">
                 <option value="" hidden>Giới tính</option>
-                <option value="Nam">Nam</option>/-strong/-heart:>:o:-((:-h<option value="Nữ">Nữ</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
             </InputSelect>
             <small class="form-text text-muted">Vui lòng chọn giới tính của bạn.</small>
             <ValidationMessage For="@(() => account.Gender)" />

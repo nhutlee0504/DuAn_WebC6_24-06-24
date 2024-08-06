@@ -1,0 +1,79 @@
+﻿@page "/updateemail"
+@using Blazor.Shared.Model
+@inject HttpClient httpclient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSruntime
+<h3>UpdateEmail</h3>
+
+@if (acc != null)
+{
+    <form>
+        @if (!string.IsNullOrEmpty(errormessage))
+        {
+            <p class="text-danger">@errormessage</p>
+        }
+        <p>
+            <strong>Old Email:</strong>
+            <input type="email" @bind="reEnteredEmail" required />
+        </p>
+        <p>
+            <strong>New Email:</strong>
+            <input type="email" @bind="NewEmail" required />
+        </p>
+        <button type="button" class="btn btn-primary" @onclick="UpdateUserInfo">Cập nhật thông tin</button>
+    </form>
+}
+
+@code {
+    private Account acc;
+    private string reEnteredEmail;
+    private string NewEmail;
+    private string errormessage;
+    private string LoggedInUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+        acc = await httpclient.GetFromJsonAsync<Account>($"api/Account/GetUser/{LoggedInUser}");
+    }
+
+    private async Task UpdateUserInfo()
+    {
+        if (string.IsNullOrWhiteSpace(reEnteredEmail) || string.IsNullOrWhiteSpace(NewEmail))
+        {
+            errormessage = "Vui lòng điền cả hai trường này.";
+        }
+        else if (reEnteredEmail == acc.Email)
+        {
+            errormessage = "";
+            if (!IsEmailValid(reEnteredEmail) || !IsEmailValid(NewEmail))
+            {
+                errormessage = "Định dạng email không hợp lệ.";
+            }
+            else
+            {
+                errormessage = "";
+                acc.Email = NewEmail;
+                var response = await httpclient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", acc);
+                if (response.IsSuccessStatusCode)
+                {
+                    NavigationManager.NavigateTo("Pages/Profile", forceLoad: true);
+                }
+                else
+                {
+                    // Xử lý khi cập nhật không thành công
+                }
+            }
+        }
+        else
+        {
+            errormessage = "Email không trùng khớp";
+        }
+    }
+
+    private bool IsEmailValid(string email)
+    {
+        var emailRegex = new System.Text.RegularExpressions.Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+        return emailRegex.IsMatch(email);
+    }
+}
