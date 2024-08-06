@@ -1,21 +1,34 @@
 ﻿@page "/forgotPass"
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject IJSRuntime js
+@using Blazor.Shared.Model
+
 <div class="container">
     <div class="col-md-4 offset-4">
-       @*  @if (ViewBag.Message != null)
+        @if (messageSuccess != null)
         {
             <div class="alert alert-success mt-3">
-                @ViewBag.Message
+                @messageSuccess
             </div>
-        } *@
-        <form method="post">
+        }
+        @if (messageError != null)
+        {
+            <div class="alert alert-danger mt-3">
+                @messageError
+            </div>
+        }
+        <EditForm Model="@account" @onclick="SubmitForm">
+            <DataAnnotationsValidator />
+
             <div class="form-group m-3">
-                <label>Nhập Email của bạn</label>
-                <input type="email" name="Email" class="form-control" value="" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <label for="email">Nhập Email của bạn</label>
+                <InputText class="form-control" @bind-Value="account.Email" />
+                <ValidationMessage For="() => account.Email" />
             </div>
             <div class="form-group m-3">
                 <button type="submit" class="btn btn-dark btn-block">Gửi</button>
             </div>
-        </form>
+        </EditForm>
     </div>
 </div>

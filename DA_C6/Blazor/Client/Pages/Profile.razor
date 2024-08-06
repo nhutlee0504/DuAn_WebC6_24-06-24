@@ -54,11 +54,12 @@
         .content-container.transition-out {
             transform: translateX(-100%);
         }
+
     .breadcrumb {
         list-style: none;
         padding: 0;
-        margin: 10px 0; 
-        font-size: 14px; 
+        margin: 10px 0;
+        font-size: 14px;
     }
 
         .breadcrumb li {
@@ -85,40 +86,42 @@
             }
 
         .breadcrumb .active {
-            color: #212529; 
-            font-weight: 500; 
-            pointer-events: none; 
-
+            color: #212529;
+            font-weight: 500;
+            pointer-events: none;
         }
 
     .nav-tabs .nav-link {
-        border-top: none; 
-        color:black;
+        border-top: none;
+        color: black;
         border-bottom: 2px solid transparent;
     }
-        .icon-nav{
-            width:15px;
-        }
-        .input-pro{
-            border-width:1px;
-            font-weight:bold;
-            padding:10px;
-            border-radius:10px;
-            width:100%;
-            font-size:15px;
-        }
+
+    .icon-nav {
+        width: 15px;
+    }
+
+    .input-pro {
+        border-width: 1px;
+        font-weight: bold;
+        padding: 10px;
+        border-radius: 10px;
+        width: 100%;
+        font-size: 15px;
+    }
 
     hr {
-        height: 2px; 
-        border: none; 
-        background-color: black; 
+        height: 2px;
+        border: none;
+        background-color: black;
     }
-       .input-pro {
-      margin-bottom: 20px;
-    }
-    .font-weight-bolder {
-      margin-bottom: 10px;
 
+    .input-pro {
+        margin-bottom: 20px;
+    }
+
+    .font-weight-bolder {
+        margin-bottom: 10px;
     }
 
     .row-custom {
@@ -135,7 +138,7 @@
     }
 
         .img-container img {
-            max-width: 100%; 
+            max-width: 100%;
             height: auto;
         }
 
@@ -155,7 +158,7 @@
 <div class="container">
     <div class="row">
         <div class="profile-header">
-            <b class="font-weight-bold h2">THÔNG TIN CÁ NHÂN</b>
+            <b class="font-weight-bold h2">THÔNG TIN CÁ NH N</b>
             <ul class="breadcrumb">
                 <li><a href="/">Trang chủ</a></li>
                 <li class="active">Thông tin của bạn</li>
@@ -194,42 +197,41 @@
                 </button>
             </li>
         </ul>
-        <div    
-             class="tab-content" id="myTabContent">
+        <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <div class="row mt-4">
-                            <div class="col-md-6">
-                                <p class="font-weight-bold h3">Thông tin chung</p>
-                                <p class="small">Đây sẽ là thông tin công khai trên trang cá nhân</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="font-weight-bolder h6">Họ và tên</p>
-                                <input type="text" class="input-pro" @bind="account.Name" readonly />
-                                <p class="font-weight-bolder h6">Địa chỉ</p>
+                    <div class="col-md-6">
+                        <p class="font-weight-bold h3">Thông tin chung</p>
+                        <p class="small">Đây sẽ là thông tin công khai trên trang cá nhân</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="font-weight-bolder h6">Họ và tên</p>
+                        <input type="text" class="input-pro" @bind="account.Name" readonly />
+                        <p class="font-weight-bolder h6">Địa chỉ</p>
                         <input type="text" class="input-pro" @bind="account.Address" readonly />
-                            </div>
-                        </div>
-                        <div class="row mt-4">
-                            <hr />
-                            <div class="col-md-6">
-                                <p class="font-weight-bold h3">Thông tin bảo mật</p>
-                                <p class="small">Đây sẽ là thông tin ẩn trên trang cá nhân</p>
-                            </div>
-                            <div class="col-md-6">
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <hr />
+                    <div class="col-md-6">
+                        <p class="font-weight-bold h3">Thông tin bảo mật</p>
+                        <p class="small">Đây sẽ là thông tin ẩn trên trang cá nhân</p>
+                    </div>
+                    <div class="col-md-6">
                         <p class="font-weight-bold h6">Số điện thoại</p>
                         <input type="text" class="input-pro" value="@GetMaskedPhone(account.Phone)" readonly />
                         <p class="font-weight-bolder h6">Email</p>
                         <input type="text" class="input-pro" value="@GetMaskedEmail(account.Email)" readonly />
-                                <p class="font-weight-bolder h6">Mật khẩu</p>
+                        <p class="font-weight-bolder h6">Mật khẩu</p>
                         <input type="password" class="input-pro" value="******************" readonly />
-                            </div>
-                        </div>
-                        <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
-                            <button class="btn btn-light me-md-2" style="border:none;background-color:white" type="button">Hủy</button>
-                            <button class="btn btn-dark" type="button">Cập nhật</button>
-                        </div>
-                   
-                
+                    </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
+                    <button class="btn btn-light me-md-2" style="border:none;background-color:white" type="button">Hủy</button>
+                    <button class="btn btn-dark" type="button">Cập nhật</button>
+                </div>
+
+
 
             </div>
             <div class="tab-pane fade" id="order" role="tabpanel" aria-labelledby="order-tab">
@@ -245,7 +247,7 @@
                                     </div>
                                     <div class="col-md-6" style="font-weight:bold">
                                         <p>MÃ ĐƠN HÀNG: @bill.IDBill</p>
-                                        <p>Ngày đặt hàng: @bill.OrderDate.ToString("dd/MM/yyyy")</p> 
+                                        <p>Ngày đặt hàng: @bill.OrderDate.ToString("dd/MM/yyyy")</p>
                                         <p>Địa chỉ nhận hàng: @account.Address</p>
                                         <p>Tổng: @bill.TotalAmount.ToString("N0") VND</p>
                                     </div>
@@ -442,5 +444,6 @@
         public int TotalPages { get; set; }
         public int CurrentPage { get; set; }
     }
-    
+
 }
+

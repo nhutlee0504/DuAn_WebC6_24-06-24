@@ -7,12 +7,14 @@ namespace Blazor.Server.Services
     {
         public IEnumerable<Cart> GetAllCart();
 
-		public Cart AddProductToCart(Cart cart);
+        public Cart AddProductToCart(Cart cart);
 
         public Cart DeleteProductFromCart(int id);
 
         public Cart UpdateProductFromCart(int id, Cart cart);
 
         public Cart DeleteAllCartByUsername(string username);
-	}
+    }
 }
+
+

@@ -1,0 +1,39 @@
+﻿@page "/UpdateColor/{id:int}"
+@using Admin.Services
+@using Admin.Model
+@inject ColorResponse col
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Colors color = new Colors();
+    protected override async Task OnInitializedAsync()
+    {
+        color = await Task.Run(() => col.GetColorById(id));
+    }
+
+    private void UpdateCol()
+    {
+        col.UpdateColor(id, color);
+        Navigation.NavigateTo("/ColorPage");
+    }
+
+    private void NavigateToColPage()
+    {
+
+        Navigation.NavigateTo("/ColorPage");
+
+    }
+}
+
+<h3>Cập nhật loại sản phẩm mới</h3>
+
+<div>
+    <label for="colName">Màu:</label>
+    <input type="text" id="categoryName" @bind="color.Color" />
+</div>
+<div>
+    <button type="button" class="btn btn-primary" @onclick="UpdateCol">Cập nhật</button>
+
+    <button type="button" class="btn btn-primary" @onclick="NavigateToColPage">Quay về danh sách</button>
+</div>

@@ -11,7 +11,9 @@ namespace Blazor.Server.Services
     public interface IBill
     {
         public IEnumerable<Bill> GetAllBill();
+
         Task<IEnumerable<Bill>> GetUserBillsAsync(string username, int pageNumber, int pageSize);
+
         public Bill GetBillId(int id);
     }
 }

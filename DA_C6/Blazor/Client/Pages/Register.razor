@@ -1,40 +1,57 @@
 ﻿@page "/Pages/Register"
+@using Blazor.Shared.Model
+@using System.Net.Http.Json
+@using System.Security.Cryptography
+@using System.Text
+@inject NavigationManager navigation
+@inject HttpClient http
+@inject IJSRuntime js
 
 <ol class="breadcrumb bg-transparent">
-    <li class="breadcrumb-item"><a href="/Home/Index">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
     <li class="breadcrumb-item active" aria-current="page">Đăng ký tài khoản</li>
 </ol>
 
 <div class="container">
-    <div class="row justify-content-center" style="margin-top:50px">
+    <div class="row justify-content-center" style="margin-top: 50px">
         <div class="col-md-4">
             <div class="text-center mb-5">
                 <h3>Đăng ký tài khoản</h3>
             </div>
-            <form asp-action="Register">
-                @*                 <div class="text-danger" asp-validation-summary="ModelOnly"></div> *@
+            <EditForm Model="@account" @onclick="SubmitForm">
+                <DataAnnotationsValidator />
                 <div class="mb-3">
                     <label for="username" class="form-label fw-bolder">Tên tài khoản</label>
-                    <input asp-for="UserName" data-intro="Điền tên tài khoản vào đây" data-step="1" type="text" class="form-control" id="username" placeholder="Tên tài khoản" required>
+                    <InputText @bind-Value="account.UserName" class="form-control" id="username" placeholder="Tên tài khoản" />
                     <small id="usernameHelp" class="form-text text-muted">Ví dụ: JohnDoe123</small>
-                    <span asp-validation-for="UserName" class="text-danger"></span>
+                    @if (!string.IsNullOrEmpty(errorUser))
+                    {
+                        <br />
+                        <span class="text-danger">@errorUser</span>
+                    }
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label fw-bolder">Mật khẩu</label>
-                    <input asp-for="Password" data-intro="Điền mật khẩu" data-step="2" type="password" class="form-control" id="password" placeholder="Mật khẩu" required>
+                    <InputText @bind-Value="account.Password" type="password" class="form-control" id="password" placeholder="Mật khẩu" />
                     <small id="passwordHelp" class="form-text text-muted">Mật khẩu ít nhất 8 ký tự</small>
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                    @if (!string.IsNullOrEmpty(errorPassword))
+                    {
+                        <br />
+                        <span class="text-danger">@errorPassword</span>
+                    }
                 </div>
                 <div class="mb-3">
                     <label for="confirmPassword" class="form-label fw-bolder">Nhập lại mật khẩu</label>
-                    <input asp-action="Register" name="passConfirm" data-intro="Điền đúng mật khẩu" data-step="3" type="password" class="form-control" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                    <InputText @bind-Value="confirmPassword" type="password" class="form-control" id="confirmPassword" placeholder="Nhập lại mật khẩu" />
                     <small id="confirmPasswordHelp" class="form-text text-muted">Xác nhận lại mật khẩu để đảm bảo chính xác</small>
-
+                    @if (!string.IsNullOrEmpty(errorCPw))
+                    {
+                        <br />
+                        <span class="text-danger">@errorCPw</span>
+                    }
                 </div>
-                <input type="submit" value="Bước tiếp theo" class="btn btn-dark w-100 rounded-pill" />
-
-            </form>
-
+                <button type="submit" class="btn btn-dark w-100 rounded-pill">Bước tiếp theo</button>
+            </EditForm>
             <div class="row justify-content-center mt-3">
                 <div class="col-auto">
                     <a>Hoặc</a>
@@ -45,12 +62,62 @@
                     <a>Bạn đã có tài khoản?</a><a href="/login">&ensp;Đăng nhập</a>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
 @code {
+    private List<Account> accounts;
+    private Account account = new Account();
+    private string confirmPassword = null;
+    private string errorUser = null;
+    private string errorPassword = null;
+    private string errorCPw = null;
 
+    private async Task SubmitForm()
+    {
+        var userExist = (await http.GetFromJsonAsync<List<Account>>("api/Account/GetAll")).FirstOrDefault(x => x.UserName == account.UserName);
+
+        if (string.IsNullOrEmpty(account.UserName))
+            errorUser = "Vui lòng nhập tên đăng nhập";
+        else if (userExist != null)
+            errorUser = "Tên đăng nhập đã tồn tại";
+        else
+            errorUser = null;
+
+        if (string.IsNullOrEmpty(account.Password))
+            errorPassword = "Vui lòng nhập mật khẩu";
+        else if (account.Password.Length < 8)
+            errorPassword = "Mật khẩu ít nhất 8 ký tự";
+        else
+            errorPassword = null;
+
+        if (string.IsNullOrEmpty(confirmPassword))
+            errorCPw = "Vui lòng nhập mật khẩu xác nhận";
+        else if (confirmPassword != account.Password)
+            errorCPw = "Mật khẩu xác nhận không trùng khớp";
+        else
+        {
+            errorCPw = null;
+            account.Password = GetHash(account.Password);
+            var username = Uri.EscapeDataString(account.UserName);
+            var password = Uri.EscapeDataString(account.Password);
+            navigation.NavigateTo($"/Pages/NextRegister/{username}/{password}");
+        }
+    }
+
+    private string GetHash(string input)
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = sha256.ComputeHash(inputBytes);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hashBytes.Length && i < 16; i++)
+            {
+                sb.Append(hashBytes[i].ToString("x2"));
+            }
+            return sb.ToString();
+        }
+    }
 }
-

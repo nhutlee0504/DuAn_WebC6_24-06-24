@@ -1,0 +1,61 @@
+﻿@page "/SizePage"
+@using Admin.Services
+@using Admin.Model
+@inject SizeResponse size
+
+@inject NavigationManager Navigation
+
+<div class="row d-flex align-items-center">
+    <div class="col d-flex justify-content-start">
+        <h2>Danh sách kích cỡ</h2>
+    </div>
+    <div class="col d-flex justify-content-end">
+        <button type="button" class="btn btn-primary" @onclick="NavigateToAddSize">Thêm kích cỡ</button>
+    </div>
+</div>
+
+
+@if (sizeitems == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-hover" style="margin-top: 20px">
+        <thead>
+            <tr>
+                <th>Kích cỡ</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @foreach (var x in sizeitems)
+            {
+                <tr>
+                    <td> @x.SizeName </td>
+                    <td>
+                        <button type="button" class="btn btn-outline-success" @onclick="() => NavigateToUpdateSize(x.IDSize)">Cập nhật</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    IEnumerable<Sizes> sizeitems;
+    protected override async Task OnInitializedAsync()
+    {
+        sizeitems = await Task.Run(() => size.GetSizes());
+    }
+
+    private void NavigateToAddSize()
+    {
+        Navigation.NavigateTo("/AddSize");
+    }
+
+    private void NavigateToUpdateSize(int id)
+    {
+        Navigation.NavigateTo($"/UpdateSize/{id}");
+    }
+}

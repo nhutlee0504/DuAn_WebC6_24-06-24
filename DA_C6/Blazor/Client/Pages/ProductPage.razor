@@ -5,132 +5,132 @@
 @inject IJSRuntime JSruntime
 
 <style>
-	.bg-text {
-		background-color: white;
-	}
+    .bg-text {
+        background-color: white;
+    }
 
-	.col-sm-4 .border {
-		transition: box-shadow 0.3s, transform 0.3s;
-	}
+    .col-sm-4 .border {
+        transition: box-shadow 0.3s, transform 0.3s;
+    }
 
-	.col-sm-4 .container-fluid {
-		transition: box-shadow 0.3s, transform 0.3s;
-	}
+    .col-sm-4 .container-fluid {
+        transition: box-shadow 0.3s, transform 0.3s;
+    }
 
-	.col-sm-4:hover .border {
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-		transform: translateY(-5px);
-	}
+    .col-sm-4:hover .border {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        transform: translateY(-5px);
+    }
 
-	.col-sm-4:hover .container-fluid {
-		transform: translateY(-5px);
-	}
+    .col-sm-4:hover .container-fluid {
+        transform: translateY(-5px);
+    }
 
-	.breadcrumb-item a {
-		color: #6c757d;
-		text-decoration: none;
-	}
+    .breadcrumb-item a {
+        color: #6c757d;
+        text-decoration: none;
+    }
+
+    .imageQR {
+        width: 100%; 
+        max-width: 70px; 
+        height: auto;
+        object-fit: contain; 
+    }
 </style>
 
 <div class="container">
-	<ol class="breadcrumb bg-transparent">
-		<li class="breadcrumb-item"><a href="">Trang chủ</a></li>
+    <ol class="breadcrumb bg-transparent">
+        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
+    </ol>
+    <div class="row mt-3">
+        <div class="col-sm-3">
+            <h5>Loại</h5>
+            <form>
+                @if (categories != null)
+                {
+                    @foreach (var category in categories)
+                    {
+                        <div>
+                            <input class="form-check-input1" type="checkbox" value="@category.IDCategory" id="@category.IDCategory"
+                                   @onchange="@(e => OnCategoryChanged(category.IDCategory, (bool)((ChangeEventArgs)e).Value))">
+                            <label>@category.Name</label>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                }
+            </form>
 
-		<li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
-	</ol>
-	<div class="row mt-3">
-		<div class="col-sm-3">
-			<h5>Loại</h5>
-			<form>
-				@if (categories != null)
-				{
-					@foreach (var category in categories)
-					{
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="@category.IDCategory" id="@category.IDCategory"
-								   @onchange="@(e => OnCategoryChanged(category.IDCategory, (bool)((ChangeEventArgs)e).Value))">
-							<label>@category.Name</label>
-						</div>
-					}
-				}
-				else
-				{
-					<div class="spinner-border" role="status">
-						<span class="visually-hidden">Loading...</span>
-					</div>
-				}
-			</form>
+            <hr class="mt-3 mb-3">
 
-			<hr class="mt-3 mb-3">
+            <h5>Phạm vi giá</h5>
+            <form method="post">
+                <div class="input-group mb-3">
+                    <input type="number" placeholder="Thấp" class="form-control" @bind="lowPrice" id="priceLow" min="0">
+                    <input type="number" placeholder="Cao" class="form-control" @bind="highPrice" id="priceHigh" min="0">
+                    <button type="button" class="btn btn-dark rounded-end" @onclick="OnFilterByPrice">Lọc</button>
+                </div>
+            </form>
 
-			<h5>Phạm vi giá</h5>
-			<form method="post">
-				<div class="input-group mb-3">
-					<input type="number" placeholder="Thấp" class="form-control" @bind="lowPrice" id="priceLow" min="0">
-					<input type="number" placeholder="Cao" class="form-control" @bind="highPrice" id="priceHigh" min="0">
-					<button type="button" class="btn btn-dark rounded-end" @onclick="OnFilterByPrice">Lọc</button>
-				</div>
-			</form>
+            <hr class="mt-3 mb-3">
 
-			<hr class="mt-3 mb-3">
+            <h5>Thứ tự sắp xếp</h5>
+            <input class="form-check-input1" type="radio" name="sortOrder" id="priceLowToHigh" value="priceLowToHigh" @onchange="@(e => OnSortOrderChanged("priceLowToHigh"))">
+            <label class="form-check-label" for="priceLowToHigh">
+                Giá từ thấp - cao
+            </label>
+            <br />
+            <input class="form-check-input1" type="radio" name="sortOrder" id="priceHighToLow" value="priceHighToLow" @onchange="@(e => OnSortOrderChanged("priceHighToLow"))">
+            <label class="form-check-label" for="priceHighToLow">
+                Giá từ cao - thấp
+            </label>
+        </div>
 
-			<h5>Thứ tự sắp xếp</h5>
-			<input class="form-check-input123" type="radio" name="sortOrder" id="priceLowToHigh" value="priceLowToHigh" @onchange="@(e => OnSortOrderChanged("priceLowToHigh"))">
-			<label class="form-check-label" for="priceLowToHigh">
-				Giá từ thấp - cao
-			</label>
-			<br />
-			<input class="form-check-input123" type="radio" name="sortOrder" id="priceHighToLow" value="priceHighToLow" @onchange="@(e => OnSortOrderChanged("priceHighToLow"))">
-			<label class="form-check-label" for="priceHighToLow">
-				Giá từ cao - thấp
-			</label>
-		</div>
-
-		<div class="col-sm-9">
-			<div class="row">
-				@if (message != null)
-				{
-					<div class="fw-bold" id="messagePrice">@message</div>
-				}
-				@if (products != null && categories != null)
-				{
-					@foreach (var x in products)
-					{
-						<div class="col-sm-4 d-flex justify-content-center flex-column prod">
-							<div class="border border-secondary-subtle rounded">
-								<a href="productdetail/@x.IDProduct">
-									<img src="@x.Image" alt="Alternate Text" class="mw-100" />
-								</a>
-							</div>
-							<div class="row container-fluid">
-								<div class="col-sm-8 mb-1">
-									<p class="font-weight-bold text-truncate">@x.Name</p>
-									<p style="font-size: small;" class="text-truncate">@categories.FirstOrDefault(z => z.IDCategory == x.IDCategory).Name</p>
-								</div>
-								<div class="col-sm-4 mb-1">
-									<p class="font-weight-bold text-truncate">@x.Price.ToString("N0") đồng</p>
-								</div>
-							</div>
-							<p><i class="bi bi-star-fill text-warning"></i> 4.9 (100)</p>
-						</div>
-					}
-				}
-				else
-				{
-					<div class="spinner-border" role="status">
-						<span class="visually-hidden">Loading...</span>
-					</div>
-				}
-			</div>
-		</div>
-	</div>
+        <div class="col-sm-9">
+            <div class="row">
+                @if (message != null)
+                {
+                    <div class="fw-bold" id="messagePrice">@message</div>
+                }
+                @if (products != null && categories != null)
+                {
+                    @foreach (var x in products)
+                    {
+                        var qrCodeUrl = qrCodeUrls.ContainsKey(x.IDProduct) ? qrCodeUrls[x.IDProduct] : null;
+                        <div class="col-sm-4 d-flex justify-content-center flex-column prod">
+                            <div class="border border-secondary-subtle rounded">
+                                <img src="@x.Image" alt="Alternate Text" class="mw-100" />
+                            </div>
+                            <div class="row container-fluid">
+                                <div class="col-sm-8">
+                                    <p class="font-weight-bold text-truncate">@x.Name</p>
+                                    <p style="font-size: small;" class="text-truncate">@categories.FirstOrDefault(z => z.IDCategory == x.IDCategory)?.Name</p>
+                                    <p><i class="bi bi-star-fill text-warning"></i> 4.9 (100)</p>
+                                </div>
+                                <div class="col-sm-4">
+                                    <p class="font-weight-bold text-truncate">@x.Price.ToString("N0") đồng</p>
+                                    @if (qrCodeUrl != null)
+                                    {
+                                        <img src="@qrCodeUrl" alt="QR Code" class="imageQR" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
-
-<script>
-	document.addEventListener("DOMContentLoaded", function () {
-		setTimeout(function () {
-			var element = document.getElementById('messagePrice');
-			element.style.display = 'none';
-		}, 3000);
-	});
-</script>

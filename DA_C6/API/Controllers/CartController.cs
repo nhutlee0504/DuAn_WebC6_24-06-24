@@ -18,21 +18,21 @@ namespace API.Controllers
             return icart.GetAllCart();
         }
 
-		[HttpPost]
-		public Cart Add(Cart cart)
-		{
-			return icart.AddProductToCart(new Cart
-			{
-				UserName = cart.UserName,
+        [HttpPost]
+        public Cart Add(Cart cart)
+        {
+            return icart.AddProductToCart(new Cart
+            {
+                UserName = cart.UserName,
                 IDPDetail = cart.IDPDetail,
                 Quantity = cart.Quantity,
-			});
-		}
+            });
+        }
 
         [HttpDelete]
         public Cart Delete(string username)
         {
             return icart.DeleteAllCartByUsername(username);
         }
-	}
+    }
 }

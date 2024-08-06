@@ -9,7 +9,7 @@ namespace API.Services
 
         public Cart AddProductToCart(Cart cart);
 
-		public Cart DeleteAllCartByUsername(string username);
+        public Cart DeleteAllCartByUsername(string username);
 
-	}
+    }
 }

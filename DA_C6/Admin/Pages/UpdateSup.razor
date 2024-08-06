@@ -1,0 +1,46 @@
+﻿@page "/UpdateSup/{id:int}"
+@using Admin.Services
+@using Admin.Model
+@inject SupplierResponse SupService
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Supplier sup = new Supplier();
+    protected override async Task OnInitializedAsync()
+    {
+        sup = await Task.Run(() => SupService.GetSupplierByID(id));
+    }
+
+    private void UpdateSuplier()
+    {
+        SupService.UpdateSuplier(sup, id);
+        Navigation.NavigateTo("/SupplierPage");
+    }
+
+    private void NavigateToSupPage()
+    {
+
+        Navigation.NavigateTo("/SupplierPage");
+
+    }
+}
+
+<h3>Cập nhật nhà cung ứng mới</h3>
+
+<div>
+    <label for="Name">Tên nhà cung ứng:</label>
+    <input type="text" id="categoryName" @bind="sup.Name" />
+    <label for="Name">Email:</label>
+    <input type="text" id="categoryName" @bind="sup.Email" />
+    <label for="Name">SĐT:</label>
+    <input type="text" id="categoryName" @bind="sup.Phone" />
+    <label for="Name">Địa chỉ:</label>
+    <input type="text" id="categoryName" @bind="sup.Address" />
+</div>
+<div>
+    <button type="button" class="btn btn-primary" @onclick="UpdateSuplier">Cập nhật</button>
+
+    <button type="button" class="btn btn-primary" @onclick="NavigateToSupPage">Quay về danh sách</button>
+</div>
+

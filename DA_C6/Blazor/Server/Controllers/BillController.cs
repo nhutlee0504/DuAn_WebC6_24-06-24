@@ -69,3 +69,5 @@ namespace Blazor.Server.Controllers
         }
     }
 }
+
+

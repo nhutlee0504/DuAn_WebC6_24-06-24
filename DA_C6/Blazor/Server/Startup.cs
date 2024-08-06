@@ -77,7 +77,6 @@ namespace Blazor.Server
             app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

@@ -3,9 +3,9 @@ using API.Data;
 using API.Model;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace API.Services
 {
@@ -16,19 +16,7 @@ namespace API.Services
         {
             context = ct;
         }
-
-		public Account LoginAccount(string username, string password)
-		{
-			using (var md5 = MD5.Create())
-			{
-				var passBytes = Encoding.UTF8.GetBytes(password);
-				var hashBytes = md5.ComputeHash(passBytes);
-				var hashedPassword = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-
-				return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
-			}
-		}
-		public Account AddAccount(Account account)
+        public Account AddAccount(Account account)
         {
             try
             {
@@ -63,6 +51,23 @@ namespace API.Services
             return context.Accounts;
         }
 
+        public Account LoginAccount(string username, string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(password);
+                byte[] hashBytes = sha256.ComputeHash(inputBytes);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length && i < 16; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("x2"));
+                }
+                var hashedPassword = sb.ToString();
+
+                return context.Accounts.FirstOrDefault(u => u.UserName == username && u.Password == hashedPassword);
+            }        
+        }
+
         public Account UpdateAccount(string user, Account account)
         {
             try
@@ -88,6 +93,5 @@ namespace API.Services
                 return null;
             }
         }
-
     }
 }

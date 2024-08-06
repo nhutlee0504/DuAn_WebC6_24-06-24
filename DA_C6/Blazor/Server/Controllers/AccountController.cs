@@ -22,6 +22,7 @@ namespace Blazor.Server.Controllers
         public AccountController(IAccount acc) => account = acc;
 
         [HttpGet]
+        [Route("GetAll")]
         public IEnumerable<Account> GetAll()
         {
             return account.GetAccounts();
@@ -38,6 +39,7 @@ namespace Blazor.Server.Controllers
             return account1;
         }
         [HttpPost]
+        [Route("Add")]
         public Account Add(Account acc)
         {
             return account.AddAccount(new Account
@@ -54,6 +56,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet("{user}")]
+        [Route("GetUser/{user}")]
         public Account GetUser(string user)
         {
             if (string.IsNullOrEmpty(user))
@@ -62,6 +65,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpPut("{user}")]
+        [Route("Update/{user}")]
         public Account Update(Account acc, string user)
         {
             if (string.IsNullOrEmpty(user))
@@ -74,7 +78,7 @@ namespace Blazor.Server.Controllers
         {
             if (string.IsNullOrEmpty(user))
                 return null;
-            account.DeleteAccount(user);     
+            account.DeleteAccount(user);
             return NoContent();
         }
 
@@ -90,7 +94,7 @@ namespace Blazor.Server.Controllers
                 }
 
                 HttpContext.Session.SetString("LoggedInUser", user.UserName);
-                HttpContext.Session.SetString("UserRole", user.Role); 
+                HttpContext.Session.SetString("UserRole", user.Role);
                 Console.WriteLine($"Login successful for user: {user.UserName}");
 
                 return Ok(new { message = "Đăng nhập thành công", role = user.Role });
