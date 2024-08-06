@@ -15,10 +15,6 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="cart-items">
-				@if (acc != null)
-				{
-					<p>@acc.Gender</p>
-				}
 				@if (cartItems != null)
 				{
 					@foreach (var item in cartItems.Where(u => u.UserName == LoggedInUser))

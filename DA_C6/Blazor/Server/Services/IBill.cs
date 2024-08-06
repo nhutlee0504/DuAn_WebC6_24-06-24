@@ -15,5 +15,6 @@ namespace Blazor.Server.Services
         Task<IEnumerable<Bill>> GetUserBillsAsync(string username, int pageNumber, int pageSize);
 
         public Bill GetBillId(int id);
+        Task<bool> PayAsync(string username, List<int> selectedProducts, decimal totalPrice);
     }
 }

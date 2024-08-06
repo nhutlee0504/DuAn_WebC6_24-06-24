@@ -4,6 +4,7 @@ using API.Data;
 using API.Model;
 using API.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -24,6 +25,32 @@ namespace API.Controllers
         public Bill GetBillId(int id)
         {
             return bill.GetBillId(id);
+        }
+        [HttpPost("pay")]
+        public async Task<IActionResult> Pay([FromBody] PaymentRequest request)
+        {
+            string username = HttpContext.Session.GetString("LoggedInUser");
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized();
+            }
+
+            bool result = await bill.PayAsync(username, request.SelectedProducts, request.TotalPrice);
+
+            if (result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Payment failed.");
+            }
+        }
+        public class PaymentRequest
+        {
+            public List<int> SelectedProducts { get; set; }
+            public decimal TotalPrice { get; set; }
         }
     }
 }

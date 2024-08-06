@@ -17,11 +17,13 @@ namespace Blazor.Server.Controllers
     {
         private readonly ApplicationDbContext _context; // Đảm bảo sử dụng DbContext của bạn
         private readonly IBill _bill;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BillController(ApplicationDbContext context, IBill bill)
+        public BillController(ApplicationDbContext context, IBill bill, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _bill = bill;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -44,12 +46,7 @@ namespace Blazor.Server.Controllers
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-
-            if (bills == null || !bills.Any())
-            {
-                return NotFound();
-            }
-
+          
             var totalPages = (int)Math.Ceiling(totalBills / (double)pageSize);
             var response = new PagedResponse<Bill>
             {
@@ -60,7 +57,32 @@ namespace Blazor.Server.Controllers
 
             return Ok(response);
         }
+        [HttpPost("pay")]
+        public async Task<IActionResult> Pay([FromBody] PaymentRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Username))
+            {
+                return Unauthorized();
+            }
 
+            bool result = await _bill.PayAsync(request.Username, request.SelectedProducts, request.TotalPrice);
+
+            if (result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Payment failed.");
+            }
+        }
+
+        public class PaymentRequest
+        {
+            public string Username { get; set; }
+            public List<int> SelectedProducts { get; set; }
+            public decimal TotalPrice { get; set; }
+        }
         public class PagedResponse<T>
         {
             public IEnumerable<T> Data { get; set; }

@@ -3,6 +3,7 @@ using API.Data;
 using API.Model;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace API.Services
 {
@@ -11,5 +12,6 @@ namespace API.Services
         public IEnumerable<Bill> GetAllBill();
 
         public Bill GetBillId(int id);
+        Task<bool> PayAsync(string username, List<int> selectedProducts, decimal totalPrice);
     }
 }

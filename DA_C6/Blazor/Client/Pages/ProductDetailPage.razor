@@ -2,6 +2,23 @@
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
 @inject IJSRuntime JSRuntime
+<style>
+	.alert {
+		border-radius: 0.5rem; 
+		padding: 1rem;
+		font-size: 1rem; 
+		margin-bottom: 1rem; 
+	}
+
+	.alert-danger {
+		background-color: #dc3545;
+		color: #ffffff; 
+	}
+
+	.alert-success {
+		background-color: #28a745; 
+		color: #ffffff;
+	}</style>
 <div class="container">
 	<div class="error-message">
 		@if (!string.IsNullOrEmpty(errorMessage))
