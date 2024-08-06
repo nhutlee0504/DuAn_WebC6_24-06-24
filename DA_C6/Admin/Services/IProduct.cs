@@ -18,5 +18,7 @@ namespace Admin.Services
         public Product Update(Product product, int id);
 
         public void Delete(int id);
+
+        IEnumerable<Product> GetProductsWithDetails(); // Bổ sung phương thức này
     }
 }

@@ -41,8 +41,8 @@ namespace Admin
             services.AddScoped<Services.ColorResponse>();
             services.AddScoped<Services.SupplierResponse>();
 
-            //services.AddScoped<IAccount, AccountResponse>();
-            //services.AddScoped<IProduct, ProductResponse>();
+            services.AddScoped<Services.AccountResponse>();
+            services.AddScoped<Services.ProductResponse>();
             //services.AddScoped<IProductDetail, ProductDetailResponse>();
             //services.AddScoped<IImage, ImageResponse>();
             //services.AddScoped<IEvaluate, EvaluateResponse>();		

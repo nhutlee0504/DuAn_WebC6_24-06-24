@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading.Tasks;
 
 namespace Admin.Services
 {
@@ -64,5 +65,19 @@ namespace Admin.Services
                return null;
             }
         }
+
+        public async Task<IEnumerable<Product>> GetProductsWithDetailsAsync()
+        {
+            return await context.Products
+                                 .Include(p => p.Supplier)
+                                 .Include(p => p.Category)
+                                 .ToListAsync();
+        }
+
+        IEnumerable<Product> IProduct.GetProductsWithDetails()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
