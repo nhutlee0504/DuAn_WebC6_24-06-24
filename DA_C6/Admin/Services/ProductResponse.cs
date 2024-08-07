@@ -13,6 +13,7 @@ namespace Admin.Services
     {
         private readonly ApplicationDbContext context;
         public ProductResponse(ApplicationDbContext ct) => context = ct;
+
         public Product Add(Product product)
         {
             context.Products.Add(product);
@@ -32,19 +33,29 @@ namespace Admin.Services
 
         public Product GetProductId(int id)
         {
-            return context.Products.FirstOrDefault(x => x.IDProduct == id);
+            return context.Products
+                          .Include(p => p.ProductDetails)
+                          .ThenInclude(pd => pd.Colors)
+                          .Include(p => p.ProductDetails)
+                          .ThenInclude(pd => pd.Sizes)
+                          .FirstOrDefault(x => x.IDProduct == id);
         }
 
         public IEnumerable<Product> GetProducts()
         {
-            return context.Products;
+            return context.Products
+                          .Include(p => p.ProductDetails)
+                          .ThenInclude(pd => pd.Colors)
+                          .Include(p => p.ProductDetails)
+                          .ThenInclude(pd => pd.Sizes)
+                          .ToList();
         }
 
         public Product Update(Product product, int id)
         {
             try
             {
-                var prod = context.Products.FirstOrDefault(x => x.IDProduct == id);
+                var prod = context.Products.Include(p => p.ProductDetails).FirstOrDefault(x => x.IDProduct == id);
                 if (prod != null)
                 {
                     prod.IDSupplier = product.IDSupplier;
@@ -61,8 +72,7 @@ namespace Admin.Services
             }
             catch (Exception)
             {
-
-               return null;
+                return null;
             }
         }
 
@@ -71,6 +81,10 @@ namespace Admin.Services
             return await context.Products
                                  .Include(p => p.Supplier)
                                  .Include(p => p.Category)
+                                 .Include(p => p.ProductDetails)
+                                 .ThenInclude(pd => pd.Colors)
+                                 .Include(p => p.ProductDetails)
+                                 .ThenInclude(pd => pd.Sizes)
                                  .ToListAsync();
         }
 
@@ -78,6 +92,5 @@ namespace Admin.Services
         {
             throw new NotImplementedException();
         }
-
     }
 }

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Admin.Data;
 using Admin.Model;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Services
@@ -10,58 +10,69 @@ namespace Admin.Services
     public class ProductDetailResponse : IProductDetail
     {
         private readonly ApplicationDbContext context;
+
         public ProductDetailResponse(ApplicationDbContext ct) => context = ct;
-        public ProductDetails Add(ProductDetails productDetails)
+
+        public async Task<ProductDetails> AddAsync(ProductDetails productDetails)
         {
             context.ProductDetails.Add(productDetails);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             return productDetails;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var prod = context.ProductDetails.FirstOrDefault(x => x.IDPDetail == id);
+            var prod = await context.ProductDetails.FirstOrDefaultAsync(x => x.IDPDetail == id);
             if (prod != null)
             {
                 context.ProductDetails.Remove(prod);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
-        public IEnumerable<ProductDetails> GetPddtByProdId(int productId)
+        public async Task<IEnumerable<ProductDetails>> GetPddtByProdIdAsync(int productId)
         {
-            return context.ProductDetails.Where(x => x.IDProduct == productId);
+            return await context.ProductDetails
+                                .Include(pd => pd.Colors)
+                                .Include(pd => pd.Sizes)
+                                .Where(x => x.IDProduct == productId)
+                                .ToListAsync();
         }
 
-        public IEnumerable<ProductDetails> GetProductDetails()
+        public async Task<IEnumerable<ProductDetails>> GetProductDetailsAsync()
         {
-            return context.ProductDetails;
+            return await context.ProductDetails
+                                .Include(pd => pd.Colors)
+                                .Include(pd => pd.Sizes)
+                                .ToListAsync();
         }
 
-        public ProductDetails GetProductDetails(int id)
+        public async Task<ProductDetails> GetProductDetailsAsync(int id)
         {
-            return context.ProductDetails.FirstOrDefault(x => x.IDPDetail == id);
+            return await context.ProductDetails
+                                .Include(pd => pd.Colors)
+                                .Include(pd => pd.Sizes)
+                                .FirstOrDefaultAsync(x => x.IDPDetail == id);
         }
 
-        public ProductDetails Update(ProductDetails productDetails, int id)
+        public async Task<ProductDetails> UpdateAsync(ProductDetails productDetails, int id)
         {
             try
             {
-                var prod = context.ProductDetails.FirstOrDefault(x => x.IDPDetail == id);
+                var prod = await context.ProductDetails.FirstOrDefaultAsync(x => x.IDPDetail == id);
                 if (prod != null)
                 {
                     prod.IDColor = productDetails.IDColor;
                     prod.IDProduct = productDetails.IDProduct;
                     prod.Size = productDetails.Size;
                     prod.Quantity = productDetails.Quantity;
-                    context.SaveChanges();
+                    await context.SaveChangesAsync();
                     return productDetails;
                 }
                 return null;
             }
-            catch (System.Exception)
+            catch
             {
-
                 return null;
             }
         }

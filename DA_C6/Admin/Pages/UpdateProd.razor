@@ -5,64 +5,104 @@
 @inject SupplierResponse supplierresponse
 @inject CategoryResponse categoryresponse
 @inject NavigationManager Navigation
+@inject ProductDetailResponse productrepose
+@inject ColorResponse colRespone
+@inject SizeResponse sizeRespone
 
-<h3>Cập nhật sản phẩm</h3>
+<h3>Chỉnh sửa sản phẩm</h3>
 
 <div class="container">
     <form @onsubmit="UpdateProduct">
-        <div class="mb-3">
-            <label for="name" class="form-label">Tên sản phẩm</label>
-            <input type="text" class="form-control" id="name" @bind="product.Name" required />
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th colspan="2">Thông tin sản phẩm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><label for="name" class="form-label">Tên sản phẩm</label></td>
+                        <td><input type="text" class="form-control" id="name" @bind="product.Name" required /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="price" class="form-label">Giá</label></td>
+                        <td><input type="number" class="form-control" id="price" @bind="product.Price" required /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="image" class="form-label">Ảnh</label></td>
+                        <td><input type="text" class="form-control" id="image" @bind="product.Image" required /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="status" class="form-label">Trạng thái</label></td>
+                        <td>
+                            <select class="form-control" id="status" @bind="product.Status" required>
+                                <option value="">Vui lòng chọn trạng thái sản phẩm</option>
+                                <option value="Bán">Bán</option>
+                                <option value="Ngừng bán">Ngừng bán</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="supplier" class="form-label">Nhà cung ứng</label></td>
+                        <td>
+                            <select class="form-control" id="supplier" @bind="product.IDSupplier" required>
+                                <option value="">Vui lòng chọn nhà cung ứng</option>
+                                @if (supplieritems != null)
+                                {
+                                    @foreach (var sup in supplieritems)
+                                    {
+                                        <option value="@sup.IDSupplier" selected="@((product.IDSupplier == sup.IDSupplier) ? "selected" : null)">
+                                            @sup.Name
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="category" class="form-label">Loại sản phẩm</label></td>
+                        <td>
+                            <select class="form-control" id="category" @bind="product.IDCategory" required>
+                                <option value="">Vui lòng chọn loại sản phẩm</option>
+                                @if (categoryitems != null)
+                                {
+                                    @foreach (var cate in categoryitems)
+                                    {
+                                        <option value="@cate.IDCategory" selected="@((product.IDCategory == cate.IDCategory) ? "selected" : null)">
+                                            @cate.Name
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="productdetails" class="form-label">Chi tiết sản phẩm</label></td>
+                        <td>
+                            <ul class="list-unstyled">
+                                @if (product.ProductDetails != null)
+                                {
+                                    @foreach (var detail in product.ProductDetails)
+                                    {
+                                        <li>
+                                            <strong>Màu sắc:</strong> @detail.Colors.Color,
+                                            <strong>Kích thước:</strong> @detail.Sizes.SizeName,
+                                            <strong>Số lượng:</strong> @detail.Quantity
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="mb-3">
-            <label for="price" class="form-label">Giá</label>
-            <input type="number" class="form-control" id="price" @bind="product.Price" required />
-        </div>
-        <div class="mb-3">
-            <label for="image" class="form-label">Ảnh</label>
-            <input type="text" class="form-control" id="image" @bind="product.Image" required />
-        </div>
-        <div class="mb-3">
-            <label for="status" class="form-label">Trạng thái</label>
-            <select class="form-control" id="status" @bind="product.Status" required>
-                <option value="">Vui lòng chọn trạng thái sản phẩm</option>
-                <option value="Bán">Bán</option>
-                <option value="Ngừng bán">Ngừng bán</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="supplier" class="form-label">Nhà cung ứng</label>
-            <select class="form-control" id="supplier" @bind="product.IDSupplier" required>
-                <option value="">Vui lòng chọn nhà cung ứng</option>
-                @if (supplieritems != null)
-                {
-                    @foreach (var sup in supplieritems)
-                    {
-                        <option value="@sup.IDSupplier">
-                            @sup.Name
-                        </option>
-                    }
-                }
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="category" class="form-label">Loại sản phẩm</label>
-            <select class="form-control" id="category" @bind="product.IDCategory" required>
-                <option value="">Vui lòng chọn loại sản phẩm</option>
-                @if (categoryitems != null)
-                {
-                    @foreach (var cate in categoryitems)
-                    {
-                        <option value="@cate.IDCategory">
-                            @cate.Name
-                        </option>
-                    }
-                }
-            </select>
-        </div>
-        <div>
+
+        <div class="mt-3">
             <button type="submit" class="btn btn-primary">Cập nhật</button>
             <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
+            <a class="btn btn-success" href="/AddProductDetails/@product.IDProduct">Thêm chi tiết sản phẩm</a>
         </div>
     </form>
 </div>
@@ -79,6 +119,12 @@
         supplieritems = await Task.Run(() => supplierresponse.GetSuppliers());
         categoryitems = await Task.Run(() => categoryresponse.GetCategories());
     }
+
+    // private async Task UpdateProduct()
+    // {
+    //     await Task.Run(() => Prodrespone.Update(product, id));
+    //     Navigation.NavigateTo("/ProductPage");
+    // }
 
     private void UpdateProduct()
     {

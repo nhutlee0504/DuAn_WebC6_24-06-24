@@ -4,21 +4,22 @@ using Admin.Model;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Admin.Services
 {
     public interface IProductDetail
     {
-        public IEnumerable<ProductDetails> GetProductDetails();
+        Task<IEnumerable<ProductDetails>> GetProductDetailsAsync();
 
-        public IEnumerable<ProductDetails> GetPddtByProdId(int productId);
+        Task<IEnumerable<ProductDetails>> GetPddtByProdIdAsync(int productId);
 
-        public ProductDetails GetProductDetails(int id);
+        Task<ProductDetails> GetProductDetailsAsync(int id);
 
-        public ProductDetails Add(ProductDetails productDetails);
+        Task<ProductDetails> AddAsync(ProductDetails productDetails);
 
-        public ProductDetails Update(ProductDetails productDetails, int id);
+        Task<ProductDetails> UpdateAsync(ProductDetails productDetails, int id);
 
-        public void Delete(int id);
+        Task DeleteAsync(int id);
     }
 }
