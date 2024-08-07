@@ -43,7 +43,7 @@ namespace Admin
 
             services.AddScoped<Services.AccountResponse>();
             services.AddScoped<Services.ProductResponse>();
-            services.AddScoped<IProductDetail, ProductDetailResponse>();
+            services.AddScoped<Services.ProductDetailResponse>();
             services.AddScoped<IImage, ImageResponse>();
             services.AddScoped<IEvaluate, EvaluateResponse>();
             services.AddScoped<IBill,BillResponse>();

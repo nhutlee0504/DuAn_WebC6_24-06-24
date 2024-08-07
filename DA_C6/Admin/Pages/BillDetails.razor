@@ -36,6 +36,7 @@ else
             @foreach (var detail in bill.BillDetails)
             {
                 <tr>
+                    <td><img src="@detail.ProductDetails.Product.Image" style="width:100px"/></td>
                     <td>@detail.ProductDetails.Product.Name</td>
                     <td>@detail.Quantity</td>
                     <td>@detail.Price.ToString("N0")</td>
