@@ -10,56 +10,46 @@
 
 <div class="container">
     <form @onsubmit="UpdateProduct">
+
         <div class="mb-3">
             <label for="name" class="form-label">Tên sản phẩm</label>
             <input type="text" class="form-control" id="name" @bind="product.Name" required />
         </div>
+
         <div class="mb-3">
             <label for="price" class="form-label">Giá</label>
             <input type="number" class="form-control" id="price" @bind="product.Price" required />
         </div>
+
         <div class="mb-3">
             <label for="image" class="form-label">Ảnh</label>
             <input type="text" class="form-control" id="image" @bind="product.Image" required />
         </div>
+
         <div class="mb-3">
             <label for="status" class="form-label">Trạng thái</label>
             <select class="form-control" id="status" @bind="product.Status" required>
-                <option value="">Vui lòng chọn tráng thái sản phẩm</option>
+                <option value="">Vui lòng chọn trạng thái sản phẩm</option>
                 <option value="Bán">Bán</option>
                 <option value="Ngừng bán">Ngừng bán</option>
             </select>
         </div>
+
         <div class="mb-3">
-            <label for="supplier" class="form-label">Nhà cung ứng</label>
+            <label for="status" class="form-label">Nhà cung ứng</label>
             <select class="form-control" id="supplier" @bind="product.IDSupplier" required>
                 <option value="">Vui lòng chọn nhà cung ứng</option>
                 @if (supplieritems != null)
                 {
-                    @foreach (var sup in supplieritems)
+                    @foreach(var item in supplieritems)
                     {
-                        <option value="@sup.IDSupplier" selected="@((product.IDSupplier == sup.IDSupplier) ? "selected" : null)">
-                            @sup.Name
-                        </option>
+                        <option value="@item.IDSupplier">@item.Name</option>
                     }
                 }
+             
             </select>
         </div>
-        <div class="mb-3">
-            <label for="category" class="form-label">Loại sản phẩm</label>
-            <select class="form-control" id="category" @bind="product.IDCategory" required>
-                <option value="">Vui lòng chọn loại sản phẩm</option>
-                @if (categoryitems != null)
-                {
-                    @foreach (var cate in categoryitems)
-                    {
-                        <option value="@cate.IDCategory" selected="@((product.IDCategory == cate.IDCategory) ? "selected" : null)">
-                            @cate.Name
-                        </option>
-                    }
-                }
-            </select>
-        </div>
+
         <div>
             <button type="submit" class="btn btn-primary">Cập nhật</button>
             <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
