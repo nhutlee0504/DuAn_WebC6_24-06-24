@@ -1,0 +1,81 @@
+﻿@page "/AddProductDetails/{id:int}"
+@using Admin.Services
+@using Admin.Model
+@inject ProductDetailResponse productrepose
+@inject ColorResponse colRespone
+@inject SizeResponse sizeRespone
+@inject NavigationManager navigation
+
+<h3>Thêm Chi Tiết Sản Phẩm</h3>
+
+<div class="container">
+    <EditForm Model="newProduct" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="color" class="form-label">Màu</label>
+            <select class="form-control" id="color" @bind="newProduct.IDColor" required>
+                <option value="">Vui lòng chọn màu</option>
+                @if (colorItems != null)
+                {
+                    @foreach (var color in colorItems)
+                    {
+                        <option value="@color.IDColor">@color.Color</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="size" class="form-label">Kích thước</label>
+            <select class="form-control" id="size" @bind="newProduct.Size" required>
+                <option value="">Vui lòng chọn kích thước</option>
+                @if (sizeItems != null)
+                {
+                    @foreach (var size in sizeItems)
+                    {
+                        <option value="@size.IDSize">@size.SizeName</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="quantity" class="form-label">Số lượng</label>
+            <input type="number" class="form-control" id="quantity" @bind="newProduct.Quantity" required />
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary">Thêm Chi Tiết</button>
+            <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+    private IEnumerable<Colors> colorItems;
+    private IEnumerable<Sizes> sizeItems;
+    private ProductDetails newProduct = new ProductDetails();
+
+    protected override async Task OnInitializedAsync()
+    {
+        colorItems = await Task.Run(() => colRespone.GetColors());
+        sizeItems = await Task.Run(() => sizeRespone.GetSizes());
+
+        // Set the IDProduct for newProduct
+        newProduct.IDProduct = id;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await Task.Run(() => productrepose.AddAsync(newProduct));
+        navigation.NavigateTo("/ProductPage");
+    }
+
+    private void NavigateToProductPage()
+    {
+        navigation.NavigateTo("/ProductPage");
+    }
+}
