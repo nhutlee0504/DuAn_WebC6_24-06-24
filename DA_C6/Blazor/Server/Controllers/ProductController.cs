@@ -18,9 +18,10 @@ namespace Blazor.Server.Controllers
             product = prod;
         }
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Product>>> SearchProductsByName(string name)
+        [Route("SearchProductsByName/{name}")]
+        public ActionResult<IEnumerable<Product>> SearchProductsByName(string name)
         {
-            var products = await product.SearchProductsByNameAsync(name);
+            var products = product.SearchProductsByNameAsync(name);
 
             if (products == null || !products.Any())
             {

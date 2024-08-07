@@ -3,7 +3,6 @@
 @inject HttpClient httpclient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSruntime
-<h3>UpdateEmail</h3>
 
 @if (acc != null)
 {
@@ -13,11 +12,11 @@
             <p class="text-danger">@errormessage</p>
         }
         <p>
-            <strong>Old Email:</strong>
+            <strong>Email cũ:</strong>
             <input type="email" @bind="reEnteredEmail" required />
         </p>
         <p>
-            <strong>New Email:</strong>
+            <strong>Email mới:</strong>
             <input type="email" @bind="NewEmail" required />
         </p>
         <button type="button" class="btn btn-primary" @onclick="UpdateUserInfo">Cập nhật thông tin</button>

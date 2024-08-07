@@ -27,7 +27,7 @@ namespace Blazor.Shared.Model
 
 
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại"), Column(TypeName = "varchar(12)")]
-        [Phone(ErrorMessage = "Số điện thoại không đúng định dạng"), RegularExpression(@"^(0\d{9}|84\d{9})$", ErrorMessage = "Số điện thoại không đúng định dạng")]
+        [RegularExpression(@"^(0\d{9}|84\d{9})$", ErrorMessage = "Số điện thoại không đúng định dạng")]
         public string Phone { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ"), Column(TypeName = "ntext")]

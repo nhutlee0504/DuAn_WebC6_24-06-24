@@ -18,6 +18,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet]
+        [Route("Get")]
         public IEnumerable<Evaluate> Get()
         {
             return _evaluate.GetEvaluate();

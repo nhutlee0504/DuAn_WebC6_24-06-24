@@ -1,7 +1,67 @@
 ﻿@page "/"
+<h2>Trang chủ Quản trị</h2>
 
-<h1>Trang chu</h1>
+<div class="dashboard-overview">
+    <div class="overview-card">
+        <h3>Tổng quan</h3>
+        <ul>
+            <li>Đơn hàng mới: -</li>
+            <li>Doanh thu hôm nay: -</li>
+            <li>Sản phẩm hết hàng: -</li>
+        </ul>
+    </div>
 
-Welcome to your new app.
+    <div class="overview-card">
+        <h3>Biểu đồ doanh thu</h3>
+        <p>(Biểu đồ doanh thu sẽ hiển thị ở đây)</p>
+    </div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <div class="overview-card">
+        <h3>Sản phẩm bán chạy nhất</h3>
+        <ul>
+            <li>(Danh sách sản phẩm bán chạy sẽ hiển thị ở đây)</li>
+        </ul>
+    </div>
+</div>
+
+<div class="recent-activity">
+    <h3>Hoạt động gần đây</h3>
+    <ul>
+        <li>(Danh sách hoạt động gần đây sẽ hiển thị ở đây)</li>
+    </ul>
+</div>
+<style>
+    body {
+        font-family: sans-serif; /* Chọn font chữ dễ đọc */
+        background-color: #f8f9fa;
+        color: #343a40;
+    }
+
+    .dashboard-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .overview-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px; /* Bo góc nhiều hơn */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Tăng độ đậm bóng đổ */
+    }
+
+        .overview-card h3 {
+            color: #007bff; /* Màu xanh dương cho tiêu đề */
+            margin-bottom: 15px;
+        }
+
+    .recent-activity ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .recent-activity li {
+        border-bottom: 1px solid #dee2e6; /* Thêm đường kẻ giữa các mục */
+        padding: 10px 0;
+    }
+</style>

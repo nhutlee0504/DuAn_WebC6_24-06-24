@@ -103,6 +103,20 @@ namespace Blazor.Server.Controllers
                 return BadRequest("Không thể cập nhật trạng thái đơn hàng này.");
             }
         }
+        [HttpPost("update-status2/{id}")]
+
+        public async Task<IActionResult> UpdateBillStatus2(int id)
+        {
+            bool result = await _bill.UpdateBillStatusAsync2(id);
+            if (result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Không thể cập nhật trạng thái đơn hàng này.");
+            }
+        }
 
         public class UpdateBillStatusRequest
         {

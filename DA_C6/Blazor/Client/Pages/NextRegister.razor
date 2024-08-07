@@ -39,7 +39,7 @@
     <li class="breadcrumb-item active" aria-current="page">Xác nhận thông tin</li>
 </ol>
 
-<EditForm Model="@account" @onclick="SubmitForm">
+<EditForm Model="@account">
     <DataAnnotationsValidator />
     <div class="registration-form mb-4" id="frm">
         <div class="text-center mb-5">
@@ -77,7 +77,8 @@
             <label class="fw-bolder" for="gioiTinh">Giới tính</label>
             <InputSelect @bind-Value="account.Gender" id="gioiTinh" class="form-control">
                 <option value="" hidden>Giới tính</option>
-                <option value="Nam">Nam</option>/-strong/-heart:>:o:-((:-h<option value="Nữ">Nữ</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
             </InputSelect>
             <small class="form-text text-muted">Vui lòng chọn giới tính của bạn.</small>
             <ValidationMessage For="@(() => account.Gender)" />
@@ -97,14 +98,14 @@
         <div class="form-check mb-3">
             <input type="checkbox" @bind-value="checKed" class="form-check-input" id="checkbox">
             <label class="form-check-label" for="checkbox">Tôi đồng ý với <a href="#">Chính sách và điều khoản</a></label>
-            @if (errorCheck != null)
+            @if (!string.IsNullOrEmpty(errorChecked))
             {
                 <br />
-                <span class="text-danger">@errorCheck</span>
+                <span class="text-danger">@errorChecked</span>
             }
         </div>
         <div>
-            <button type="submit" class="btn btn-dark w-100 rounded-pill">Đăng ký tài khoản</button>
+            <button type="submit" class="btn btn-dark w-100 rounded-pill" @onclick="SubmitForm">Đăng ký tài khoản</button>
         </div>
     </div>
 </EditForm>
@@ -117,7 +118,8 @@
     private Account account = new Account();
     private string errorEmailExit = null;
     private bool checKed = false;
-    private string errorCheck = null;
+    private string errorChecked;
+
 
     protected override void OnParametersSet()
     {
@@ -129,19 +131,32 @@
     private async Task SubmitForm()
     {
         var emailExit = (await http.GetFromJsonAsync<List<Account>>("api/Account/GetAll")).FirstOrDefault(x => x.Email == account.Email);
+        if (!checKed)
+        {
+            errorChecked = "Bạn cần đồng ý với chính sách và điều khoản";
+            return;
+        }
+        else
+        {
+            errorChecked = null;
+        }
+
+        if (emailExit != null)
+        {
+            errorEmailExit = "Email đã tồn tại";
+            return;
+        }
+        else
+            errorEmailExit = null;
+
         if (string.IsNullOrEmpty(account.Name) || string.IsNullOrEmpty(account.Phone) || string.IsNullOrEmpty(account.Address) || string.IsNullOrEmpty(account.Gender) || string.IsNullOrEmpty(account.Email))
         {
-
+           
         }
-        else if (emailExit != null)
-            errorEmailExit = "Email đã tồn tại";
-        else if (checKed == false)
-            errorCheck = "Vui lòng xác nhận đồng ý";
         else
         {
             try
             {
-                errorCheck = null;
                 errorEmailExit = null;
                 var response = await http.PostAsJsonAsync("api/Account/Add", account);
 

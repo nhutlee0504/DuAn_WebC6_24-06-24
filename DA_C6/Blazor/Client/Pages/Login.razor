@@ -82,10 +82,10 @@
 @code {
     public class AccountLogin
     {
-        [Required(ErrorMessage = "Tên tài khoản là bắt buộc.")]
+        [Required(ErrorMessage = "Tên tài khoản không được bỏ trống.")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
+        [Required(ErrorMessage = "Mật khẩu không được bỏ trống.")]
         public string Password { get; set; }
     }
 
@@ -123,7 +123,7 @@
 
     private async Task ClearErrorMessageAfterDelay()
     {
-        await Task.Delay(1000);
+        await Task.Delay(3000);
         errorMessage = null;
         StateHasChanged();
     }

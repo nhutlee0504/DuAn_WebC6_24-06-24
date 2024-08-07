@@ -109,7 +109,7 @@ namespace Blazor.Server.Services
             }
             return false;
         }
-
+  
         public async Task<bool> UpdateBillStatusAsync(int billId, string newStatus)
         {
             var bill = await _context.Bills.FindAsync(billId);
@@ -121,7 +121,17 @@ namespace Blazor.Server.Services
             }
             return false;
         }
-
+        public async Task<bool> UpdateBillStatusAsync2(int billId)
+        {
+            var bill = await _context.Bills.FindAsync(billId);
+            if (bill != null)
+            {
+                bill.Status = "Hoàn thành";
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
 
 
     }

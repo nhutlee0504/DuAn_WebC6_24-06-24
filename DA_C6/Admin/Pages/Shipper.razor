@@ -1,0 +1,129 @@
+﻿
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    color: #343a40;
+    padding: 15px;
+    font-weight: bold;
+}
+
+.table td {
+    padding: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.badge {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border-radius: 0.5rem;
+}
+
+
+
+</style>
+@page "/Shipper"
+@using Admin.Services
+@using Admin.Model
+@inject BillResponse billitem
+@inject NavigationManager Navigation
+
+@if (bills == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="container mt-4">
+        <table class="table table-borderless text-center">
+            <thead>
+                <tr>
+                    <th>Mã hóa đơn</th>
+                    <th>Tên người dùng</th>
+                    <th>Tổng tiền</th>
+                    <th>Ngày đặt hàng</th>
+                    <th>Trạng thái</th>
+                    <th>Xác nhận</th>
+                    <th>Xem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var x in bills)
+                {
+                    <tr>
+                        <td>@x.IDBill</td>
+                        <td>@x.UserName</td>
+                        <td>@x.TotalAmount.ToString("N0") ₫</td>
+                        <td>@x.OrderDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (x.Status == "Xác nhận")
+                            {
+                                <span class="badge bg-warning text-light">@x.Status</span>
+                            }
+                            else if (x.Status == "Hoàn thành")
+                            {
+                                <span class="badge bg-success text-light">@x.Status</span>
+                            }
+                            else if (x.Status == "Đã hủy")
+                            {
+                                <span class="badge bg-danger text-light">@x.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary text-light">@x.Status</span>
+                            }
+                        </td>
+                        <td>
+                            @if (x.Status == "Xác nhận")
+                            {
+                                <button class="btn btn-success" @onclick="() => UpdateBillShip(x.IDBill)">Xác nhận đơn</button>
+                            }
+                            else if(x.Status == "Đang giao")
+                            {
+                              <button class="btn btn-danger" @onclick="() => UpdateBillShip2(x.IDBill)">Đã giao</button>
+                            }
+                        </td>
+                          <td>
+                         <a class="btn btn-info" href="@($"/BillDetails/{x.IDBill}")">Chi tiết</a</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private IEnumerable<Bill> bills;
+    private Bill bill;
+
+    protected override async Task OnInitializedAsync()
+    {
+        bills = await billitem.GetAllBillAsync();
+    }
+
+    private async Task UpdateBillShip(int id)
+    {
+        bill = await billitem.UpdateWithShipperAsync(id);
+        Navigation.NavigateTo("/Shipper", forceLoad: true);
+    }
+
+    private async Task UpdateBillShip2(int id)
+    {
+        bill = await billitem.UpdateWithShipper2Async(id);
+        Navigation.NavigateTo("/Shipper", forceLoad: true);
+    }
+}

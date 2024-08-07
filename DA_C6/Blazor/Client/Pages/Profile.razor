@@ -5,9 +5,26 @@
 @using System.Collections.Generic
 @using System.Linq
 @using System.Threading.Tasks
+@using System.Security.Cryptography
+@using System.Text
 @inject NavigationManager NavigationManager
 <style>
+    .btn-custom {
+        background-color: #000;
+        color: #fff;
+        border: 1px solid #000;
+    }
 
+        .btn-custom:hover {
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #000;
+        }
+
+        .btn-custom:focus, .btn-custom:active {
+            box-shadow: none;
+            outline: none;
+        }
     .pagination-container {
         display: flex;
         flex-direction: column;
@@ -77,7 +94,7 @@
             }
 
         .breadcrumb a {
-            color: #007bff; /* Màu xanh dương cho liên kết */
+            color: #007bff; 
             text-decoration: none;
         }
 
@@ -97,6 +114,18 @@
         border-bottom: 2px solid transparent;
     }
 
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+    }
+
+    .input-group {
+        margin-bottom: 1rem; 
+    }
+
+    .input-group-text i {
+        color: dark; 
+    }
     .icon-nav {
         width: 15px;
     }
@@ -206,9 +235,19 @@
                     </div>
                     <div class="col-md-6">
                         <p class="font-weight-bolder h6">Họ và tên</p>
-                        <input type="text" class="input-pro" @bind="account.Name" readonly />
+                        <input type="text" class="input-pro" @bind="account.Name" />
                         <p class="font-weight-bolder h6">Địa chỉ</p>
-                        <input type="text" class="input-pro" @bind="account.Address" readonly />
+                        <input type="text" class="input-pro" @bind="account.Address" />
+                        <p class="font-weight-bolder h6">Giới tính</p>
+                        <select class="input-pro" @bind="account.Gender">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                        <p class="font-weight-bold h6">Số điện thoại</p>
+                        <input type="text" class="input-pro" @bind="account.Phone" />
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
+                        <button @onclick="UpdateUserInfo1" class="btn btn-dark" type="button">Cập nhật</button>
                     </div>
                 </div>
                 <div class="row mt-4">
@@ -218,18 +257,76 @@
                         <p class="small">Đây sẽ là thông tin ẩn trên trang cá nhân</p>
                     </div>
                     <div class="col-md-6">
-                        <p class="font-weight-bold h6">Số điện thoại</p>
-                        <input type="text" class="input-pro" value="@GetMaskedPhone(account.Phone)" readonly />
+
                         <p class="font-weight-bolder h6">Email</p>
-                        <input type="text" class="input-pro" value="@GetMaskedEmail(account.Email)" readonly />
+                        <input type="text" class="input-pro" value="@GetMaskedEmail(account.Email)" />
+                        <a class="btn btn-outline-dark mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                           Cập nhật email
+                        </a>
+                        <div class="collapse" id="collapseExample">
+                            <div class="card card-body">
+                                @if (account != null)
+                                {
+                                    <form>
+                                        @if (!string.IsNullOrEmpty(errormessage))
+                                        {
+                                            <p class="text-danger">@errormessage</p>
+                                        }
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control" @bind="reEnteredEmail" placeholder="Email cũ" required />
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control" @bind="NewEmail" placeholder="Email mới" required />
+                                        </div>
+                                        <button type="button" class="btn btn-custom" @onclick="UpdateUserInfo2">Cập nhật</button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
                         <p class="font-weight-bolder h6">Mật khẩu</p>
                         <input type="password" class="input-pro" value="******************" readonly />
+                        <a class="btn btn-outline-dark mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                            Cập nhật mật khẩu
+                        </a>
+                        <div class="collapse" id="collapseExample2">
+                            <div class="card card-body">
+                                @if (account != null)
+                                {
+                                   
+                                                <label for="oldPass" class="form-label">Mật khẩu cũ</label>
+                                                <input type="password" id="oldPass" class="form-control" @bind="oldPass" />
+                                                @if (!string.IsNullOrEmpty(errorOldPass))
+                                                {
+                                                    <div class="text-danger mt-1">@errorOldPass</div>
+                                                }
+                                          
+                                                <label for="newPass" class="form-label">Mật khẩu mới</label>
+                                                <input type="password" id="newPass" class="form-control" @bind="newPass" />
+                                                @if (!string.IsNullOrEmpty(errorNewPass))
+                                                {
+                                                    <div class="text-danger mt-1">@errorNewPass</div>
+                                                }
+                                                <label for="newPass2" class="form-label">Nhập lại mật khẩu mới</label>
+                                                <input type="password" id="newPass2" class="form-control mb-3" @bind="newPass2" />
+                                                @if (!string.IsNullOrEmpty(errorNewPass2))
+                                                {
+                                                    <div class="text-danger mt-1">@errorNewPass2</div>
+                                                }
+                                          
+                                                <button type="button" class="btn btn-custom"  @onclick="SubmitForm">Xác nhận</button>
+                                            @if (!string.IsNullOrEmpty(errorMessage))
+                                            {
+                                                <div class="text-danger mt-3">@errorMessage</div>
+                                            }
+                                }
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-                <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
-                    <button class="btn btn-light me-md-2" style="border:none;background-color:white" type="button">Hủy</button>
-                    <button class="btn btn-dark" type="button">Cập nhật</button>
-                </div>
+              
 
 
 
@@ -252,7 +349,26 @@
                                         <p>Tổng: @bill.TotalAmount.ToString("N0") VND</p>
                                     </div>
                                     <div class="col-md-2 status-container">
-                                        <p style="color:#FBBF24">Trạng thái: @bill.Status</p>
+                                        @if (bill.Status == "Đang chờ")
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                        else if (bill.Status == "Xác nhận")
+                                        {
+                                            <span class="badge rounded-pill bg-primary text-light">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                        else if (bill.Status == "Đã giao")
+                                        {
+                                            <span class="badge rounded-pill text-bg-light">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                        else if (bill.Status == "Hoàn thành")
+                                        {
+                                            <span class="badge rounded-pill bg-success text-light">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-secondary text-light">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
                                     </div>
                                     <div class="col-md-2 btn-container">
                                         <div class="d-grid gap-2 d-md-block">
@@ -260,9 +376,9 @@
                                             {
                                                 <button type="button" class="btn btn-danger rounded-pill" @onclick="() => HandleCancel(bill.IDBill)">Hủy đơn</button>
                                             }
-                                            @if (bill.Status == "Thành công")
+                                            @if (bill.Status == "Đã giao")
                                             {
-                                                <button type="button" class="btn btn-success rounded-pill" @onclick="() => HandleUpdateStatus(bill.IDBill)">Xác nhận</button>
+                                                <button type="button" class="btn btn-success rounded-pill" @onclick="() => HandleUpdateStatus2(bill.IDBill)">Xác nhận</button>
                                             }
                                             <button class="btn btn-dark rounded-pill" type="button" @onclick="() => NavigateToBillDetails(bill.IDBill)">Chi tiết</button>
                                         </div>
@@ -337,11 +453,90 @@
     private int PageSize = 4;
     private bool HasPreviousPage => CurrentPage > 1;
     private bool HasNextPage => CurrentPage < TotalPages;
+    private Account acc;
+    private string reEnteredEmail;
+    private string NewEmail;
+    private string errormessage;
+    private string oldPass;
+    private string newPass;
+    private string newPass2;
+    private string errorOldPass;
+    private string errorNewPass;
+    private string errorNewPass2;
+
+    private async Task SubmitForm()
+    {
+        ValidateForm();
+
+        if (!string.IsNullOrEmpty(errorOldPass) || !string.IsNullOrEmpty(errorNewPass) || !string.IsNullOrEmpty(errorNewPass2))
+        {
+            return;
+        }
+
+        if (account.Password != GetHash(oldPass))
+        {
+            errorOldPass = "Mật khẩu cũ không đúng";
+        }
+        else if (newPass != newPass2)
+        {
+            errorNewPass2 = "Mật khẩu xác nhận không khớp";
+        }
+        else
+        {
+            account.Password = GetHash(newPass);
+            try
+            {
+                var response = await HttpClient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", account);
+                if (response.IsSuccessStatusCode)
+                {
+                    await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "LoggedInUser");
+                    NavigationManager.NavigateTo("/login");
+                }
+                else
+                {
+                    errorMessage = "Đổi mật khẩu không thành công";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                errorMessage = "Đã xảy ra lỗi khi đổi mật khẩu.";
+            }
+        }
+    }
+
+    private void ValidateForm()
+    {
+        errorOldPass = string.IsNullOrEmpty(oldPass) ? "Vui lòng nhập mật khẩu cũ" : null;
+        errorNewPass = string.IsNullOrEmpty(newPass) ? "Vui lòng nhập mật khẩu mới" : null;
+        errorNewPass2 = string.IsNullOrEmpty(newPass2) ? "Vui lòng nhập mật khẩu xác nhận" : null;
+
+        if (!string.IsNullOrEmpty(newPass) && newPass.Length < 8)
+        {
+            errorNewPass = "Mật khẩu phải ít nhất 8 ký tự";
+        }
+    }
+
+    private string GetHash(string input)
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = sha256.ComputeHash(inputBytes);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hashBytes.Length && i < 16; i++)
+            {
+                sb.Append(hashBytes[i].ToString("x2"));
+            }
+            return sb.ToString();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+
             LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
 
             if (!string.IsNullOrEmpty(LoggedInUser))
@@ -368,6 +563,19 @@
             await LoadPage(CurrentPage);
         }
     }
+    private async Task UpdateUserInfo1()
+    {
+        var response = await HttpClient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", account);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/Pages/Profile", forceLoad: true);
+        }
+        else
+        {
+            // Xử lý khi cập nhật không thành công
+        }
+    }
+
 
     private async Task NextPage()
     {
@@ -415,7 +623,45 @@
             errorMessage = $"Lỗi khi tải trang: {ex.Message}";
         }
     }
+    private async Task UpdateUserInfo2()
+    {
+        if (string.IsNullOrWhiteSpace(reEnteredEmail) || string.IsNullOrWhiteSpace(NewEmail))
+        {
+            errormessage = "Vui lòng điền cả hai trường này.";
+        }
+        else if (reEnteredEmail == account.Email)
+        {
+            errormessage = "";
+            if (!IsEmailValid(reEnteredEmail) || !IsEmailValid(NewEmail))
+            {
+                errormessage = "Định dạng email không hợp lệ.";
+            }
+            else
+            {
+                errormessage = "";
+                account.Email = NewEmail;
+                var response = await HttpClient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", account);
+                if (response.IsSuccessStatusCode)
+                {
+                    NavigationManager.NavigateTo("Pages/Profile", forceLoad: true);
+                }
+                else
+                {
+                    // Xử lý khi cập nhật không thành công
+                }
+            }
+        }
+        else
+        {
+            errormessage = "Email không trùng khớp";
+        }
+    }
 
+    private bool IsEmailValid(string email)
+    {
+        var emailRegex = new System.Text.RegularExpressions.Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+        return emailRegex.IsMatch(email);
+    }
     private string GetMaskedPhone(string phone)
     {
         if (string.IsNullOrEmpty(phone) || phone.Length < 4)
@@ -483,6 +729,31 @@
             _isPaymentSuccessful = true;
             _successMessage = "Trạng thái đơn hàng đã được cập nhật thành công!";
             StateHasChanged();
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình cập nhật trạng thái đơn hàng: {errorMessage}");
+        }
+    }
+    private async Task HandleUpdateStatus2(int billId)
+    {
+        var updateRequest = new Bill
+            {
+                IDBill = billId,
+                Status = "Hoàn thành"
+            };
+
+        var response = await HttpClient.PostAsJsonAsync($"api/bill/update-status2/{billId}", updateRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _isPaymentSuccessful = true;
+            _successMessage = "Trạng thái đơn hàng đã được cập nhật thành công!";
+            StateHasChanged();
+            await JSRuntime.InvokeVoidAsync("alert", $"Đã xác nhận thành công hóa đơn! Cảm ơn đã mua hàng :D");
+            await JSRuntime.InvokeVoidAsync("location.reload");
+          
         }
         else
         {

@@ -128,3 +128,10 @@
 .col-sm-3:hover .container-fluid {
     transform: translateY(-5px);
 }
+
+.imageQR {
+    width: 100%;
+    max-width: 100px;
+    height: auto;
+    object-fit: contain;
+}

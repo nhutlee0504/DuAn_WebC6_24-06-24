@@ -1,8 +1,6 @@
 ﻿@page "/product"
 @inject HttpClient http
 @inject NavigationManager NavigationManager
-@inject HttpClient HttpClient
-@inject IJSRuntime JSruntime
 
 <style>
     .bg-text {
@@ -31,11 +29,8 @@
         text-decoration: none;
     }
 
-    .imageQR {
-        width: 100%; 
-        max-width: 70px; 
-        height: auto;
-        object-fit: contain; 
+    .active > .page-link, .page-link.active{
+       border: 1.5px solid black;
     }
 </style>
 
@@ -98,27 +93,24 @@
                 {
                     <div class="fw-bold" id="messagePrice">@message</div>
                 }
-                @if (products != null && categories != null)
+                @if (pagedProducts != null && categories != null)
                 {
-                    @foreach (var x in products)
+                    @foreach (var x in pagedProducts)
                     {
-                        var qrCodeUrl = qrCodeUrls.ContainsKey(x.IDProduct) ? qrCodeUrls[x.IDProduct] : null;
-                        <div class="col-sm-4 d-flex justify-content-center flex-column prod">
+                        <div class="col-sm-4 d-flex justify-content-center flex-column prod  mb-4">
                             <div class="border border-secondary-subtle rounded">
-                                <img src="@x.Image" alt="Alternate Text" class="mw-100" />
+                                <a href="/productdetail/@x.IDProduct"><img src="@x.Image" alt="Alternate Text" class="mw-100" /></a>
                             </div>
                             <div class="row container-fluid">
-                                <div class="col-sm-8">
-                                    <p class="font-weight-bold text-truncate">@x.Name</p>
-                                    <p style="font-size: small;" class="text-truncate">@categories.FirstOrDefault(z => z.IDCategory == x.IDCategory)?.Name</p>
-                                    <p><i class="bi bi-star-fill text-warning"></i> 4.9 (100)</p>
+                                <div class="col-md-8">
+                                    <span class="fw-bold text-truncate">@x.Name</span>
+                                    <br />
+                                    <span style="font-size: small; line-height: 1" class="text-truncate">@categories.FirstOrDefault(z => z.IDCategory == x.IDCategory)?.Name</span>
+                                    <br />
+                                    <span style="line-height: 3"><i class="bi bi-star-fill text-warning"></i> 4.9 (100)</span>
                                 </div>
-                                <div class="col-sm-4">
-                                    <p class="font-weight-bold text-truncate">@x.Price.ToString("N0") đồng</p>
-                                    @if (qrCodeUrl != null)
-                                    {
-                                        <img src="@qrCodeUrl" alt="QR Code" class="imageQR" />
-                                    }
+                                <div class="col-md-4">
+                                    <p class="fw-bold text-truncate">@x.Price.ToString("N0") đồng</p>
                                 </div>
                             </div>
                         </div>
@@ -130,6 +122,30 @@
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 }
+            </div>
+            <div class="d-flex justify-content-center">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link text-black" aria-label="Previous" @onclick="@(e => ChangePage(currentPage - 1))">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        @for (var i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(currentPage == i ? "active" : "")">
+                                <a class="page-link text-black bg-white" @onclick="@(e => ChangePage(i))">
+                                    <span>@i</span>
+                                </a>
+                            </li>
+                        }
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link text-black" aria-label="Next" @onclick="@(e => ChangePage(currentPage + 1))">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

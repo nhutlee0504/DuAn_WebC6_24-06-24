@@ -1,4 +1,4 @@
-﻿@page "/testttnd"
+﻿ @page "/testttnd"
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
 @inject IJSRuntime JSruntime
@@ -7,25 +7,31 @@
 
 @if (acc != null)
 {
-    <p>
-        <strong>Tên người dùng:</strong>
-        <input type="text" @bind="acc.UserName" />
-    </p>
-    <p>
-        <strong>Email:</strong>
-        <input type="text" @bind="acc.Email" />
-    </p>
-    <p>
-        <strong>Số điện thoại:</strong>
-        <input type="text" @bind="acc.Phone" />
-    </p>
-    <button class="btn btn-primary" @onclick="UpdateUserInfo">Cập nhật thông tin</button>
+    <EditForm Model="acc" >
+        <DataAnnotationsValidator />
+
+        <p>
+            <strong>Tên người dùng:</strong>
+            <InputText @bind-Value="acc.UserName" />
+            <ValidationMessage For="@(() => acc.UserName)" />
+        </p>
+        <p>
+            <strong>Email:</strong>
+            <InputText @bind-Value="acc.Email" />
+            <ValidationMessage For="@(() => acc.Email)" />
+        </p>
+        <p>
+            <strong>Số điện thoại:</strong>
+            <InputText @bind-Value="acc.Phone" />
+            <ValidationMessage For="@(() => acc.Phone)" />
+        </p>
+        <button @onclick="UpdateUserInfo" class="btn btn-primary" type="submit">Cập nhật thông tin</button>
+    </EditForm>
 }
 else
 {
     <p>Không tìm thấy thông tin tài khoản.</p>
 }
-
 @code {
     private Account acc;
     private string LoggedInUser;
