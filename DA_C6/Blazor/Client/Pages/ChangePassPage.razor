@@ -101,7 +101,7 @@
                 if (response.IsSuccessStatusCode)
                 {
                     await js.InvokeVoidAsync("localStorage.removeItem", "LoggedInUser");
-                    navigation.NavigateTo("/login");
+                    navigation.NavigateTo("/login", forceLoad: true);
                 }
                 else
                 {
