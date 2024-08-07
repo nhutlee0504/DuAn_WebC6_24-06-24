@@ -325,7 +325,6 @@
             }
             catch (Exception ex)
             {
-                // Log the exception or display a more detailed error message
                 await JSRuntime.InvokeVoidAsync("alert", $"Lỗi không mong muốn: {ex.Message}");
             }
         }
