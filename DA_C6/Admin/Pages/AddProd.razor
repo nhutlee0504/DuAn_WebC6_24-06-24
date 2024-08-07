@@ -19,7 +19,7 @@
         </div>
         <div class="mb-3">
             <label for="image" class="form-label">Ảnh</label>
-            <InputFile class="image" id="image" OnChange="HandleImageChange" />
+            <input type="text" class="form-control" id="image" @bind="newProduct.Image" required />
         </div>
         <div class="mb-3">
             <label for="status" class="form-label">Trạng thái</label>
@@ -83,13 +83,13 @@
     {
         navigation.NavigateTo("/ProductPage");
     }
-    private async Task HandleImageChange(InputFileChangeEventArgs e)
-    {
-        var file = e.File;
-        var buffer = new byte[file.Size];
-        await file.OpenReadStream().ReadAsync(buffer);
+    // private async Task HandleImageChange(InputFileChangeEventArgs e)
+    // {
+    //     var file = e.File;
+    //     var buffer = new byte[file.Size];
+    //     await file.OpenReadStream().ReadAsync(buffer);
 
-        // Assuming the image is saved as a Base64 string in the database
-        newProduct.Image = Convert.ToBase64String(buffer);
-    }
+    //     // Assuming the image is saved as a Base64 string in the database
+    //     newProduct.Image = Convert.ToBase64String(buffer);
+    // }
 }

@@ -98,7 +98,40 @@ namespace Blazor.Server.Services
                 .Take(pageSize)
                 .ToListAsync();
         }
-
+        public async Task<bool> CancelBillAsync(int billId)
+        {
+            var bill = await _context.Bills.FindAsync(billId);
+            if (bill != null && bill.Status == "Đang chờ")
+            {
+                bill.Status = "Đã hủy";
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+  
+        public async Task<bool> UpdateBillStatusAsync(int billId, string newStatus)
+        {
+            var bill = await _context.Bills.FindAsync(billId);
+            if (bill != null)
+            {
+                bill.Status = newStatus;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> UpdateBillStatusAsync2(int billId)
+        {
+            var bill = await _context.Bills.FindAsync(billId);
+            if (bill != null)
+            {
+                bill.Status = "Hoàn thành";
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
 
 
     }

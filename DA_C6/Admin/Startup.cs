@@ -43,13 +43,15 @@ namespace Admin
 
             services.AddScoped<Services.AccountResponse>();
             services.AddScoped<Services.ProductResponse>();
-            services.AddScoped<Services. ProductDetailResponse>();
-            services.AddScoped<Services. ImageResponse>();
-            services.AddScoped<Services.EvaluateResponse>();
+            services.AddScoped<IProductDetail, ProductDetailResponse>();
+            services.AddScoped<IImage, ImageResponse>();
+            services.AddScoped<IEvaluate, EvaluateResponse>();
+            services.AddScoped<IBill,BillResponse>();
             services.AddScoped<Services.BillResponse>();
             services.AddScoped<Services.BillDetailResponse>();
-            services.AddScoped<Services.SaleResponse>();
-            services.AddScoped<Services.CartResponse>();
+            services.AddScoped<ISale, SaleResponse>();
+            services.AddScoped<ICart, CartResponse>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

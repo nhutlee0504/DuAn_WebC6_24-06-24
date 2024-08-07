@@ -4,27 +4,27 @@
 @inject AccountResponse accountrespose
 @inject NavigationManager navigation
 
-<h3>AccountPage</h3>
+<h3>Danh sách tài khoản</h3>
 
 @if (accountitems == null)
 {
-    <p>Loading...</p>
+    <p>Đang tải...</p>
 }
 else
 {
-    <table class="table table-hover" style="margin-top: 20px">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>Email</th>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Phone</th>
-                <th>Address</th>
-                <th>Role</th>
+                <th>Họ và tên</th>
+                <th>Giới tính</th>
+                <th>Số điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Vai trò</th>
                 <th>Hành động</th>
             </tr>
         </thead>
-        <tbody class="table-group-divider">
+        <tbody>
             @foreach (var x in accountitems)
             {
                 <tr>
@@ -35,7 +35,8 @@ else
                     <td>@x.Address</td>
                     <td>@x.Role</td>
                     <td>
-                        <button type="button" class="btn btn-outline-success" @onclick="() => BlockAccount(x.UserName)">Cập nhật</button>
+                        <button type="button" class="btn btn-outline-success" @onclick="() => EditAccount(x.UserName)">Chỉnh sửa</button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="() => BlockAccount(x.UserName)">Khóa</button>
                     </td>
                 </tr>
             }
@@ -51,10 +52,16 @@ else
     {
         accountitems = await Task.Run(() => accountrespose.GetAccounts());
     }
+
+    private async Task EditAccount(string User)
+    {
+        navigation.NavigateTo($"/EditAccountPage/{User}"); // Chuyển hướng đến trang chỉnh sửa
+    }
+
     private async Task BlockAccount(string User)
     {
         accounts = await Task.Run(() => accountrespose.GetAccountById(User));
-        accounts.Role = "Baned";
+        accounts.Role = "Banned";
         var FindAccount = await Task.Run(() => accountrespose.UpdateAccount(User, accounts));
         navigation.NavigateTo("AccountPage", forceLoad: true);
     }

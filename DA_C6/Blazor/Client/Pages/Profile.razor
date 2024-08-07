@@ -5,465 +5,768 @@
 @using System.Collections.Generic
 @using System.Linq
 @using System.Threading.Tasks
+@using System.Security.Cryptography
+@using System.Text
 @inject NavigationManager NavigationManager
 <style>
+    .btn-custom {
+        background-color: #000;
+        color: #fff;
+        border: 1px solid #000;
+    }
 
-	.pagination-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 20px;
-	}
+        .btn-custom:hover {
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #000;
+        }
 
-	.pagination {
-		display: flex;
-		gap: 10px; /* Khoảng cách giữa các nút */
-	}
+        .btn-custom:focus, .btn-custom:active {
+            box-shadow: none;
+            outline: none;
+        }
+    .pagination-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
 
-	.page-button {
-		background-color: black;
-		color: white;
-		border: none;
-		padding: 10px 15px;
-		border-radius: 5px;
-		cursor: pointer;
-		transition: background-color 0.3s;
-	}
+    .pagination {
+        display: flex;
+        gap: 10px; /* Khoảng cách giữa các nút */
+    }
 
-		.page-button:disabled {
-			background-color: gray;
-			cursor: not-allowed;
-		}
+    .page-button {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
 
-		.page-button.active {
-			background-color: white;
-			color: black;
-			border: 2px solid black;
-			border-radius: 50%; /* Hình vòng tròn */
-		}
+        .page-button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
 
-		.page-button:hover:not(:disabled) {
-			background-color: darkgray;
-		}
+        .page-button.active {
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            border-radius: 50%; /* Hình vòng tròn */
+        }
 
-	.content-container {
-		width: 100%;
-		transition: transform 0.3s ease-out;
-	}
+        .page-button:hover:not(:disabled) {
+            background-color: darkgray;
+        }
 
-		.content-container.transition-out {
-			transform: translateX(-100%);
-		}
+    .content-container {
+        width: 100%;
+        transition: transform 0.3s ease-out;
+    }
 
-	.breadcrumb {
-		list-style: none;
-		padding: 0;
-		margin: 10px 0;
-		font-size: 14px;
-	}
+        .content-container.transition-out {
+            transform: translateX(-100%);
+        }
 
-		.breadcrumb li {
-			display: inline;
-		}
+    .breadcrumb {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0;
+        font-size: 14px;
+    }
 
-			.breadcrumb li::after {
-				content: "/";
-				padding: 0 5px;
-				color: #6c757d; /* Màu xám cho dấu phân cách */
-			}
+        .breadcrumb li {
+            display: inline;
+        }
 
-			.breadcrumb li:last-child::after {
-				content: "";
-			}
+            .breadcrumb li::after {
+                content: "/";
+                padding: 0 5px;
+                color: #6c757d; /* Màu xám cho dấu phân cách */
+            }
 
-		.breadcrumb a {
-			color: #007bff; /* Màu xanh dương cho liên kết */
-			text-decoration: none;
-		}
+            .breadcrumb li:last-child::after {
+                content: "";
+            }
 
-			.breadcrumb a:hover {
-				text-decoration: underline;
-			}
+        .breadcrumb a {
+            color: #007bff; 
+            text-decoration: none;
+        }
 
-		.breadcrumb .active {
-			color: #212529;
-			font-weight: 500;
-			pointer-events: none;
-		}
+            .breadcrumb a:hover {
+                text-decoration: underline;
+            }
 
-	.nav-tabs .nav-link {
-		border-top: none;
-		color: black;
-		border-bottom: 2px solid transparent;
-	}
+        .breadcrumb .active {
+            color: #212529;
+            font-weight: 500;
+            pointer-events: none;
+        }
 
-	.icon-nav {
-		width: 15px;
-	}
+    .nav-tabs .nav-link {
+        border-top: none;
+        color: black;
+        border-bottom: 2px solid transparent;
+    }
 
-	.input-pro {
-		border-width: 1px;
-		font-weight: bold;
-		padding: 10px;
-		border-radius: 10px;
-		width: 100%;
-		font-size: 15px;
-	}
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+    }
 
-	hr {
-		height: 2px;
-		border: none;
-		background-color: black;
-	}
+    .input-group {
+        margin-bottom: 1rem; 
+    }
 
-	.input-pro {
-		margin-bottom: 20px;
-	}
+    .input-group-text i {
+        color: dark; 
+    }
+    .icon-nav {
+        width: 15px;
+    }
 
-	.font-weight-bolder {
-		margin-bottom: 10px;
-	}
+    .input-pro {
+        border-width: 1px;
+        font-weight: bold;
+        padding: 10px;
+        border-radius: 10px;
+        width: 100%;
+        font-size: 15px;
+    }
 
-	.row-custom {
-		background-color: #F8F8F8;
-		border: none;
-		border-radius: 25px;
-		padding: 15px;
-	}
+    hr {
+        height: 2px;
+        border: none;
+        background-color: black;
+    }
 
-	.img-container, .status-container, .btn-container {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
+    .input-pro {
+        margin-bottom: 20px;
+    }
 
-		.img-container img {
-			max-width: 100%;
-			height: auto;
-		}
+    .font-weight-bolder {
+        margin-bottom: 10px;
+    }
 
-		.btn-container .btn {
-			margin: 5px;
-		}
+    .row-custom {
+        background-color: #F8F8F8;
+        border: none;
+        border-radius: 25px;
+        padding: 15px;
+    }
+
+    .img-container, .status-container, .btn-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .btn-container .btn {
+            margin: 5px;
+        }
 </style>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 @if (errorMessage != null)
 {
-	<div class="alert alert-danger" role="alert">
-		@errorMessage
-	</div>
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
 }
 <div class="container">
-	<div class="row">
-		<div class="profile-header">
-			<b class="font-weight-bold h2">THÔNG TIN CÁ NHÂN</b>
-			<ul class="breadcrumb">
-				<li><a href="/">Trang chủ</a></li>
-				<li class="active">Thông tin của bạn</li>
-			</ul>
-		</div>
-	</div>
+    <div class="row">
+        <div class="profile-header">
+            <b class="font-weight-bold h2">THÔNG TIN CÁ NHÂN</b>
+            <ul class="breadcrumb">
+                <li><a href="/">Trang chủ</a></li>
+                <li class="active">Thông tin của bạn</li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 <div class="container">
-	<div class="row">
-		<div class="col-md-2">
-			<img src="/IMG/image 3 (1).png" />
+    <div class="row">
+        <div class="col-md-2">
+            <img src="/IMG/image 3 (1).png" />
 
-		</div>
-		<div class="col-md-10 mt-2">
-			<p class="h1">@account.Name</p>
-			<p class="small">BROTHERHOODSTORE <img src="/IMG/Icon.png" /></p>
-		</div>
-	</div>
-	<div class="row mb-3" style="margin-top:20px">
-		<ul class="nav nav-tabs" id="myTab" role="tablist">
-			<li class="nav-item" role="presentation">
-				<button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">
-					<img src="/IMG/Icon (1).png" class="icon-nav" />
-					Thông tin của bạn
-				</button>
-			</li>
-			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="order-tab" data-bs-toggle="tab" data-bs-target="#order" type="button" role="tab" aria-controls="order" aria-selected="false">
-					<img class="icon-nav" src="/IMG/image 4.png" alt="Alternate Text" /> Đơn hàng
-				</button>
-			</li>
-			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="setting-tab" data-bs-toggle="tab" data-bs-target="#setting" type="button" role="tab" aria-controls="setting" aria-selected="false">
-					<img class="icon-nav" src="/IMG/settings.png" alt="Alternate Text" /> Cài đặt
-				</button>
-			</li>
-		</ul>
-		<div class="tab-content" id="myTabContent">
-			<div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-				<div class="row mt-4">
-					<div class="col-md-6">
-						<p class="font-weight-bold h3">Thông tin chung</p>
-						<p class="small">Đây sẽ là thông tin công khai trên trang cá nhân</p>
-					</div>
-					<div class="col-md-6">
-						<p class="font-weight-bolder h6">Họ và tên</p>
-						<input type="text" class="input-pro" @bind="account.Name" />
-						<p class="font-weight-bolder h6">Địa chỉ</p>
-						<input type="text" class="input-pro" @bind="account.Address" />
-						<p class="font-weight-bolder h6">Giới tính</p>
-						<select class="input-pro" @bind="account.Gender">
-							<option value="Nam">Nam</option>
-							<option value="Nữ">Nữ</option>
-						</select>
-						<p class="font-weight-bold h6">Số điện thoại</p>
-						<input type="text" class="input-pro" @bind="account.Phone"/>
-					</div>
-				</div>
-				<div class="row mt-4">
-					<hr />
-					<div class="col-md-6">
-						<p class="font-weight-bold h3">Thông tin bảo mật</p>
-						<p class="small">Đây sẽ là thông tin ẩn trên trang cá nhân</p>
-					</div>
-					<div class="col-md-6">
-						
-						<p class="font-weight-bolder h6">Email</p>
-						<input type="text" class="input-pro" value="@GetMaskedEmail(account.Email)" />
-						<a href="updateemail" class="btn btn-dark">Cập nhật email</a>
-						<p class="font-weight-bolder h6">Mật khẩu</p>
-						<input type="password" class="input-pro" value="******************" readonly />
-					</div>
-				</div>
-				<div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
-					<button class="btn btn-light me-md-2" style="border:none;background-color:white" type="button">Hủy</button>
-					<button @onclick="UpdateUserInfo" class="btn btn-dark" type="button">Cập nhật</button>
-				</div>
+        </div>
+        <div class="col-md-10 mt-2">
+            <p class="h1">@account.Name</p>
+            <p class="small">BROTHERHOODSTORE <img src="/IMG/Icon.png" /></p>
+        </div>
+    </div>
+    <div class="row mb-3" style="margin-top:20px">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">
+                    <img src="/IMG/Icon (1).png" class="icon-nav" />
+                    Thông tin của bạn
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="order-tab" data-bs-toggle="tab" data-bs-target="#order" type="button" role="tab" aria-controls="order" aria-selected="false">
+                    <img class="icon-nav" src="/IMG/image 4.png" alt="Alternate Text" /> Đơn hàng
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="setting-tab" data-bs-toggle="tab" data-bs-target="#setting" type="button" role="tab" aria-controls="setting" aria-selected="false">
+                    <img class="icon-nav" src="/IMG/settings.png" alt="Alternate Text" /> Cài đặt
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <p class="font-weight-bold h3">Thông tin chung</p>
+                        <p class="small">Đây sẽ là thông tin công khai trên trang cá nhân</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="font-weight-bolder h6">Họ và tên</p>
+                        <input type="text" class="input-pro" @bind="account.Name" />
+                        <p class="font-weight-bolder h6">Địa chỉ</p>
+                        <input type="text" class="input-pro" @bind="account.Address" />
+                        <p class="font-weight-bolder h6">Giới tính</p>
+                        <select class="input-pro" @bind="account.Gender">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                        <p class="font-weight-bold h6">Số điện thoại</p>
+                        <input type="text" class="input-pro" @bind="account.Phone" />
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex mb-4 justify-content-md-end">
+                        <button @onclick="UpdateUserInfo1" class="btn btn-dark" type="button">Cập nhật</button>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <hr />
+                    <div class="col-md-6">
+                        <p class="font-weight-bold h3">Thông tin bảo mật</p>
+                        <p class="small">Đây sẽ là thông tin ẩn trên trang cá nhân</p>
+                    </div>
+                    <div class="col-md-6">
+
+                        <p class="font-weight-bolder h6">Email</p>
+                        <input type="text" class="input-pro" value="@GetMaskedEmail(account.Email)" />
+                        <a class="btn btn-outline-dark mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                           Cập nhật email
+                        </a>
+                        <div class="collapse" id="collapseExample">
+                            <div class="card card-body">
+                                @if (account != null)
+                                {
+                                    <form>
+                                        @if (!string.IsNullOrEmpty(errormessage))
+                                        {
+                                            <p class="text-danger">@errormessage</p>
+                                        }
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control" @bind="reEnteredEmail" placeholder="Email cũ" required />
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control" @bind="NewEmail" placeholder="Email mới" required />
+                                        </div>
+                                        <button type="button" class="btn btn-custom" @onclick="UpdateUserInfo2">Cập nhật</button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                        <p class="font-weight-bolder h6">Mật khẩu</p>
+                        <input type="password" class="input-pro" value="******************" readonly />
+                        <a class="btn btn-outline-dark mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                            Cập nhật mật khẩu
+                        </a>
+                        <div class="collapse" id="collapseExample2">
+                            <div class="card card-body">
+                                @if (account != null)
+                                {
+                                   
+                                                <label for="oldPass" class="form-label">Mật khẩu cũ</label>
+                                                <input type="password" id="oldPass" class="form-control" @bind="oldPass" />
+                                                @if (!string.IsNullOrEmpty(errorOldPass))
+                                                {
+                                                    <div class="text-danger mt-1">@errorOldPass</div>
+                                                }
+                                          
+                                                <label for="newPass" class="form-label">Mật khẩu mới</label>
+                                                <input type="password" id="newPass" class="form-control" @bind="newPass" />
+                                                @if (!string.IsNullOrEmpty(errorNewPass))
+                                                {
+                                                    <div class="text-danger mt-1">@errorNewPass</div>
+                                                }
+                                                <label for="newPass2" class="form-label">Nhập lại mật khẩu mới</label>
+                                                <input type="password" id="newPass2" class="form-control mb-3" @bind="newPass2" />
+                                                @if (!string.IsNullOrEmpty(errorNewPass2))
+                                                {
+                                                    <div class="text-danger mt-1">@errorNewPass2</div>
+                                                }
+                                          
+                                                <button type="button" class="btn btn-custom"  @onclick="SubmitForm">Xác nhận</button>
+                                            @if (!string.IsNullOrEmpty(errorMessage))
+                                            {
+                                                <div class="text-danger mt-3">@errorMessage</div>
+                                            }
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+              
 
 
 
-			</div>
-			<div class="tab-pane fade" id="order" role="tabpanel" aria-labelledby="order-tab">
-				<div class="pagination-container">
-					<div class="content-container" id="contentContainer">
-						@if (bills != null && bills.Any())
-						{
-							@foreach (var bill in bills)
-							{
-								<div class="row mt-3 row-custom mb-4">
-									<div class="col-md-2 img-container">
-										<img src="/IMG/image 8.png" alt="Image" />
-									</div>
-									<div class="col-md-6" style="font-weight:bold">
-										<p>MÃ ĐƠN HÀNG: @bill.IDBill</p>
-										<p>Ngày đặt hàng: @bill.OrderDate.ToString("dd/MM/yyyy")</p>
-										<p>Địa chỉ nhận hàng: @account.Address</p>
-										<p>Tổng: @bill.TotalAmount.ToString("N0") VND</p>
-									</div>
-									<div class="col-md-2 status-container">
-										<p style="color:#FBBF24">Trạng thái: @bill.Status</p>
-									</div>
-									<div class="col-md-2 btn-container">
-										<div class="d-grid gap-2 d-md-block">
-											<button class="btn btn-danger" type="button">Hủy đơn</button>
-											<button class="btn btn-dark" type="button" @onclick="() => NavigateToBillDetails(bill.IDBill)">Chi tiết</button>
-										</div>
-									</div>
-								</div>
-							}
-						}
-						else
-						{
-							<p>Không có đơn hàng nào</p>
-						}
-					</div>
-					<div class="pagination">
-						<button @onclick="PreviousPage" disabled="@(!HasPreviousPage)" class="page-button">Lùi</button>
-						@for (int i = 1; i <= TotalPages; i++)
-						{
-							<button @onclick="() => LoadPage(i)" class="page-button @(i == CurrentPage ? "active" : "")">
-								@i
-							</button>
-						}
-						<button @onclick="NextPage" disabled="@(!HasNextPage)" class="page-button">Tiến</button>
-					</div>
-				</div>
-			</div>
-			<div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="setting-tab">
-				<h3 class="mt-4">Tùy chọn hiển thị</h3>
-				<div class="form-group">
-					<label for="theme">Chế độ giao diện</label>
-					<select id="theme" class="form-control mb-2" style="border-color:black; border-width:2px;">
-						<option value="light">Sáng</option>
-						<option value="dark">Tối</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="language">Ngôn ngữ</label>
-					<select id="language" class="form-control mb-2" style="border-color:black; border-width:2px;">
-						<option value="vi">Tiếng Việt</option>
-						<option value="en">English</option>
-					</select>
-				</div>
-				<button class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+            <div class="tab-pane fade" id="order" role="tabpanel" aria-labelledby="order-tab">
+                <div class="pagination-container">
+                    <div class="content-container" id="contentContainer">
+                        @if (bills != null && bills.Any())
+                        {
+                            @foreach (var bill in bills)
+                            {
+                                <div class="row mt-3 row-custom mb-4">
+                                    <div class="col-md-2 img-container">
+                                        <img src="/IMG/image 8.png" alt="Image" />
+                                    </div>
+                                    <div class="col-md-6" style="font-weight:bold">
+                                        <p>MÃ ĐƠN HÀNG: @bill.IDBill</p>
+                                        <p>Ngày đặt hàng: @bill.OrderDate.ToString("dd/MM/yyyy")</p>
+                                        <p>Địa chỉ nhận hàng: @account.Address</p>
+                                        <p>Tổng: @bill.TotalAmount.ToString("N0") VND</p>
+                                    </div>
+                                    <div class="col-md-2 status-container">
+                                        @if (bill.Status == "Đang chờ")
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                        else if (bill.Status == "Xác nhận")
+                                        {
+                                            <span class="badge rounded-pill bg-primary text-light">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                        else if (bill.Status == "Đã giao")
+                                        {
+                                            <span class="badge rounded-pill text-bg-light">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                        else if (bill.Status == "Hoàn thành")
+                                        {
+                                            <span class="badge rounded-pill bg-success text-light">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-secondary text-light">Trạng thái đơn hàng: @bill.Status</span>
+                                        }
+                                    </div>
+                                    <div class="col-md-2 btn-container">
+                                        <div class="d-grid gap-2 d-md-block">
+                                            @if (bill.Status == "Đang chờ")
+                                            {
+                                                <button type="button" class="btn btn-danger rounded-pill" @onclick="() => HandleCancel(bill.IDBill)">Hủy đơn</button>
+                                            }
+                                            @if (bill.Status == "Đã giao")
+                                            {
+                                                <button type="button" class="btn btn-success rounded-pill" @onclick="() => HandleUpdateStatus2(bill.IDBill)">Xác nhận</button>
+                                            }
+                                            <button class="btn btn-dark rounded-pill" type="button" @onclick="() => NavigateToBillDetails(bill.IDBill)">Chi tiết</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>Không có đơn hàng nào</p>
+                        }
+                    </div>
+                    <div class="pagination">
+                        <button @onclick="PreviousPage" disabled="@(!HasPreviousPage)" class="page-button">Trang trước</button>
+                        @for (int i = 1; i <= TotalPages; i++)
+                        {
+                            <button @onclick="() => LoadPage(i)" class="page-button @(i == CurrentPage ? "active" : "")">
+                                @i
+                            </button>
+                        }
+                        <button @onclick="NextPage" disabled="@(!HasNextPage)" class="page-button">Trang sau</button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="setting-tab">
+                <h3 class="mt-4">Tùy chọn hiển thị</h3>
+                <div class="form-group">
+                    <label for="theme">Chế độ giao diện</label>
+                    <select id="theme" class="form-control mb-2" style="border-color:black; border-width:2px;">
+                        <option value="light">Sáng</option>
+                        <option value="dark">Tối</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="language">Ngôn ngữ</label>
+                    <select id="language" class="form-control mb-2" style="border-color:black; border-width:2px;">
+                        <option value="vi">Tiếng Việt</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">Lưu thay đổi</button>
 
-				<h3 class="mt-4">Thông báo</h3>
-				<div class="form-check">
-					<input type="checkbox" id="emailNotifications" class="form-check-input" />
-					<label for="emailNotifications" class="form-check-label">Nhận thông báo qua email</label>
-				</div>
-				<div class="form-check">
-					<input type="checkbox" id="smsNotifications" class="form-check-input" />
-					<label for="smsNotifications" class="form-check-label">Nhận thông báo qua SMS</label>
-				</div>
-				<button class="btn btn-primary">Lưu thay đổi</button>
+                <h3 class="mt-4">Thông báo</h3>
+                <div class="form-check">
+                    <input type="checkbox" id="emailNotifications" class="form-check-input" />
+                    <label for="emailNotifications" class="form-check-label">Nhận thông báo qua email</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="smsNotifications" class="form-check-input" />
+                    <label for="smsNotifications" class="form-check-label">Nhận thông báo qua SMS</label>
+                </div>
+                <button class="btn btn-primary">Lưu thay đổi</button>
 
-				<h3 class="mt-4">Bảo mật</h3>
-				<button class="btn btn-danger">Xóa tài khoản</button>
-			</div>
-		</div>
-	</div>
+                <h3 class="mt-4">Bảo mật</h3>
+                <button class="btn btn-danger">Xóa tài khoản</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @code {
-	private void NavigateToBillDetails(int billId)
-	{
-		NavigationManager.NavigateTo($"/billdetails/{billId}");
-	}
-	private Account account = new Account();
-	private string errorMessage;
-	private string LoggedInUser;
-	private IEnumerable<Bill> bills;
-	private int CurrentPage = 1;
-	private int TotalPages;
-	private int PageSize = 4;
-	private bool HasPreviousPage => CurrentPage > 1;
-	private bool HasNextPage => CurrentPage < TotalPages;
+    private void NavigateToBillDetails(int billId)
+    {
+        NavigationManager.NavigateTo($"/billdetails/{billId}");
+    }
+    private Account account = new Account();
+    private string errorMessage;
+    private string LoggedInUser;
+    private IEnumerable<Bill> bills;
+    private int CurrentPage = 1;
+    private int TotalPages;
+    private int PageSize = 4;
+    private bool HasPreviousPage => CurrentPage > 1;
+    private bool HasNextPage => CurrentPage < TotalPages;
+    private Account acc;
+    private string reEnteredEmail;
+    private string NewEmail;
+    private string errormessage;
+    private string oldPass;
+    private string newPass;
+    private string newPass2;
+    private string errorOldPass;
+    private string errorNewPass;
+    private string errorNewPass2;
 
-	protected override async Task OnInitializedAsync()
-	{
-		try
-		{
-			LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+    private async Task SubmitForm()
+    {
+        ValidateForm();
 
-			if (!string.IsNullOrEmpty(LoggedInUser))
-			{
-				account = await HttpClient.GetFromJsonAsync<Account>($"api/account/details/{LoggedInUser}");
-				await LoadPage(CurrentPage);
-			}
-			else
-			{
-				errorMessage = "Không tìm thấy thông tin đăng nhập.";
-			}
-		}
-		catch (Exception ex)
-		{
-			errorMessage = $"Lỗi khi lấy thông tin tài khoản: {ex.Message}";
-		}
-	}
+        if (!string.IsNullOrEmpty(errorOldPass) || !string.IsNullOrEmpty(errorNewPass) || !string.IsNullOrEmpty(errorNewPass2))
+        {
+            return;
+        }
 
-	private async Task PreviousPage()
-	{
-		if (HasPreviousPage)
-		{
-			CurrentPage--;
-			await LoadPage(CurrentPage);
-		}
-	}
+        if (account.Password != GetHash(oldPass))
+        {
+            errorOldPass = "Mật khẩu cũ không đúng";
+        }
+        else if (newPass != newPass2)
+        {
+            errorNewPass2 = "Mật khẩu xác nhận không khớp";
+        }
+        else
+        {
+            account.Password = GetHash(newPass);
+            try
+            {
+                var response = await HttpClient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", account);
+                if (response.IsSuccessStatusCode)
+                {
+                    await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "LoggedInUser");
+                    NavigationManager.NavigateTo("/login");
+                }
+                else
+                {
+                    errorMessage = "Đổi mật khẩu không thành công";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                errorMessage = "Đã xảy ra lỗi khi đổi mật khẩu.";
+            }
+        }
+    }
 
-	private async Task NextPage()
-	{
-		if (HasNextPage)
-		{
-			CurrentPage++;
-			await LoadPage(CurrentPage);
-		}
-	}
+    private void ValidateForm()
+    {
+        errorOldPass = string.IsNullOrEmpty(oldPass) ? "Vui lòng nhập mật khẩu cũ" : null;
+        errorNewPass = string.IsNullOrEmpty(newPass) ? "Vui lòng nhập mật khẩu mới" : null;
+        errorNewPass2 = string.IsNullOrEmpty(newPass2) ? "Vui lòng nhập mật khẩu xác nhận" : null;
 
-	private async Task LoadPage(int pageNumber)
-	{
-		try
-		{
-			LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+        if (!string.IsNullOrEmpty(newPass) && newPass.Length < 8)
+        {
+            errorNewPass = "Mật khẩu phải ít nhất 8 ký tự";
+        }
+    }
 
-			if (!string.IsNullOrEmpty(LoggedInUser))
-			{
-				var response = await HttpClient.GetFromJsonAsync<PagedResponse<Bill>>($"/api/bill/paged?username={LoggedInUser}&pageNumber={pageNumber}&pageSize={PageSize}");
+    private string GetHash(string input)
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = sha256.ComputeHash(inputBytes);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hashBytes.Length && i < 16; i++)
+            {
+                sb.Append(hashBytes[i].ToString("x2"));
+            }
+            return sb.ToString();
+        }
+    }
 
-				if (response != null)
-				{
-					var contentContainer = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "contentContainer");
-					await contentContainer.InvokeVoidAsync("classList.add", "transition-out");
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
 
-					bills = response.Data;
-					TotalPages = response.TotalPages;
-					CurrentPage = response.CurrentPage;
+            LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
 
-					await Task.Delay(300);
-					await contentContainer.InvokeVoidAsync("classList.remove", "transition-out");
-				}
-				else
-				{
-					errorMessage = "Không tìm thấy đơn hàng.";
-				}
-			}
-			else
-			{
-				errorMessage = "Không tìm thấy thông tin đăng nhập.";
-			}
-		}
-		catch (Exception ex)
-		{
-			errorMessage = $"Lỗi khi tải trang: {ex.Message}";
-		}
-	}
+            if (!string.IsNullOrEmpty(LoggedInUser))
+            {
+                account = await HttpClient.GetFromJsonAsync<Account>($"api/account/details/{LoggedInUser}");
+                await LoadPage(CurrentPage);
+            }
+            else
+            {
+                errorMessage = "Không tìm thấy thông tin đăng nhập.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Lỗi khi lấy thông tin tài khoản: {ex.Message}";
+        }
+    }
 
-	private string GetMaskedPhone(string phone)
-	{
-		if (string.IsNullOrEmpty(phone) || phone.Length < 4)
-		{
-			return phone;
-		}
+    private async Task PreviousPage()
+    {
+        if (HasPreviousPage)
+        {
+            CurrentPage--;
+            await LoadPage(CurrentPage);
+        }
+    }
+    private async Task UpdateUserInfo1()
+    {
+        var response = await HttpClient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", account);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/Pages/Profile", forceLoad: true);
+        }
+        else
+        {
+            // Xử lý khi cập nhật không thành công
+        }
+    }
 
-		int maskLength = phone.Length - 4;
-		return new string('*', maskLength) + phone.Substring(maskLength);
-	}
 
-	private string GetMaskedEmail(string email)
-	{
-		if (string.IsNullOrEmpty(email) || !email.Contains('@'))
-		{
-			return email;
-		}
+    private async Task NextPage()
+    {
+        if (HasNextPage)
+        {
+            CurrentPage++;
+            await LoadPage(CurrentPage);
+        }
+    }
 
-		var parts = email.Split('@');
-		if (parts[0].Length < 3)
-		{
-			return email;
-		}
+    private async Task LoadPage(int pageNumber)
+    {
+        try
+        {
+            LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
 
-		int maskLength = parts[0].Length - 3;
-		string maskedLocalPart = parts[0].Substring(0, 1) + new string('*', maskLength) + parts[0].Substring(parts[0].Length - 2, 2);
-		return maskedLocalPart + "@" + parts[1];
-	}
+            if (!string.IsNullOrEmpty(LoggedInUser))
+            {
+                var response = await HttpClient.GetFromJsonAsync<PagedResponse<Bill>>($"/api/bill/paged?username={LoggedInUser}&pageNumber={pageNumber}&pageSize={PageSize}");
 
-	private async Task UpdateUserInfo()
-	{
-		var response = await HttpClient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", account);
-		if (response.IsSuccessStatusCode)
-		{
-			NavigationManager.NavigateTo("/Pages/Profile", forceLoad: true);
-		}
-		else
-		{
-			// Xử lý khi cập nhật không thành công
-		}
-	}
+                if (response != null)
+                {
+                    var contentContainer = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "contentContainer");
+                    await contentContainer.InvokeVoidAsync("classList.add", "transition-out");
 
-	public class PagedResponse<T>
-	{
-		public IEnumerable<T> Data { get; set; }
-		public int TotalPages { get; set; }
-		public int CurrentPage { get; set; }
-	}
+                    bills = response.Data;
+                    TotalPages = response.TotalPages;
+                    CurrentPage = response.CurrentPage;
+
+                    await Task.Delay(300);
+                    await contentContainer.InvokeVoidAsync("classList.remove", "transition-out");
+                }
+                else
+                {
+                    errorMessage = "Không tìm thấy đơn hàng.";
+                }
+            }
+            else
+            {
+                errorMessage = "Không tìm thấy thông tin đăng nhập.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Lỗi khi tải trang: {ex.Message}";
+        }
+    }
+    private async Task UpdateUserInfo2()
+    {
+        if (string.IsNullOrWhiteSpace(reEnteredEmail) || string.IsNullOrWhiteSpace(NewEmail))
+        {
+            errormessage = "Vui lòng điền cả hai trường này.";
+        }
+        else if (reEnteredEmail == account.Email)
+        {
+            errormessage = "";
+            if (!IsEmailValid(reEnteredEmail) || !IsEmailValid(NewEmail))
+            {
+                errormessage = "Định dạng email không hợp lệ.";
+            }
+            else
+            {
+                errormessage = "";
+                account.Email = NewEmail;
+                var response = await HttpClient.PutAsJsonAsync($"api/Account/Update/{LoggedInUser}", account);
+                if (response.IsSuccessStatusCode)
+                {
+                    NavigationManager.NavigateTo("Pages/Profile", forceLoad: true);
+                }
+                else
+                {
+                    // Xử lý khi cập nhật không thành công
+                }
+            }
+        }
+        else
+        {
+            errormessage = "Email không trùng khớp";
+        }
+    }
+
+    private bool IsEmailValid(string email)
+    {
+        var emailRegex = new System.Text.RegularExpressions.Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+        return emailRegex.IsMatch(email);
+    }
+    private string GetMaskedPhone(string phone)
+    {
+        if (string.IsNullOrEmpty(phone) || phone.Length < 4)
+        {
+            return phone;
+        }
+
+        int maskLength = phone.Length - 4;
+        return new string('*', maskLength) + phone.Substring(maskLength);
+    }
+
+    private string GetMaskedEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email) || !email.Contains('@'))
+        {
+            return email;
+        }
+
+        var parts = email.Split('@');
+        if (parts[0].Length < 3)
+        {
+            return email;
+        }
+
+        int maskLength = parts[0].Length - 3;
+        string maskedLocalPart = parts[0].Substring(0, 1) + new string('*', maskLength) + parts[0].Substring(parts[0].Length - 2, 2);
+        return maskedLocalPart + "@" + parts[1];
+    }
+
+    private bool _isPaymentSuccessful;
+    private string _successMessage;
+    private async Task HandleCancel(int billId)
+    {
+        var response = await HttpClient.PostAsync($"api/bill/cancel/{billId}", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+
+            // Hiện thông báo bằng JavaScript
+            await JSRuntime.InvokeVoidAsync("alert", "Đơn hàng đã được hủy thành công!");
+
+            // Reload lại trang web
+            await JSRuntime.InvokeVoidAsync("location.reload");
+
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình hủy đơn hàng: {errorMessage}");
+        }
+    }
+
+    private async Task HandleUpdateStatus(int billId)
+    {
+        var updateRequest = new Bill
+            {
+                IDBill = billId,
+                Status = "Đã xác nhận"
+            };
+
+        var response = await HttpClient.PostAsJsonAsync("api/bill/update-status", updateRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _isPaymentSuccessful = true;
+            _successMessage = "Trạng thái đơn hàng đã được cập nhật thành công!";
+            StateHasChanged();
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình cập nhật trạng thái đơn hàng: {errorMessage}");
+        }
+    }
+    private async Task HandleUpdateStatus2(int billId)
+    {
+        var updateRequest = new Bill
+            {
+                IDBill = billId,
+                Status = "Hoàn thành"
+            };
+
+        var response = await HttpClient.PostAsJsonAsync($"api/bill/update-status2/{billId}", updateRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _isPaymentSuccessful = true;
+            _successMessage = "Trạng thái đơn hàng đã được cập nhật thành công!";
+            StateHasChanged();
+            await JSRuntime.InvokeVoidAsync("alert", $"Đã xác nhận thành công hóa đơn! Cảm ơn đã mua hàng :D");
+            await JSRuntime.InvokeVoidAsync("location.reload");
+          
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình cập nhật trạng thái đơn hàng: {errorMessage}");
+        }
+    }
+    public class PagedResponse<T>
+    {
+        public IEnumerable<T> Data { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+    }
 
 }
 

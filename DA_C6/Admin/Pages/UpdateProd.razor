@@ -6,26 +6,22 @@
 @inject CategoryResponse categoryresponse
 @inject NavigationManager Navigation
 
-<h3>Chỉnh sửa sản phẩm</h3>
+<h3>Cập nhật sản phẩm</h3>
 
 <div class="container">
     <form @onsubmit="UpdateProduct">
-
         <div class="mb-3">
             <label for="name" class="form-label">Tên sản phẩm</label>
             <input type="text" class="form-control" id="name" @bind="product.Name" required />
         </div>
-
         <div class="mb-3">
             <label for="price" class="form-label">Giá</label>
             <input type="number" class="form-control" id="price" @bind="product.Price" required />
         </div>
-
         <div class="mb-3">
             <label for="image" class="form-label">Ảnh</label>
             <input type="text" class="form-control" id="image" @bind="product.Image" required />
         </div>
-
         <div class="mb-3">
             <label for="status" class="form-label">Trạng thái</label>
             <select class="form-control" id="status" @bind="product.Status" required>
@@ -34,22 +30,36 @@
                 <option value="Ngừng bán">Ngừng bán</option>
             </select>
         </div>
-
         <div class="mb-3">
-            <label for="status" class="form-label">Nhà cung ứng</label>
+            <label for="supplier" class="form-label">Nhà cung ứng</label>
             <select class="form-control" id="supplier" @bind="product.IDSupplier" required>
                 <option value="">Vui lòng chọn nhà cung ứng</option>
                 @if (supplieritems != null)
                 {
-                    @foreach(var item in supplieritems)
+                    @foreach (var sup in supplieritems)
                     {
-                        <option value="@item.IDSupplier">@item.Name</option>
+                        <option value="@sup.IDSupplier">
+                            @sup.Name
+                        </option>
                     }
                 }
-             
             </select>
         </div>
-
+        <div class="mb-3">
+            <label for="category" class="form-label">Loại sản phẩm</label>
+            <select class="form-control" id="category" @bind="product.IDCategory" required>
+                <option value="">Vui lòng chọn loại sản phẩm</option>
+                @if (categoryitems != null)
+                {
+                    @foreach (var cate in categoryitems)
+                    {
+                        <option value="@cate.IDCategory">
+                            @cate.Name
+                        </option>
+                    }
+                }
+            </select>
+        </div>
         <div>
             <button type="submit" class="btn btn-primary">Cập nhật</button>
             <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
@@ -68,22 +78,27 @@
         product = await Task.Run(() => Prodrespone.GetProductId(id));
         supplieritems = await Task.Run(() => supplierresponse.GetSuppliers());
         categoryitems = await Task.Run(() => categoryresponse.GetCategories());
-        StateHasChanged(); // Cập nhật giao diện người dùng
     }
 
-    private async Task UpdateProduct()
+    private void UpdateProduct()
     {
-        await Task.Run(() => Prodrespone.Update(product, id)); // Truyền cả product và id
+        try
+        {
+            // Gọi phương thức update từ dịch vụ ProductResponse
+            Prodrespone.Update(product, id);
 
-        // Khi cập nhật thành công, gọi StateHasChanged() để cập nhật giao diện người dùng
-        StateHasChanged();
-
-        Navigation.NavigateTo("/ProductPage");
+            // Chuyển hướng đến trang danh sách sản phẩm
+            Navigation.NavigateTo("/ProductPage");
+        }
+        catch (Exception ex)
+        {
+            // Xử lý lỗi nếu cần
+            Console.WriteLine($"Có lỗi xảy ra: {ex.Message}");
+        }
     }
 
     private void NavigateToProductPage()
     {
         Navigation.NavigateTo("/ProductPage");
     }
-    // trang này lỗi chưa lưu được nhà cung ứng và loại sản phẩm
 }

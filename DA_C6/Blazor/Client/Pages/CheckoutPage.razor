@@ -6,56 +6,107 @@
 @using System.Text.Json
 @inject IJSRuntime JSruntime
 @inject IJSRuntime JSRuntime
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
+    /* CSS cho modal */
+    .modal {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Nền mờ */
+        z-index: 1050;
+        overflow-y: auto; /* Thêm cuộn nếu nội dung modal quá dài */
+    }
+
+    .modal-dialog {
+        margin: 5rem auto; /* Điều chỉnh khoảng cách từ trên xuống để modal nằm giữa màn hình */
+        max-width: 400px; /* Điều chỉnh chiều rộng tối đa của modal nếu cần */
+    }
+
+    .modal-content {
+        background: #fff;
+        border-radius: 0.3rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng nổi bật hơn */
+        text-align: center; /* Căn giữa nội dung modal */
+    }
+
+    .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #dee2e6; /* Thêm đường kẻ phân cách */
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+    }
+
+    /* CSS cho biểu tượng success */
+    .success-icon {
+        display: block;
+        margin: 1rem auto; 
+        width: 4rem;
+        height: 4rem;
+        border-radius: 50%;
+        background-color: #28a745; 
+        color: white;
+        line-height: 4rem; 
+        font-size: 2rem;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+        .modal-body p {
+            font-size: 1.1rem;
+        }
+
+    /* CSS cho button */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.25rem;
+    }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+    /* CSS khác */
     .breadcrumb-item a {
         color: #6c757d;
         text-decoration: none;
     }
 
     .form-section input {
-        border-radius: 0.5rem; 
-        border: 2px solid #6c757d; 
-        padding: 0.5rem; 
-        font-size: 1rem; 
+        border-radius: 0.5rem;
+        border: 2px solid #6c757d;
+        padding: 0.5rem;
+        font-size: 1rem;
     }
 
         .form-section input:read-only {
             background-color: #f8f9fa;
-            color: #495057; 
+            color: #495057;
         }
 
     .form-section .fw-bold {
-        font-weight: 700; 
+        font-weight: 700;
     }
-    .modal {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1050;
-}
-.modal-dialog {
-    margin: 1.75rem auto;
-}
-.modal-content {
-    background: #fff;
-    border-radius: 0.3rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
-.modal-header, .modal-body, .modal-footer {
-    padding: 1rem;
-}
-.modal-title {
-    margin: 0;
-}
-.btn-close {
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-}
+
 
 </style>
 
@@ -169,6 +220,15 @@
                     <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">@AllPrice.ToString("N0")đ</h5>
                 </div>
                 <div class="row mt-3 mb-3">
+                    <h5 class="col-sm-4 font-weight-bold">Loại thanh toán</h5>
+                    <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">Tiền mặt</h5>
+
+                </div>
+                <div class="row mt-3 mb-3">
+                    <h5 class="col-sm-4 font-weight-bold">Loại vận chuyển</h5>
+                    <h5 class="col-sm-8 font-weight-bold d-flex justify-content-end">Nhanh</h5>
+                </div>
+                <div class="row mt-3 mb-3">
                     <input type="submit" class="btn btn-dark rounded-pill" value="Xác nhận" @onclick="HandlePayment" />
                 </div>
             </div>
@@ -186,10 +246,10 @@
                     <button type="button" class="btn-close" @onclick="() => _isPaymentSuccessful = false"></button>
                 </div>
                 <div class="modal-body">
-                    <p>@_successMessage</p>
+                    <i class="fas fa-check-circle success-icon"></i> <p>@_successMessage</p>
                 </div>
                 <div class="modal-footer">
-                    <button @onclick="home" type="button" class="btn btn-primary">Về Trang Chủ</button>
+                    <a type="button" class="btn btn-primary" href="/">Về Trang Chủ</a>
                 </div>
             </div>
         </div>
@@ -244,45 +304,41 @@
             }
         }
     }
-    private bool _isPaymentSuccessful;
-    private string _successMessage;
+        private bool _isPaymentSuccessful;
+        private string _successMessage;
 
-    private async Task HandlePayment()
-    {
-        var paymentRequest = new PaymentRequest
+        private async Task HandlePayment()
+        {
+            var paymentRequest = new PaymentRequest
             {
                 Username = LoggedInUser,
                 SelectedProducts = selectedIDPDetails,
                 TotalPrice = TotalPrice
             };
 
-        try
-        {
-            var response = await httpclient.PostAsJsonAsync("api/bill/pay", paymentRequest);
+            try
+            {
+                var response = await httpclient.PostAsJsonAsync("api/bill/pay", paymentRequest);
 
-            if (response.IsSuccessStatusCode)
-            {
-                _isPaymentSuccessful = true;
-                _successMessage = "Thanh toán thành công!";
-                StateHasChanged(); // Cập nhật giao diện người dùng
+                if (response.IsSuccessStatusCode)
+                {
+                    _isPaymentSuccessful = true;
+                    _successMessage = "Đặt hàng thành công!";
+                    StateHasChanged();
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình thanh toán: {errorMessage}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình thanh toán: {errorMessage}");
+                await JSRuntime.InvokeVoidAsync("alert", $"Lỗi không mong muốn: {ex.Message}");
             }
         }
-        catch (Exception ex)
-        {
-            // Log the exception or display a more detailed error message
-            await JSRuntime.InvokeVoidAsync("alert", $"Lỗi không mong muốn: {ex.Message}");
-        }
-    }
+   
 
-    private async Task home()
-    {
-        NavigationManager.NavigateTo("/", forceLoad: true);
-    }
 
 
     public class PaymentRequest
