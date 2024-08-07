@@ -1,0 +1,95 @@
+﻿@page "/AddProdPage"
+@using Admin.Services
+@using Admin.Model
+@inject ProductResponse productrepose
+@inject SupplierResponse supplierresponse
+@inject CategoryResponse categoryresponse
+@inject NavigationManager navigation
+
+<h3>Thêm sản phẩm mới</h3>
+<div class="container">
+    <form @onsubmit="HandleValidSubmit">
+        <div class="mb-3">
+            <label for="name" class="form-label">Tên sản phẩm</label>
+            <input type="text" class="form-control" id="name" @bind="newProduct.Name" required />
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Giá</label>
+            <input type="number" class="form-control" id="price" @bind="newProduct.Price" required />
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Ảnh</label>
+            <InputFile class="image" id="image" OnChange="HandleImageChange" />
+        </div>
+        <div class="mb-3">
+            <label for="status" class="form-label">Trạng thái</label>
+            <select class="form-control" id="status" @bind="newProduct.Status" required>
+                <option value="">Vui lòng chọn tráng thái sản phẩm</option>
+                <option value="Bán">Bán</option>
+                <option value="Ngừng bán">Ngừng bán</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="supplier" class="form-label">Nhà cung ứng</label>
+            <select class="form-control" id="supplier" @bind="newProduct.IDSupplier" required>
+                <option value="">Vui lòng chọn nhà cung ứng</option>
+                @if (supplieritems != null)
+                {
+                    @foreach (var sup in supplieritems)
+                    {
+                        <option value="@sup.IDSupplier">@sup.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">Loại sản phẩm</label>
+            <select class="form-control" id="category" @bind="newProduct.IDCategory" required>
+                <option value="">Vui lòng chọn loại sản phẩm</option>
+                @if (categoryitems != null)
+                {
+                    @foreach (var cate in categoryitems)
+                    {
+                        <option value="@cate.IDCategory">@cate.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Thêm</button>
+            <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
+        </div>
+    </form>
+</div>
+
+@code {
+    IEnumerable<Supplier> supplieritems;
+    IEnumerable<Category> categoryitems;
+    private Product newProduct = new Product();
+
+    protected override async Task OnInitializedAsync()
+    {
+        supplieritems = await  Task.Run(() =>  supplierresponse.GetSuppliers());
+        categoryitems = await  Task.Run(() =>  categoryresponse.GetCategories());
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await  Task.Run(() =>  productrepose.Add(newProduct));
+        navigation.NavigateTo("/ProductPage");
+    }
+
+    private void NavigateToProductPage()
+    {
+        navigation.NavigateTo("/ProductPage");
+    }
+    private async Task HandleImageChange(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+
+        // Assuming the image is saved as a Base64 string in the database
+        newProduct.Image = Convert.ToBase64String(buffer);
+    }
+}

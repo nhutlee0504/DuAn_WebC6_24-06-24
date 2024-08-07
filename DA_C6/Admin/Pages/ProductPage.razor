@@ -1,0 +1,73 @@
+﻿@page "/ProductPage"
+@using Admin.Services
+@using Admin.Model
+@inject ProductResponse productrepose
+@inject NavigationManager navigation
+
+<h3>ProductPage</h3>
+
+<div class="col d-flex justify-content-end">
+    <button type="button" class="btn btn-primary" @onclick="NavigateToCategoryPage">Thêm sản phẩm</button>
+</div>
+@if (productitems == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-hover" style="margin-top: 20px">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>Giá</th>
+                <th>Ảnh</th>
+                <th>Trạng thái</th>
+                <th>Nhà cung ứng</th>
+                <th>Loại</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @foreach (var x in productitems)
+            {
+                <tr>
+                    <td class="ellipsis">@x.Name</td>
+                    <td>@x.Price.ToString("N0")đ</td>
+                    <td><img src="/@x.Image" style="width:100px; height:100px;"></td>
+                    <td>@x.Status</td>
+                    <td>@x.Supplier.Name</td>
+                    <td>@x.Category.Name</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-success" @onclick="() =>UpdateProduct(x.IDProduct) ">Cập nhật</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<style>
+    .ellipsis {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px; /* Bạn có thể điều chỉnh giá trị này */
+    }
+</style>
+
+@code {
+    IEnumerable<Product> productitems;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productitems = await productrepose.GetProductsWithDetailsAsync();
+    }
+    private void NavigateToCategoryPage()
+    {
+        navigation.NavigateTo("/AddProdPage");
+    }
+    private void UpdateProduct(int productId)
+    {
+        navigation.NavigateTo($"/UpdateProd/{productId}"); // Điều hướng đến trang cập nhật với ID của sản phẩm
+    }
+}
