@@ -115,14 +115,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        product = await Task.Run(() => Prodrespone.GetProductId(id));
+        product = await Task.Run(() => Prodrespone.GetProductByIdAsync(id));
         supplieritems = await Task.Run(() => supplierresponse.GetSuppliers());
         categoryitems = await Task.Run(() => categoryresponse.GetCategories());
     }
 
     private async Task UpdateProduct()
     {
-        await Task.Run(() => Prodrespone.Update(product, id));
+        await Task.Run(() => Prodrespone.UpdateAsync(product, id));
         Navigation.NavigateTo("/ProductPage");
     }
 
