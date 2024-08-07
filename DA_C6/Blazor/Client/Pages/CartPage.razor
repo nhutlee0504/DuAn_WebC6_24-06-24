@@ -40,8 +40,6 @@
 								if (product != null)
 								{
 									<div class="cart-item mb-3">
-										@* 										var prodd = productdetailitems.FirstOrDefault(pd => pd.IDPDetail == item.IDPDetail);
-					// Rest of your existing code... *@
 										<div class="cart-item mb-3">
 											<input type="checkbox" name="selectedProducts" value="@item.IDPDetail" @onchange="e => UpdateSelectedIDPDetails(e, item.IDPDetail)" />
 											<!-- Rest of your existing code... -->
@@ -85,6 +83,7 @@
 							<h4>Thêm sản phẩm vào giỏ hàng của bạn</h4>
 						}
 					}
+
 				}
 				else
 				{

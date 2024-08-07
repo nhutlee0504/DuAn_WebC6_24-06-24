@@ -2,6 +2,7 @@
 @using Blazor.Shared.Model
 @inject HttpClient httpclient
 @inject IJSRuntime JSRuntime
+@inject NavigationManager navigation
 <style>
 	.alert {
 		border-radius: 0.5rem; 
@@ -47,10 +48,17 @@
                             </div>
                         </div>
                         <div class="col-md-3">
+                            <div class="image-option">
+                                <input type="radio" id="image-@productitems.IDProduct" name="image-options" value="@productitems.IDProduct" class="radio-btn-image" @onclick="() => UpdateMainImage(productitems.Image)">
+                                <label for="image-@productitems.IDProduct">
+                                    <img src="/@productitems.Image" alt="Option @productitems.IDProduct" class="w-75 img-thumbnail">
+                                </label>
+                            </div>
                             @if (imagedetailitems != null && imagedetailitems.Any())
                             {
                                 <div class="image-selection">
-                                    @foreach (var img in imagedetailitems)
+                                 
+                                    @foreach (var img in imagedetailitems.Take(3))
                                     {
                                         <div class="image-option">
                                             <input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image" @onclick="() => UpdateMainImage(img.Image)">
@@ -174,7 +182,7 @@
                 <div class="row overflow-auto">
                     @if (productitemsmany != null && categoryitems != null)
                     {
-                        @foreach (var x in productitemsmany.Take(4))
+                        @foreach (var x in productitemsmany.Where(p => p.IDCategory == productitems.IDCategory).Take(4))
                         {
                             <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
                                 <div class="card position-relative">
@@ -184,7 +192,7 @@
                                             <i class="bi bi-bag-heart"></i>
                                         </span>
                                     </div>
-                                    <a href="productdetail/@x.IDProduct">
+                                    <a @onclick="() => chuyensp(x.IDProduct)">
                                         <img src="/@x.Image" class="card-img-top custom-class-img" alt="Ao" />
                                     </a>
                                     <div class="card-body">
@@ -199,7 +207,7 @@
 
                                             <i class="fa fa-star text-warning me-2"></i>
 
-                                            <p class="text-muted mb-0">4.9 <span class="fw-bold">(98)</span></p>
+                                            <p class="text-muted mb-0">4.9 <i class="bi bi-star-fill text-warning"></i> <span class="fw-bold">(98)</span></p>
 
                                         </div>
                                     </div>
@@ -336,5 +344,10 @@
     {
         var mainImage = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "main-image");
         await mainImage.InvokeVoidAsync("setAttribute", "src", selectedImage);
+    }
+
+    private async Task chuyensp(int id)
+    {
+        navigation.NavigateTo($"/productdetail/{id}", forceLoad: true);
     }
 }
