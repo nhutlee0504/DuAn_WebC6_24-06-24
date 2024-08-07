@@ -76,7 +76,39 @@ namespace Blazor.Server.Controllers
                 return BadRequest("Payment failed.");
             }
         }
+        [HttpPost("cancel/{id}")]
+        public async Task<IActionResult> CancelBill(int id)
+        {
+            bool result = await _bill.CancelBillAsync(id);
+            if (result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Không thể hủy đơn hàng này.");
+            }
+        }
 
+        [HttpPost("update-status")]
+        public async Task<IActionResult> UpdateBillStatus([FromBody] UpdateBillStatusRequest request)
+        {
+            bool result = await _bill.UpdateBillStatusAsync(request.BillId, request.NewStatus);
+            if (result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Không thể cập nhật trạng thái đơn hàng này.");
+            }
+        }
+
+        public class UpdateBillStatusRequest
+        {
+            public int BillId { get; set; }
+            public string NewStatus { get; set; }
+        }
         public class PaymentRequest
         {
             public string Username { get; set; }

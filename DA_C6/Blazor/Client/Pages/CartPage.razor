@@ -15,6 +15,10 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="cart-items">
+				@if(cartItems == null || !cartItems.Any())
+				{
+					<h4>Giỏ hàng của bạn trống!</h4>
+				}
 				@if (cartItems != null)
 				{
 					@foreach (var item in cartItems.Where(u => u.UserName == LoggedInUser))

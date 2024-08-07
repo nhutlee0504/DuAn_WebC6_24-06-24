@@ -158,7 +158,7 @@
 <div class="container">
     <div class="row">
         <div class="profile-header">
-            <b class="font-weight-bold h2">THÔNG TIN CÁ NH N</b>
+            <b class="font-weight-bold h2">THÔNG TIN CÁ NHÂN</b>
             <ul class="breadcrumb">
                 <li><a href="/">Trang chủ</a></li>
                 <li class="active">Thông tin của bạn</li>
@@ -256,8 +256,15 @@
                                     </div>
                                     <div class="col-md-2 btn-container">
                                         <div class="d-grid gap-2 d-md-block">
-                                            <button class="btn btn-danger" type="button">Hủy đơn</button>
-                                            <button class="btn btn-dark" type="button" @onclick="() => NavigateToBillDetails(bill.IDBill)">Chi tiết</button>
+                                            @if (bill.Status == "Đang chờ")
+                                            {
+                                                <button type="button" class="btn btn-danger rounded-pill" @onclick="() => HandleCancel(bill.IDBill)">Hủy đơn</button>
+                                            }
+                                            @if (bill.Status == "Thành công")
+                                            {
+                                                <button type="button" class="btn btn-success rounded-pill" @onclick="() => HandleUpdateStatus(bill.IDBill)">Xác nhận</button>
+                                            }
+                                            <button class="btn btn-dark rounded-pill" type="button" @onclick="() => NavigateToBillDetails(bill.IDBill)">Chi tiết</button>
                                         </div>
                                     </div>
                                 </div>
@@ -269,14 +276,14 @@
                         }
                     </div>
                     <div class="pagination">
-                        <button @onclick="PreviousPage" disabled="@(!HasPreviousPage)" class="page-button">Lùi</button>
+                        <button @onclick="PreviousPage" disabled="@(!HasPreviousPage)" class="page-button">Trang trước</button>
                         @for (int i = 1; i <= TotalPages; i++)
                         {
                             <button @onclick="() => LoadPage(i)" class="page-button @(i == CurrentPage ? "active" : "")">
                                 @i
                             </button>
                         }
-                        <button @onclick="NextPage" disabled="@(!HasNextPage)" class="page-button">Tiến</button>
+                        <button @onclick="NextPage" disabled="@(!HasNextPage)" class="page-button">Trang sau</button>
                     </div>
                 </div>
             </div>
@@ -438,6 +445,51 @@
         return maskedLocalPart + "@" + parts[1];
     }
 
+    private bool _isPaymentSuccessful;
+    private string _successMessage;
+    private async Task HandleCancel(int billId)
+    {
+        var response = await HttpClient.PostAsync($"api/bill/cancel/{billId}", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+
+            // Hiện thông báo bằng JavaScript
+            await JSRuntime.InvokeVoidAsync("alert", "Đơn hàng đã được hủy thành công!");
+
+            // Reload lại trang web
+            await JSRuntime.InvokeVoidAsync("location.reload");
+
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình hủy đơn hàng: {errorMessage}");
+        }
+    }
+
+    private async Task HandleUpdateStatus(int billId)
+    {
+        var updateRequest = new Bill
+            {
+                IDBill = billId,
+                Status = "Đã xác nhận"
+            };
+
+        var response = await HttpClient.PostAsJsonAsync("api/bill/update-status", updateRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _isPaymentSuccessful = true;
+            _successMessage = "Trạng thái đơn hàng đã được cập nhật thành công!";
+            StateHasChanged();
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình cập nhật trạng thái đơn hàng: {errorMessage}");
+        }
+    }
     public class PagedResponse<T>
     {
         public IEnumerable<T> Data { get; set; }

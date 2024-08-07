@@ -1,8 +1,27 @@
 ﻿@page "/login"
 @using Blazor.Shared.Model
+@using System.ComponentModel.DataAnnotations
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+<style>
+    .alert {
+        border-radius: 0.5rem;
+        padding: 1rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .alert-danger {
+        background-color: #dc3545;
+        color: #ffffff;
+    }
+
+    .alert-success {
+        background-color: #28a745;
+        color: #ffffff;
+    }
+</style>
 <div class="container">
     <div class="row justify-content-center mt-5 mb-5">
         <div class="col-md-6">
@@ -52,7 +71,7 @@
                         <a href="signinGoogle" class="btn btn-light btn-block rounded-pill border w-100">Đăng nhập bằng Google</a>
                     </div>
                     <div class="text-center mt-3">
-                        /-strong/-heart:>:o:-((:-hBạn mới biết đến NEXTON? <a class="text-primary" href="Pages/Register">Đăng ký tài khoản</a>
+                        Bạn mới biết đến NEXTON? <a class="text-primary" href="Pages/Register">Đăng ký tài khoản</a>
                     </div>
                 </EditForm>
             </div>
@@ -63,7 +82,10 @@
 @code {
     public class AccountLogin
     {
+        [Required(ErrorMessage = "Tên tài khoản là bắt buộc.")]
         public string UserName { get; set; }
+
+        [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
         public string Password { get; set; }
     }
 
@@ -86,16 +108,23 @@
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                errorMessage = $"Lỗi đăng nhập: {errorContent}";
+                errorMessage = "Tài khoản hoặc mật khẩu không đúng";
                 successMessage = null;
+                await ClearErrorMessageAfterDelay();
             }
         }
         catch (Exception ex)
         {
             errorMessage = "Đã xảy ra lỗi: " + ex.Message;
             successMessage = null;
+            await ClearErrorMessageAfterDelay();
         }
     }
-}
+
+    private async Task ClearErrorMessageAfterDelay()
+    {
+        await Task.Delay(1000);
+        errorMessage = null;
+        StateHasChanged();
+    }
 }
