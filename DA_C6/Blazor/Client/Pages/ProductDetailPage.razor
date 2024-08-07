@@ -53,7 +53,7 @@
                                     @foreach (var img in imagedetailitems)
                                     {
                                         <div class="image-option">
-                                            <input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image">
+                                            <input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image" @onclick="() => UpdateMainImage(img.Image)">
                                             <label for="image-@img.IDImage">
                                                 <img src="/@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
                                             </label>
@@ -80,13 +80,14 @@
                     <div class="card-body">
                         <div class="container">
                             <div class="row d-flex justify-content-between">
-                                <div class="">
-                                    <div style="font-size:large">
-                                    </div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="">
-                                    </div>
+                                <div class="d-flex justify-content-between">
+                                    <h4>
+                                        4.9<i class="bi bi-star-half text-warning"></i>
+                                     
+                                    </h4>
+                                    <h4>
+                                        @productitems.Price.ToString("N0")đ
+                                    </h4>
                                 </div>
                             </div>
 
@@ -329,5 +330,11 @@
     {
         var qrCodeData = $"Sản phẩm: {productitems.Name} - Giá: {productitems.Price.ToString("N0")} đồng";
         qrCodeUrl = await GetQRCodeAsync(qrCodeData);
+    }
+
+    private async Task UpdateMainImage(string selectedImage)
+    {
+        var mainImage = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "main-image");
+        await mainImage.InvokeVoidAsync("setAttribute", "src", selectedImage);
     }
 }
