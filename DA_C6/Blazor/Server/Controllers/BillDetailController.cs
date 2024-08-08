@@ -50,10 +50,16 @@ namespace Blazor.Controllers
             }
         }
         [HttpGet]
-        public IEnumerable<BillDetails> GetBDID(int id)
+        [Route("GetBDID")]
+        public IEnumerable<BillDetails> GetBDID()
         {
-            return bid.GetBillDetailsForAdmin(id);
+            return bid.GetBillDetailsForAdmin();
         }
 
+        //[HttpGet]
+        //public IEnumerable<BillDetails> checkvaluew(bool ktr)
+        //{
+        //    string username = HttpContext.Session.GetString("LoggedInUser");
+        //}
     }
 }

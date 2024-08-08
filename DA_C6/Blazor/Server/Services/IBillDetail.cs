@@ -10,6 +10,6 @@ namespace Blazor.Server.Services
     public interface IBillDetail
     {
         public List<BillDetails> GetBillDetails(int id);
-        public IEnumerable<BillDetails> GetBillDetailsForAdmin(int id);
+        public IEnumerable<BillDetails> GetBillDetailsForAdmin();
     }
 }

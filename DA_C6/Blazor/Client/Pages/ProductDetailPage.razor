@@ -250,11 +250,14 @@
     private Cart c = new Cart();
     private List<Evaluate> evaluates;
     private string qrCodeUrl;
+    private bool hasBoughtProduct = false;
+    private string LoggedInUser;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
             productitemsmany = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
             productitems = await httpclient.GetFromJsonAsync<Product>($"api/Product/GetProduct/{id}");
             productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>($"api/ProductDetail/GetPddtByProdId/{id}");
@@ -264,7 +267,6 @@
             supplieritems = await httpclient.GetFromJsonAsync<List<Supplier>>("api/Supplier/GetSuppliers");
             imagedetailitems = await httpclient.GetFromJsonAsync<List<ImageDetails>>($"api/ImageDetail/GetImageDetails/{id}");
             evaluates = (await httpclient.GetFromJsonAsync<List<Evaluate>>($"api/evaluate/get")).Where(x => x.IDProduct == int.Parse(id)).ToList();
-            await LoadQRCodeUrl();
         }
         catch (Exception ex)
         {

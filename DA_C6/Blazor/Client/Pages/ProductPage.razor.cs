@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System;
 using Blazor.Shared.Model;
 using System.Linq;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Components;
 
 namespace Blazor.Client.Pages
 {
@@ -19,12 +21,17 @@ namespace Blazor.Client.Pages
         private int currentPage = 1;
         private int totalPages;
         private int pageSize = 6; // tổng số sản phẩm trong 1 trang
+		private string searchTermFromUrl;
 
-        protected override async Task OnInitializedAsync()
+
+		protected override async Task OnInitializedAsync()
         {
             try
             {
-                products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+				var uri = new Uri(NavigationManager.Uri);
+				var param = System.Web.HttpUtility.ParseQueryString(uri.Query);
+				searchTermFromUrl = param.Get("find");
+				products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
                 categories = await http.GetFromJsonAsync<List<Category>>("api/category/getcategories");
                 UpdatePagedProducts();
             }

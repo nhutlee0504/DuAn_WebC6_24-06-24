@@ -27,7 +27,8 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Bill> GetSizes()
+        [Route("GetBills")]
+        public IEnumerable<Bill> GetBills()
         {
             return _bill.GetAllBill();
         }
