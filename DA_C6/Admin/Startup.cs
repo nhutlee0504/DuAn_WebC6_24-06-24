@@ -51,6 +51,7 @@ namespace Admin
             services.AddScoped<Services.BillDetailResponse>();
             services.AddScoped<ISale, SaleResponse>();
             services.AddScoped<ICart, CartResponse>();
+            services.AddScoped<ImageResponse>();
 
         }
 

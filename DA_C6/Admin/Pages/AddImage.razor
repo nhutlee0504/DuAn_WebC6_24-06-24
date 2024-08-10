@@ -1,0 +1,99 @@
+﻿@page "/AddImage/{id:int}"
+@using Microsoft.AspNetCore.Hosting
+@using System.IO
+@using Admin.Services
+@using Microsoft.AspNetCore.Components.Forms
+@inject IWebHostEnvironment Environment
+@inject ImageResponse imageResponse
+@inject NavigationManager navi
+
+<h3>ImageDetailPage</h3>
+<a href="/UpdateProd/@id" class="btn btn-secondary">Quay Lại Trang Hiển Thị</a>
+<div class="upload-container">
+    <InputFile OnChange="HandleFileSelected" multiple />
+    <button @onclick="SaveFiles" class="btn btn-primary">Lưu</button>
+    <h3>Ảnh Đã Tải Lên</h3>
+    @if (uploadedImages != null && uploadedImages.Count > 0)
+    {
+        <div>
+            @foreach (var imageUrl in uploadedImages)
+            {
+                <img src="@imageUrl" alt="Uploaded Image" style="max-width: 100px; height: auto; margin: 5px;" />
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private List<IBrowserFile> filesToUpload = new List<IBrowserFile>();
+    private List<string> uploadedImages = new List<string>();
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        filesToUpload.Clear();
+        filesToUpload.AddRange(e.GetMultipleFiles());
+    }
+
+    private async Task SaveFiles()
+    {
+        if (filesToUpload.Count == 0)
+        {
+            return; // Không có tệp nào để lưu
+        }
+
+        try
+        {
+            var folderPath = Path.Combine(Environment.WebRootPath, "Image_Product");
+
+            // Tạo thư mục nếu chưa tồn tại
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            foreach (var file in filesToUpload)
+            {
+                var fileName = file.Name;
+                var filePath = Path.Combine(folderPath, fileName);
+
+                if (!File.Exists(filePath))
+                {
+                    // Nếu ảnh chưa tồn tại, lưu ảnh vào thư mục và thêm vào danh sách ảnh
+                    using (var stream = file.OpenReadStream())
+                    using (var memoryStream = new MemoryStream())
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        // Sao chép dữ liệu từ luồng tệp vào cả luồng bộ nhớ và luồng tệp
+                        await stream.CopyToAsync(memoryStream);
+                        memoryStream.Position = 0;
+                        await memoryStream.CopyToAsync(fileStream);
+
+                        // Thêm dữ liệu ảnh vào danh sách
+                        uploadedImages.Add($"/Image_Product/{fileName}");
+                    }
+
+                    // Lưu đường dẫn ảnh vào cơ sở dữ liệu
+                    imageResponse.AddImage($"/Image_Product/{fileName}", id);
+                }
+                else
+                {
+                    // Nếu ảnh đã tồn tại, chỉ thêm đường dẫn vào danh sách ảnh đã tải lên
+                    uploadedImages.Add($"/Image_Product/{fileName}");
+
+                    // Kiểm tra và thêm vào cơ sở dữ liệu nếu chưa có
+                    imageResponse.AddImage($"/Image_Product/{fileName}", id);
+                }
+            }
+
+            filesToUpload.Clear(); // Xóa danh sách sau khi lưu
+            navi.NavigateTo($"UpdateProd/{id}");
+        }
+        catch (Exception ex)
+        {
+            // Xử lý lỗi và hiển thị thông báo
+            Console.Error.WriteLine($"Lỗi khi lưu tệp: {ex.Message}");
+        }
+    }
+}

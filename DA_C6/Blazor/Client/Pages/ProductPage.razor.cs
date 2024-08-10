@@ -24,8 +24,8 @@ namespace Blazor.Client.Pages
         {
             try
             {
-                products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
-                categories = await http.GetFromJsonAsync<List<Category>>("api/category/getcategories");
+                products = await http.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
+                categories = await http.GetFromJsonAsync<List<Category>>("api/Category/GetCategories");
                 UpdatePagedProducts();
             }
             catch (Exception ex)
@@ -60,17 +60,17 @@ namespace Blazor.Client.Pages
                 selectedCategories.Remove(IDCategory);
             }
             if (selectedCategories.Count > 0)
-                products = (await http.GetFromJsonAsync<List<Product>>("api/product/getproducts")).Where(x => selectedCategories.Contains(x.IDCategory)).ToList();
+                products = (await http.GetFromJsonAsync<List<Product>>("api/Product/Getproducts")).Where(x => selectedCategories.Contains(x.IDCategory)).ToList();
             else
             {
-                products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+                products = await http.GetFromJsonAsync<List<Product>>("api/Product/Getproducts");
             }
             UpdatePagedProducts();
         }
 
         private async Task OnFilterByPrice()
         {
-            var filteredProducts = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+            var filteredProducts = await http.GetFromJsonAsync<List<Product>>("api/Product/Getproducts");
 
             if (lowPrice >= 0 && highPrice >= 0)
             {
@@ -82,7 +82,7 @@ namespace Blazor.Client.Pages
                 message = "Không tìm thấy sản phẩm trong khoản giá";
                 await Task.Delay(3000);
                 message = null;
-                products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+                products = await http.GetFromJsonAsync<List<Product>>("api/Product/Getproducts");
             }
             else
             {

@@ -31,7 +31,7 @@ namespace Blazor.Client.Pages
         {
             try
             {
-                accounts = await http.GetFromJsonAsync<List<Account>>("api/account/getall");
+                accounts = await http.GetFromJsonAsync<List<Account>>("api/Account/getall");
             }
             catch (Exception ex)
             {
@@ -60,7 +60,7 @@ namespace Blazor.Client.Pages
                     await SendEmailAsync(Email, "[NEXTON] Mật khẩu mới", emailMessage);
 
                     acc.Password = GetHash(newPassword);
-                    var response = await http.PutAsJsonAsync($"api/account/update/{acc.UserName}", acc);
+                    var response = await http.PutAsJsonAsync($"api/Account/update/{acc.UserName}", acc);
 
                     if (response.IsSuccessStatusCode)
                     {
