@@ -29,9 +29,9 @@ namespace Blazor.Server.Services
                            .ToList();
         }
 
-        public IEnumerable<BillDetails> GetBillDetailsForAdmin()
+        public IEnumerable<BillDetails> GetBillDetailsForAdmin(int id)
         {
-            return _context.BillDetails;
+            return _context.BillDetails.Where(t => t.IDBill == id);
         }
     }
 }

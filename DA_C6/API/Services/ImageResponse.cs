@@ -16,11 +16,19 @@ namespace API.Services
 		{
 			return context.ImageDetails.Where(x => x.IDProduct == productId);
 		}
-        public ImageDetails AddImage( ImageDetails image)
+        public ImageDetails AddImage(string image, int id)
         {
-            context.ImageDetails.Add(image);
-            context.SaveChanges();          
-            return image;
+            var prod = context.Products.FirstOrDefault(x => x.IDProduct == id);
+            if (prod == null)
+            {
+                return null;
+            }
+            ImageDetails imageDetails = new ImageDetails();
+            imageDetails.IDProduct = prod.IDProduct;
+            imageDetails.Image = image;
+            context.ImageDetails.Add(imageDetails);
+            context.SaveChanges();
+            return imageDetails;
         }
 
         public ImageDetails DeleteImage(int id)

@@ -1,96 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Admin.Data;
+﻿using Admin.Data;
 using Admin.Model;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Admin.Services
 {
     public class ProductResponse : IProduct
     {
-        private readonly ApplicationDbContext context;
-        public ProductResponse(ApplicationDbContext ct) => context = ct;
+        private readonly ApplicationDbContext _context;
 
-        public Product Add(Product product)
+        public ProductResponse(ApplicationDbContext context)
         {
-            context.Products.Add(product);
-            context.SaveChanges();
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Product>> GetProductsAsync()
+        {
+            return await _context.Products.ToListAsync();
+        }
+
+        public async Task<Product> GetProductByIdAsync(int id)
+        {
+            return await _context.Products.FindAsync(id);
+        }
+
+        public async Task<Product> AddAsync(Product product)
+        {
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
             return product;
         }
 
-        public void Delete(int id)
+        public async Task<Product> UpdateAsync(Product product, int id)
         {
-            var prod = context.Products.FirstOrDefault(x => x.IDProduct == id);
-            if (prod != null)
+            var existingProduct = await _context.Products.FindAsync(id);
+            if (existingProduct != null)
             {
-                context.Products.Remove(prod);
-                context.SaveChanges();
+                existingProduct.Name = product.Name;
+                existingProduct.Price = product.Price;
+                existingProduct.Image = product.Image;
+                existingProduct.Status = product.Status;
+                existingProduct.IDSupplier = product.IDSupplier;
+                existingProduct.IDCategory = product.IDCategory;
+
+                await _context.SaveChangesAsync();
             }
+            return existingProduct;
         }
 
-        public Product GetProductId(int id)
+        public async Task DeleteAsync(int id)
         {
-            return context.Products
-                          .Include(p => p.ProductDetails)
-                          .ThenInclude(pd => pd.Colors)
-                          .Include(p => p.ProductDetails)
-                          .ThenInclude(pd => pd.Sizes)
-                          .FirstOrDefault(x => x.IDProduct == id);
-        }
-
-        public IEnumerable<Product> GetProducts()
-        {
-            return context.Products
-                          .Include(p => p.ProductDetails)
-                          .ThenInclude(pd => pd.Colors)
-                          .Include(p => p.ProductDetails)
-                          .ThenInclude(pd => pd.Sizes)
-                          .ToList();
-        }
-
-        public Product Update(Product product, int id)
-        {
-            try
+            var product = await _context.Products.FindAsync(id);
+            if (product != null)
             {
-                var prod = context.Products.Include(p => p.ProductDetails).FirstOrDefault(x => x.IDProduct == id);
-                if (prod != null)
-                {
-                    prod.IDSupplier = product.IDSupplier;
-                    prod.IDCategory = product.IDCategory;
-                    prod.Name = product.Name;
-                    prod.Price = product.Price;
-                    prod.Image = product.Image;
-                    prod.Describe = product.Describe;
-                    prod.Status = product.Status;
-                    context.SaveChanges();
-                    return prod;
-                }
-                return null;
-            }
-            catch (Exception)
-            {
-                return null;
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
             }
         }
 
         public async Task<IEnumerable<Product>> GetProductsWithDetailsAsync()
         {
-            return await context.Products
-                                 .Include(p => p.Supplier)
-                                 .Include(p => p.Category)
-                                 .Include(p => p.ProductDetails)
-                                 .ThenInclude(pd => pd.Colors)
-                                 .Include(p => p.ProductDetails)
-                                 .ThenInclude(pd => pd.Sizes)
-                                 .ToListAsync();
+            return await _context.Products.Include(p => p.Supplier).Include(p => p.Category).Include(p => p.ProductDetails).ThenInclude(pd => pd.Colors).Include(p => p.ProductDetails).ThenInclude(pd => pd.Sizes).ToListAsync();
         }
-
-        IEnumerable<Product> IProduct.GetProductsWithDetails()
-        {
-            throw new NotImplementedException();
-        }
+    
     }
 }

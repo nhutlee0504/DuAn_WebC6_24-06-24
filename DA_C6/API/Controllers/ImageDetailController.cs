@@ -25,14 +25,27 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ImageDetails AddImage(ImageDetails imageDetail)
+        public IActionResult AddImage(string image, int id)
         {
-        
-            return _imageService.AddImage(new ImageDetails
+            if (string.IsNullOrEmpty(image))
             {
-                IDProduct = imageDetail.IDProduct,
-                Image = imageDetail.Image
-            });
+                return BadRequest();
+            }
+
+            var imageDetails = new ImageDetails
+            {
+                IDProduct = id,
+                Image = image
+            };
+
+            var result = _imageService.AddImage(image, id);
+
+            if (result == null)
+            {
+                return StatusCode(500);
+            }
+
+            return Ok(result);
         }
         [HttpDelete("{id}")]
         public IActionResult DeleteImg(int id)

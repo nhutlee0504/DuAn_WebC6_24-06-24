@@ -1,5 +1,5 @@
 ﻿@page "/product"
-@inject HttpClient http
+@inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 
 <style>
@@ -95,28 +95,35 @@
 				}
 				@if (pagedProducts != null && categories != null)
 				{
+					
 					@if (searchTermFromUrl != null)
 					{
 						@foreach (var x in pagedProducts.Where(n => n.Name.ToLower().Contains(searchTermFromUrl.ToLower())))
 						{
-							<div class="col-sm-4 d-flex justify-content-center flex-column prod  mb-4">
-								<div class="border border-secondary-subtle rounded">
-									<a href="/productdetail/@x.IDProduct"><img src="@x.Image" alt="Alternate Text" class="mw-100" /></a>
-								</div>
-								<div class="row container-fluid">
-									<div class="col-md-8">
-										<span class="fw-bold text-truncate">@x.Name</span>
-										<br />
-										<span style="font-size: small; line-height: 1" class="text-truncate">@categories.FirstOrDefault(z => z.IDCategory == x.IDCategory)?.Name</span>
-										<br />
-										<span style="line-height: 3"><i class="bi bi-star-fill text-warning"></i> 4.9 (100)</span>
+							
+								<div class="col-sm-4 d-flex justify-content-center flex-column prod  mb-4">
+									<div class="border border-secondary-subtle rounded">
+										<a href="/productdetail/@x.IDProduct"><img src="@x.Image" alt="Alternate Text" class="mw-100" /></a>
 									</div>
-									<div class="col-md-4">
-										<p class="fw-bold text-truncate">@x.Price.ToString("N0") đồng</p>
+									<div class="row container-fluid">
+										<div class="col-md-8">
+											<span class="fw-bold text-truncate">@x.Name</span>
+											<br />
+											<span style="font-size: small; line-height: 1" class="text-truncate">@categories.FirstOrDefault(z => z.IDCategory == x.IDCategory)?.Name</span>
+											<br />
+											<span style="line-height: 3"><i class="bi bi-star-fill text-warning"></i> 4.9 (100)</span>
+										</div>
+										<div class="col-md-4">
+											<p class="fw-bold text-truncate">@x.Price.ToString("N0") đồng</p>
+										</div>
 									</div>
 								</div>
-							</div>
-						}
+							}
+						
+
+				}
+
+				
 					}
 					else
 					{

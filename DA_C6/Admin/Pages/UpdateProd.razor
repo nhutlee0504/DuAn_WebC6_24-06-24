@@ -1,6 +1,8 @@
 ﻿@page "/UpdateProd/{id:int}"
 @using Admin.Services
 @using Admin.Model
+@using System.IO
+@using Microsoft.AspNetCore.Hosting
 @inject ProductResponse Prodrespone
 @inject SupplierResponse supplierresponse
 @inject CategoryResponse categoryresponse
@@ -8,6 +10,8 @@
 @inject ProductDetailResponse productrepose
 @inject ColorResponse colRespone
 @inject SizeResponse sizeRespone
+@inject ImageResponse imageResponse
+@inject IWebHostEnvironment WebHostEnvironment
 
 <h3>Chỉnh sửa sản phẩm</h3>
 
@@ -95,6 +99,22 @@
                             </ul>
                         </td>
                     </tr>
+                    <tr>
+                        <td><label class="form-label">Ảnh chi tiết</label></td>
+                        <td>
+                            @if (imageDetails != null && imageDetails.Any())
+                            {
+                                @foreach (var x in imageDetails)
+                                {
+                                    <div>
+                                        <img src="@x.Image" alt="Alternate Text" style="width: 100px; height:100px">
+                                        <button class="btn btn-danger" @onclick="@(() => DeleteImageDetail(x.IDImage))">Xóa</button>
+                                    </div>
+
+                                }
+                            }
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -103,6 +123,7 @@
             <button type="submit" class="btn btn-primary">Cập nhật</button>
             <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
             <a class="btn btn-success" href="/AddProductDetails/@product.IDProduct">Thêm chi tiết sản phẩm</a>
+            <a class="btn btn-primary" href="/AddImage/@product.IDProduct">Thêm ảnh chi tiết</a>
         </div>
     </form>
 </div>
@@ -112,26 +133,23 @@
     private Product product = new Product();
     private IEnumerable<Supplier> supplieritems;
     private IEnumerable<Category> categoryitems;
+    private IEnumerable<ImageDetails> imageDetails;
 
     protected override async Task OnInitializedAsync()
     {
-        product = await Task.Run(() => Prodrespone.GetProductId(id));
+        product = await Task.Run(() => Prodrespone.GetProductByIdAsync(id));
         supplieritems = await Task.Run(() => supplierresponse.GetSuppliers());
         categoryitems = await Task.Run(() => categoryresponse.GetCategories());
-    }
+        imageDetails = await Task.Run(() => imageResponse.GetImages(id));
 
-    // private async Task UpdateProduct()
-    // {
-    //     await Task.Run(() => Prodrespone.Update(product, id));
-    //     Navigation.NavigateTo("/ProductPage");
-    // }
+    }
 
     private void UpdateProduct()
     {
         try
         {
             // Gọi phương thức update từ dịch vụ ProductResponse
-            Prodrespone.Update(product, id);
+            Prodrespone.UpdateAsync(product, id);
 
             // Chuyển hướng đến trang danh sách sản phẩm
             Navigation.NavigateTo("/ProductPage");
@@ -140,6 +158,39 @@
         {
             // Xử lý lỗi nếu cần
             Console.WriteLine($"Có lỗi xảy ra: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteImageDetail(int imageId)
+    {
+        try
+        {
+            // Tìm thông tin về ảnh từ danh sách hiện tại
+            var imageDetail = imageDetails.FirstOrDefault(img => img.IDImage == imageId);
+
+            if (imageDetail != null)
+            {
+                // Xóa tệp ảnh khỏi thư mục
+                var fileName = Path.GetFileName(imageDetail.Image);
+                var filePath = Path.Combine(WebHostEnvironment.WebRootPath, "Image_Product", fileName);
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+
+                // Xóa ảnh khỏi cơ sở dữ liệu
+                imageResponse.DeleteImage(imageId);
+
+                Navigation.NavigateTo($"/UpdateProd/{id}", forceLoad: true);
+            }
+            else
+            {
+                Console.WriteLine("Ảnh không tìm thấy.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Có lỗi xảy ra khi xóa ảnh: {ex.Message}");
         }
     }
 

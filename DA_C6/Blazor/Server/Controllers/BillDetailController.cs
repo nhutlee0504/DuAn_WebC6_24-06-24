@@ -50,10 +50,9 @@ namespace Blazor.Controllers
             }
         }
         [HttpGet]
-        [Route("GetBDID")]
-        public IEnumerable<BillDetails> GetBDID()
+        public IEnumerable<BillDetails> GetBDID(int id)
         {
-            return bid.GetBillDetailsForAdmin();
+            return bid.GetBillDetailsForAdmin(id);
         }
 
         //[HttpGet]

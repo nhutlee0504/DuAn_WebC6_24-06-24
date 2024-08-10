@@ -1,95 +1,114 @@
 ﻿@page "/AddProdPage"
 @using Admin.Services
 @using Admin.Model
-@inject ProductResponse productrepose
-@inject SupplierResponse supplierresponse
-@inject CategoryResponse categoryresponse
+@using System.IO
+@inject ProductResponse productResponse
+@inject SupplierResponse supplierResponse
+@inject CategoryResponse categoryResponse
 @inject NavigationManager navigation
 
 <h3>Thêm sản phẩm mới</h3>
 <div class="container">
-    <form @onsubmit="HandleValidSubmit">
+    <EditForm Model="newProduct" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
         <div class="mb-3">
             <label for="name" class="form-label">Tên sản phẩm</label>
-            <input type="text" class="form-control" id="name" @bind="newProduct.Name" required />
+            <InputText class="form-control" id="name" @bind-Value="newProduct.Name" required />
         </div>
         <div class="mb-3">
             <label for="price" class="form-label">Giá</label>
-            <input type="number" class="form-control" id="price" @bind="newProduct.Price" required />
+            <InputNumber class="form-control" id="price" @bind-Value="newProduct.Price" required />
         </div>
         <div class="mb-3">
             <label for="image" class="form-label">Ảnh</label>
-            <input type="text" class="form-control" id="image" @bind="newProduct.Image" required />
+            <InputFile id="image" OnChange="HandleImageChange" />
         </div>
         <div class="mb-3">
             <label for="status" class="form-label">Trạng thái</label>
-            <select class="form-control" id="status" @bind="newProduct.Status" required>
-                <option value="">Vui lòng chọn tráng thái sản phẩm</option>
+            <InputSelect id="status" @bind-Value="newProduct.Status" required>
+                <option value="">Vui lòng chọn trạng thái sản phẩm</option>
                 <option value="Bán">Bán</option>
                 <option value="Ngừng bán">Ngừng bán</option>
-            </select>
+            </InputSelect>
         </div>
         <div class="mb-3">
             <label for="supplier" class="form-label">Nhà cung ứng</label>
-            <select class="form-control" id="supplier" @bind="newProduct.IDSupplier" required>
+            <InputSelect id="supplier" @bind-Value="newProduct.IDSupplier" required>
                 <option value="">Vui lòng chọn nhà cung ứng</option>
-                @if (supplieritems != null)
+                @if (supplierItems != null)
                 {
-                    @foreach (var sup in supplieritems)
+                    @foreach (var sup in supplierItems)
                     {
                         <option value="@sup.IDSupplier">@sup.Name</option>
                     }
                 }
-            </select>
+            </InputSelect>
         </div>
         <div class="mb-3">
             <label for="category" class="form-label">Loại sản phẩm</label>
-            <select class="form-control" id="category" @bind="newProduct.IDCategory" required>
+            <InputSelect id="category" @bind-Value="newProduct.IDCategory" required>
                 <option value="">Vui lòng chọn loại sản phẩm</option>
-                @if (categoryitems != null)
+                @if (categoryItems != null)
                 {
-                    @foreach (var cate in categoryitems)
+                    @foreach (var cate in categoryItems)
                     {
                         <option value="@cate.IDCategory">@cate.Name</option>
                     }
                 }
-            </select>
+            </InputSelect>
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Thêm</button>
-            <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
+            <button type="button" class="btn btn-secondary">Quay về danh sách</button>
         </div>
-    </form>
+    </EditForm>
 </div>
 
 @code {
-    IEnumerable<Supplier> supplieritems;
-    IEnumerable<Category> categoryitems;
+    private IEnumerable<Supplier> supplierItems;
+    private IEnumerable<Category> categoryItems;
     private Product newProduct = new Product();
+    private IBrowserFile uploadedImage;
 
     protected override async Task OnInitializedAsync()
     {
-        supplieritems = await  Task.Run(() =>  supplierresponse.GetSuppliers());
-        categoryitems = await  Task.Run(() =>  categoryresponse.GetCategories());
+        supplierItems = await Task.Run(() => supplierResponse.GetSuppliers());
+        categoryItems = await Task.Run(() => categoryResponse.GetCategories());
     }
 
     private async Task HandleValidSubmit()
     {
-        await  Task.Run(() =>  productrepose.Add(newProduct));
+        if (uploadedImage != null)
+        {
+            var imageFileName = await SaveImageFile(uploadedImage);
+            newProduct.Image = imageFileName;
+        }
+        else
+        {
+            newProduct.Image = "default-image.jpg"; // Giá trị mặc định nếu không có ảnh tải lên
+        }
+
+        await Task.Run(() => productResponse.AddAsync(newProduct));
         navigation.NavigateTo("/ProductPage");
     }
 
-    private void NavigateToProductPage()
+    private void HandleImageChange(InputFileChangeEventArgs e)
     {
-        navigation.NavigateTo("/ProductPage");
+        uploadedImage = e.File;
     }
-    // private async Task HandleImageChange(InputFileChangeEventArgs e)
-    // {
-    //     var file = e.File;
-    //     var buffer = new byte[file.Size];
-    //     await file.OpenReadStream().ReadAsync(buffer);
 
-    //     // Assuming the image is saved as a Base64 string in the database
-    //     newProduct.Image = Convert.ToBase64String(buffer);
-    // }
+    private async Task<string> SaveImageFile(IBrowserFile file)
+    {
+        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.Name);
+        var filePath = Path.Combine("wwwroot/Image_Product", fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        return fileName;
+    }
 }

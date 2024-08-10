@@ -8,7 +8,107 @@
 @using System.Security.Cryptography
 @using System.Text
 @inject NavigationManager NavigationManager
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Bundle JS (bao gồm cả Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <style>
+    .modal {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Nền mờ */
+        z-index: 1050;
+        overflow-y: auto; /* Thêm cuộn nếu nội dung modal quá dài */
+    }
+
+    .modal-dialog {
+        margin: 5rem auto; /* Điều chỉnh khoảng cách từ trên xuống để modal nằm giữa màn hình */
+        max-width: 500px; /* Điều chỉnh chiều rộng tối đa của modal nếu cần */
+    }
+
+    .modal-content {
+        background: #fff;
+        border-radius: 0.3rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng nổi bật hơn */
+        text-align: center; /* Căn giữa nội dung modal */
+    }
+
+    .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #dee2e6; /* Thêm đường kẻ phân cách */
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+    }
+
+    /* CSS cho biểu tượng success */
+    .success-icon {
+        display: block;
+        margin: 1rem auto;
+        width: 4rem;
+        height: 4rem;
+        border-radius: 50%;
+        background-color: #28a745;
+        color: white;
+        line-height: 4rem;
+        font-size: 2rem;
+        text-align: center; /* Căn giữa nội dung biểu tượng */
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+        .modal-body p {
+            font-size: 1.1rem;
+        }
+
+    /* CSS cho button */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.25rem;
+    }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
     .btn-custom {
         background-color: #000;
         color: #fff;
@@ -34,33 +134,43 @@
 
     .pagination {
         display: flex;
-        gap: 10px; /* Khoảng cách giữa các nút */
+        justify-content: center;
+        gap: 10px;
     }
 
     .page-button {
-        background-color: black;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
+        background-color: white;
+        color: black;
+        border: 1px solid #ccc;
+        padding: 3px 6px;
+        margin: 0;
+        border-radius: 50px;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
         .page-button:disabled {
-            background-color: gray;
+            background-color: #f5f5f5;
+            color: #999;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
         .page-button.active {
-            background-color: white;
-            color: black;
-            border: 2px solid black;
-            border-radius: 50%; /* Hình vòng tròn */
+            background-color: black;
+            color: white;
+            border: 1px solid black;
         }
 
         .page-button:hover:not(:disabled) {
-            background-color: darkgray;
+            background-color: #e0e0e0;
+            color: black;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
     .content-container {
@@ -176,8 +286,6 @@
         }
 </style>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 @if (errorMessage != null)
 {
     <div class="alert alert-danger" role="alert">
@@ -438,6 +546,49 @@
         </div>
     </div>
 </div>
+<!-- Modal Xác Nhận Hủy -->
+@if (_isCancelConfirmationVisible)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block; padding-right: 17px;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận hủy đơn</h5>
+                    <button type="button" class="btn-close" @onclick="() => _isCancelConfirmationVisible = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn hủy đơn hàng không?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => _isCancelConfirmationVisible = false">Hủy</button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmCancel">Xác nhận hủy đơn hàng này</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal Thông Báo Hủy Thành Công -->
+@if (_isCancelSuccessVisible)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block; padding-right: 17px;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thông Báo</h5>
+                    <button type="button" class="btn-close" @onclick="() => _isCancelSuccessVisible = false"></button>
+                </div>
+                <div class="modal-body">
+                    <i class="fas fa-check-circle success-icon"></i>
+                    <p>@_successMessage</p>
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-primary" href="/">Về trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     private void NavigateToBillDetails(int billId)
@@ -693,48 +844,34 @@
 
     private bool _isPaymentSuccessful;
     private string _successMessage;
+    private bool _isCancelConfirmationVisible;
+    private bool _isCancelSuccessVisible;
+    private int _billIdToCancel;
+
     private async Task HandleCancel(int billId)
     {
-        var response = await HttpClient.PostAsync($"api/bill/cancel/{billId}", null);
+        _billIdToCancel = billId;
+        _isCancelConfirmationVisible = true;
+        StateHasChanged();
+    }
+
+    private async Task ConfirmCancel()
+    {
+        _isCancelConfirmationVisible = false; // Ẩn modal xác nhận hủy
+
+        var response = await HttpClient.PostAsync($"api/bill/cancel/{_billIdToCancel}", null);
 
         if (response.IsSuccessStatusCode)
         {
-
-            // Hiện thông báo bằng JavaScript
-            await JSRuntime.InvokeVoidAsync("alert", "Đơn hàng đã được hủy thành công!");
-
-            // Reload lại trang web
-            await JSRuntime.InvokeVoidAsync("location.reload");
-
+            _successMessage = "Đơn hàng đã được hủy thành công!";
+            _isCancelSuccessVisible = true;
         }
         else
         {
             var errorMessage = await response.Content.ReadAsStringAsync();
             await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình hủy đơn hàng: {errorMessage}");
         }
-    }
-
-    private async Task HandleUpdateStatus(int billId)
-    {
-        var updateRequest = new Bill
-            {
-                IDBill = billId,
-                Status = "Đã xác nhận"
-            };
-
-        var response = await HttpClient.PostAsJsonAsync("api/bill/update-status", updateRequest);
-
-        if (response.IsSuccessStatusCode)
-        {
-            _isPaymentSuccessful = true;
-            _successMessage = "Trạng thái đơn hàng đã được cập nhật thành công!";
-            StateHasChanged();
-        }
-        else
-        {
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            await JSRuntime.InvokeVoidAsync("alert", $"Xuất hiện lỗi trong quá trình cập nhật trạng thái đơn hàng: {errorMessage}");
-        }
+        StateHasChanged();
     }
     private async Task HandleUpdateStatus2(int billId)
     {
