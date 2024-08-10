@@ -31,7 +31,7 @@ namespace Blazor.Client.Pages
         {
             try
             {
-                accounts = await http.GetFromJsonAsync<List<Account>>("api/Account/getall");
+                accounts = await http.GetFromJsonAsync<List<Account>>("api/Account/Getall");
             }
             catch (Exception ex)
             {
