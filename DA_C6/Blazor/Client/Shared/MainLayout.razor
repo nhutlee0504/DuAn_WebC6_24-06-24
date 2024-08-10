@@ -15,7 +15,7 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                 </ul>
-                <form id="searchForm" @onsubmit="SearchProducts" class="mx-auto w-50">
+                <form id="searchForm" @onsubmit="HandleSearch" class="mx-auto w-50">
                     <div class="position-relative w-100">
                         <input @bind="searchTerm" class="form-control pl-5"
                                style="border-radius: 25px; background-color: #F8F8F8;"
@@ -177,5 +177,10 @@
         {
             NavigationManager.NavigateTo($"/product?find={searchTerm}", forceLoad: true);
         }
+    }
+
+    private async Task LoadTrang()
+    {
+        NavigationManager.NavigateTo("/", forceLoad: true);
     }
 }
