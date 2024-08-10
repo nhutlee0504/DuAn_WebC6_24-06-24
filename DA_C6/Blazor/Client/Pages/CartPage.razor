@@ -7,6 +7,12 @@
 @using System.Text.Json
 
 <div class="container">
+	@if (!string.IsNullOrEmpty(errorMessage))
+	{
+		<div class="alert alert-danger" role="alert">
+			@errorMessage
+		</div>
+	}
 	<h1>Giỏ hàng</h1>
 	@*   @foreach(var item in cartItems)
 	{
@@ -34,8 +40,6 @@
 								if (product != null)
 								{
 									<div class="cart-item mb-3">
-										@* 										var prodd = productdetailitems.FirstOrDefault(pd => pd.IDPDetail == item.IDPDetail);
-					// Rest of your existing code... *@
 										<div class="cart-item mb-3">
 											<input type="checkbox" name="selectedProducts" value="@item.IDPDetail" @onchange="e => UpdateSelectedIDPDetails(e, item.IDPDetail)" />
 											<!-- Rest of your existing code... -->
@@ -79,6 +83,7 @@
 							<h4>Thêm sản phẩm vào giỏ hàng của bạn</h4>
 						}
 					}
+
 				}
 				else
 				{
@@ -146,6 +151,7 @@
 	private Colors cl = new Colors();
 	private string LoggedInUser;
 	private Account acc;
+	private string errorMessage = "";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -186,8 +192,17 @@
 
 	private async Task IncreaseQuantity(Cart item)
 	{
-		item.Quantity++;
-		await UpdateCartItem(item);
+		var productDetail = productdetailitems.FirstOrDefault(p => p.IDPDetail == item.IDPDetail);
+		if (productDetail != null && item.Quantity < productDetail.Quantity)
+		{
+			item.Quantity++;
+			await UpdateCartItem(item);
+		}
+		else
+		{
+			// Hiển thị thông báo lỗi
+			errorMessage = "Số lượng đã chọn vượt quá số lượng tối đa của sản phẩm!";
+		}
 	}
 
 	private async Task DecreaseQuantity(Cart item)
@@ -196,6 +211,7 @@
 		{
 			item.Quantity--;
 			await UpdateCartItem(item);
+			errorMessage = "";
 		}
 	}
 
@@ -225,7 +241,25 @@
 	private async Task ProceedToCheckout()
 	{
 		await SaveToLocalStorage(selectedIDPDetails);
-		NavigationManager.NavigateTo("/checkout");
+
+		var storedItems = await JSruntime.InvokeAsync<string>("localStorage.getItem", "SelectedIDPDetails");
+		if (string.IsNullOrEmpty(storedItems))
+		{
+			errorMessage = "Vui lòng chọn ít nhất một sản phẩm để mua hàng!";
+		}
+		else
+		{
+			var selectedItems = JsonSerializer.Deserialize<List<int>>(storedItems);
+			if (selectedItems.Count == 0)
+			{
+				errorMessage = "Vui lòng chọn ít nhất một sản phẩm để mua hàng!";
+			}
+			else
+			{
+				await SaveToLocalStorage(selectedIDPDetails);
+				NavigationManager.NavigateTo("/checkout");
+			}
+		}
 	}
 
 	private void UpdateSelectedIDPDetails(ChangeEventArgs e, int idPDetail)
