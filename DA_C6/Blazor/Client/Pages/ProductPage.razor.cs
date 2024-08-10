@@ -24,8 +24,8 @@ namespace Blazor.Client.Pages
         {
             try
             {
-                products = await http.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
-                categories = await http.GetFromJsonAsync<List<Category>>("api/Category/GetCategories");
+                products = await http.GetFromJsonAsync<List<Product>>("api/Product/getproducts");
+                categories = await http.GetFromJsonAsync<List<Category>>("api/Category/getcategories");
                 UpdatePagedProducts();
             }
             catch (Exception ex)
