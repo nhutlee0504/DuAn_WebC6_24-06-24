@@ -18,8 +18,8 @@ namespace Blazor.Client.Pages
         {
             try
             {
-                products = await http.GetFromJsonAsync<List<Product>>("api/product/getproducts");
-                categories = await http.GetFromJsonAsync<List<Category>>("api/category/getcategories");
+                products = await http.GetFromJsonAsync<List<Product>>("api/Product/getproducts");
+                categories = await http.GetFromJsonAsync<List<Category>>("api/Category/getcategories");
             }
             catch (Exception ex)
             {
