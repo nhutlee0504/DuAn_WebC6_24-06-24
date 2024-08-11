@@ -147,12 +147,12 @@
 
     }
 
-    private void UpdateProduct()
+    private async Task UpdateProduct()
     {
         try
         {
             // Gọi phương thức update từ dịch vụ ProductResponse
-            Prodrespone.UpdateAsync(product, id);
+            await Prodrespone.UpdateAsync(product, id);
 
             // Chuyển hướng đến trang danh sách sản phẩm
             Navigation.NavigateTo("/ProductPage");

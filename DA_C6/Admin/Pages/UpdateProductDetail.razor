@@ -71,7 +71,7 @@
 	private async Task HandleValidSubmit()
 	{
 		// await Task.Run(() => productrepose.UpdateAsync(newProduct, id));
-		productrepose.UpdateAsync(newProduct, id);
+		await productrepose.UpdateAsync(newProduct, id);
 		navigation.NavigateTo("/ProductPage");
 	}
 
