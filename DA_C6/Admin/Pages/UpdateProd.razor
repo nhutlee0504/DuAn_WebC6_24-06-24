@@ -95,6 +95,7 @@
                                             <strong>Màu sắc:</strong> @detail.Colors.Color,
                                             <strong>Kích thước:</strong> @detail.Sizes.SizeName,
                                             <strong>Số lượng:</strong> @detail.Quantity
+                                            <a class="btn btn-success" href="/UppProductDetails/@detail.IDPDetail">Cập nhật</a>
                                         </li>
                                     }
                                 }
@@ -183,7 +184,7 @@
                 // Xóa ảnh khỏi cơ sở dữ liệu
                 imageResponse.DeleteImage(imageId);
 
-                Navigation.NavigateTo($"/UpdateProd/{id}", forceLoad: true);
+                Navigation.NavigateTo($"/UpdateProd/{id}");
             }
             else
             {
@@ -225,7 +226,6 @@
             }
         }
     }
-
 
     private void NavigateToProductPage()
     {

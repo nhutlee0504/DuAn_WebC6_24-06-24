@@ -35,7 +35,22 @@
             return localStorage.getItem('LoggedInRole');
         }
     }
+    let timeout;
 
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(logout, 1800000); // 1800000ms = 30 phút
+    }
+
+    function logout() {
+        localStorage.removeItem("LoggedInUser");
+        localStorage.removeItem("LoggedInRole");
+        window.location.href = '/';
+    }
+
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
 </script>
 @code {
     bool isLoggedIn;
@@ -109,12 +124,6 @@
             await ClearErrorMessageAfterDelay();
         }
     }
-
-
-
-
-
-
     private async Task ClearErrorMessageAfterDelay()
     {
         await Task.Delay(3000);

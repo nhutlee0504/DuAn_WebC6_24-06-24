@@ -57,24 +57,33 @@ namespace Admin.Services
 
         public async Task<ProductDetails> UpdateAsync(ProductDetails productDetails, int id)
         {
-            try
-            {
-                var prod = await context.ProductDetails.FirstOrDefaultAsync(x => x.IDPDetail == id);
-                if (prod != null)
-                {
-                    prod.IDColor = productDetails.IDColor;
-                    prod.IDProduct = productDetails.IDProduct;
-                    prod.Size = productDetails.Size;
-                    prod.Quantity = productDetails.Quantity;
-                    await context.SaveChangesAsync();
-                    return productDetails;
-                }
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
+			var existingProduct = await context.ProductDetails.FindAsync(id);
+			if (existingProduct != null)
+			{
+				existingProduct.Size = productDetails.Size;
+				existingProduct.IDColor = productDetails.IDColor;
+                existingProduct.Quantity = productDetails.Quantity;
+				await context.SaveChangesAsync();
+			}
+			return existingProduct;
+			//try
+   //         {
+   //             var prod = await context.ProductDetails.FirstOrDefaultAsync(x => x.IDPDetail == id);
+   //             if (prod != null)
+   //             {
+   //                 prod.IDColor = productDetails.IDColor;
+   //                 prod.IDProduct = productDetails.IDProduct;
+   //                 prod.Size = productDetails.Size;
+   //                 prod.Quantity = productDetails.Quantity;
+   //                 await context.SaveChangesAsync();
+   //                 return productDetails;
+   //             }
+   //             return null;
+   //         }
+   //         catch
+   //         {
+   //             return null;
+   //         }
         }
     }
 }
