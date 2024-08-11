@@ -51,7 +51,7 @@
                             <div class="image-option">
                                 <input type="radio" id="image-@productitems.IDProduct" name="image-options" value="@productitems.IDProduct" class="radio-btn-image" @onclick="() => UpdateMainImage(productitems.Image)">
                                 <label for="image-@productitems.IDProduct">
-                                    <img src="/@productitems.Image" alt="Option @productitems.IDProduct" class="w-75 img-thumbnail">
+                                    <img src="@productitems.Image" alt="Option @productitems.IDProduct" class="w-75 img-thumbnail">
                                 </label>
                             </div>
                             @if (imagedetailitems != null && imagedetailitems.Any())
@@ -63,7 +63,7 @@
                                         <div class="image-option">
                                             <input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image" @onclick="() => UpdateMainImage(img.Image)">
                                             <label for="image-@img.IDImage">
-                                                <img src="/@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
+                                                <img src="@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
                                             </label>
                                         </div>
                                     }
