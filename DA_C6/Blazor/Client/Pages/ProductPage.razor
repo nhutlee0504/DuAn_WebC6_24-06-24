@@ -115,8 +115,8 @@
                 }
                 @if (pagedProducts != null && categories != null)
                 {
-                    @foreach (var x in pagedProducts)
-                    {
+                    @foreach (var x in pagedProducts.Where(x => x.Status == "Bán").ToList())
+                        {
                         <div class="col-sm-4 d-flex justify-content-center flex-column prod mb-4">
                             <div class="border border-secondary-subtle rounded">
                                 <a href="/productdetail/@x.IDProduct"><img src="@x.Image" alt="Alternate Text" class="mw-100" /></a>
