@@ -1,7 +1,7 @@
 ﻿@page "/Pages/About"
 @using Blazor.Shared
 @inject HttpClient Http
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <style>
@@ -30,6 +30,8 @@
     .submit-btn {
         border-radius: 20px;
         padding: 10px;
+        background-color:black;
+        color:white;
         font-weight: bold;
     }
 
@@ -38,69 +40,63 @@
             color: #fff;
         }</style>
 <div class="container intro-section">
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-md-6 intro-content">
             <h3 class="font-weight-bold">Về chúng tôi</h3>
             <p>
-                Chúng tôi không chỉ giúp bạn thiết kế các sản phẩm đặc biệt mà còn giúp bạn dễ dàng thực hiện để chia sẻ thiết kế của bạn với nhiều người cùng chí hướng hơn.
+                Chúng tôi là một nhóm sáng tạo với sứ mệnh mang lại những giải pháp thiết kế độc đáo và hiệu quả. Từ việc tạo ra các sản phẩm thiết kế đặc biệt đến việc cung cấp các công cụ giúp bạn chia sẻ và phát triển ý tưởng của mình, chúng tôi cam kết đồng hành cùng bạn trên mỗi bước đường.
             </p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <img src="/IMG/image.png" class="w-100" />
-        </div>
-        <div class="col-md-6">
-            <h3 class="font-weight-bold">
-                Cung cấp thời trang và sản phẩm đủ tiêu chuẩn
-            </h3>
             <p>
-                Đã có hàng triệu người rất hài lòng với điều này. Page builder và số lượng ngày càng nhiều. Công nghệ phát triển, yêu cầu ngày càng cao. Riode đã mang lại.
+                Với đội ngũ chuyên gia dày dạn kinh nghiệm, chúng tôi không ngừng đổi mới và cải tiến để đáp ứng nhu cầu ngày càng cao của thị trường. Chúng tôi tin tưởng vào sự sáng tạo không giới hạn và khả năng tạo ra những sản phẩm chất lượng cao nhất.
             </p>
+        </div>
+        <div class="col-md-6">
+            <img src="/IMG/image.png" alt="About Us Image" />
         </div>
     </div>
 
-    <div class="row mt-3">
-        <div class="col-md-6">
-            <h3 class="font-weight-bold">
-                Cung cấp thời trang và
-                sản phẩm đủ tiêu chuẩn
-            </h3>
-            <p>
-                Đã có hàng triệu người rất hài lòng với điều này. s page builder và số lượng ngày càng nhiều. Công nghệ phát triển, yêu cầu ngày càng cao. Riode đã mang lại.
-            </p>
-        </div>
-        <div class="col-md-6">
-            <img src="/IMG/image (1).png" class="w-100" />
-        </div>
-    </div>
-
-    <div class="row">
-        <h3 class="font-weight-bolder">Hãy liên lạc với chúng tôi</h3>
-    </div>
     <div class="row mb-4">
         <div class="col-md-6">
-            <h4 class="font-weight-bolder">Địa chỉ</h4>
-            <p class="mb-2">Tòa nhà Cao đẳng FPT Polytechnic Cần Thơ, đường số 22, Thường Thạnh, Cái Răng, Cần Thơ.</p>
-            <h4 class="font-weight-bolder">Email</h4>
-            <p class="mb-2">fpt@fpt.edu.vn</p>
-            <h4 class="font-weight-bold">Số điện thoại</h4>
-            <p class="mb-2">0933.345.332 </p>
+            <h3 class="font-weight-bold">Cung cấp thời trang và sản phẩm đủ tiêu chuẩn</h3>
+            <p>
+                Chúng tôi cung cấp các sản phẩm thời trang và thiết kế đáp ứng tiêu chuẩn quốc tế, đảm bảo chất lượng và sự hài lòng của khách hàng. Dịch vụ của chúng tôi bao gồm các công cụ tạo dựng trang web và các giải pháp thiết kế tiên tiến nhất, giúp bạn dễ dàng thể hiện ý tưởng của mình.
+            </p>
+            <p>
+                Được hỗ trợ bởi công nghệ tiên tiến và sự sáng tạo không ngừng, chúng tôi mang đến những giải pháp thiết kế phù hợp với nhu cầu của từng khách hàng. Dù bạn là một cá nhân hay một doanh nghiệp, chúng tôi luôn sẵn sàng hỗ trợ bạn trong việc hiện thực hóa các ý tưởng sáng tạo.
+            </p>
         </div>
+        <div class="col-md-6">
+            <img src="/IMG/image (1).png" alt="Fashion and Products Image" />
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 contact-info">
+            <h4 class="font-weight-bolder"><i class="fas fa-map-marker-alt"></i> Địa chỉ</h4>
+            <p class="mb-2">Tòa nhà Cao đẳng FPT Polytechnic Cần Thơ, đường số 22, Thường Thạnh, Cái Răng, Cần Thơ.</p>
+            <h4 class="font-weight-bolder"><i class="fas fa-envelope"></i> Email</h4>
+            <p class="mb-2">fpt@fpt.edu.vn</p>
+            <h4 class="font-weight-bold"><i class="fas fa-phone"></i> Số điện thoại</h4>
+            <p class="mb-2">0933.345.332</p>
+        </div>
+
         <div class="col-md-6 contact-form">
-            <h4 class="font-weight-bold">Họ và tên</h4>
-            <input type="text" class="w-100 input-field" placeholder="Nhập họ và tên: (Ví dụ: Nguyễn Văn A)">
-            <h4 class="font-weight-bold">Email</h4>
-            <input type="text" class="w-100 input-field" placeholder="Nhập email: (Ví dụ: nguyenvana@example.com)">
-            <h4 class="font-weight-bold">Nội dung</h4>
-            <textarea class="w-100 input-field" placeholder="Nội dung"></textarea>
-            <button class="btn btn-dark w-50 mt-4 submit-btn">Gửi</button>
+            <h4 class="font-weight-bold"><i class="fas fa-user"></i> Họ và tên</h4>
+            <div class="input-group">
+                <input type="text" class="w-100 input-field" placeholder="Nhập họ và tên: (Ví dụ: Nguyễn Văn A)">
+            </div>
+            <h4 class="font-weight-bold"><i class="fas fa-envelope"></i> Email</h4>
+            <div class="input-group">
+                <input type="text" class="w-100 input-field" placeholder="Nhập email: (Ví dụ: nguyenvana@example.com)">
+            </div>
+            <h4 class="font-weight-bold"><i class="fas fa-pencil-alt"></i> Nội dung</h4>
+            <div class="input-group">
+                <textarea class="w-100 input-field" placeholder="Nội dung"></textarea>
+            </div>
+            <button class="btn submit-btn w-50 mt-4">Gửi</button>
         </div>
     </div>
 </div>
-
-}
-
 @code {
 
 }

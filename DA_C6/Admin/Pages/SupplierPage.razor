@@ -52,7 +52,7 @@ else
     IEnumerable<Supplier> supitems;
     protected override async Task OnInitializedAsync()
     {
-        supitems = await Task.Run(() => sup.GetSuppliers());
+        supitems = await sup.GetSuppliersAsync();
     }
 
     private void NavigateToAddSup()

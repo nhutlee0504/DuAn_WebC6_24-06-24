@@ -7,127 +7,119 @@
 @inject SupplierResponse supplierresponse
 @inject CategoryResponse categoryresponse
 @inject NavigationManager Navigation
-@inject ProductDetailResponse productrepose
-@inject ColorResponse colRespone
-@inject SizeResponse sizeRespone
 @inject ImageResponse imageResponse
 @inject IWebHostEnvironment WebHostEnvironment
 
 <h3>Chỉnh sửa sản phẩm</h3>
 
 <div class="container">
-    <form @onsubmit="UpdateProduct">
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th colspan="2">Thông tin sản phẩm</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><label for="name" class="form-label">Tên sản phẩm</label></td>
-                        <td><input type="text" class="form-control" id="name" @bind="product.Name" required /></td>
-                    </tr>
-                    <tr>
-                        <td><label for="price" class="form-label">Giá</label></td>
-                        <td><input type="number" class="form-control" id="price" @bind="product.Price" required /></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <InputFile OnChange="HandleFileSelected" />
-                        </td>
-                        <td><img src="@product.Image" alt="Ảnh sản phẩm" class="img-thumbnail mt-2" style="max-width: 200px;" /></td>
-                    </tr>
-                    <tr>
-                        <td><label for="status" class="form-label">Trạng thái</label></td>
-                        <td>
-                            <select class="form-control" id="status" @bind="product.Status" required>
-                                <option value="">Vui lòng chọn trạng thái sản phẩm</option>
-                                <option value="Bán">Bán</option>
-                                <option value="Ngừng bán">Ngừng bán</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="supplier" class="form-label">Nhà cung ứng</label></td>
-                        <td>
-                            <select class="form-control" id="supplier" @bind="product.IDSupplier" required>
-                                <option value="">Vui lòng chọn nhà cung ứng</option>
-                                @if (supplieritems != null)
-                                {
-                                    @foreach (var sup in supplieritems)
-                                    {
-                                        <option value="@sup.IDSupplier" selected="@((product.IDSupplier == sup.IDSupplier) ? "selected" : null)">
-                                            @sup.Name
-                                        </option>
-                                    }
-                                }
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="category" class="form-label">Loại sản phẩm</label></td>
-                        <td>
-                            <select class="form-control" id="category" @bind="product.IDCategory" required>
-                                <option value="">Vui lòng chọn loại sản phẩm</option>
-                                @if (categoryitems != null)
-                                {
-                                    @foreach (var cate in categoryitems)
-                                    {
-                                        <option value="@cate.IDCategory" selected="@((product.IDCategory == cate.IDCategory) ? "selected" : null)">
-                                            @cate.Name
-                                        </option>
-                                    }
-                                }
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="productdetails" class="form-label">Chi tiết sản phẩm</label></td>
-                        <td>
-                            <ul class="list-unstyled">
-                                @if (product.ProductDetails != null)
-                                {
-                                    @foreach (var detail in product.ProductDetails)
-                                    {
-                                        <li>
-                                            <strong>Màu sắc:</strong> @detail.Colors.Color,
-                                            <strong>Kích thước:</strong> @detail.Sizes.SizeName,
-                                            <strong>Số lượng:</strong> @detail.Quantity
-                                        </li>
-                                    }
-                                }
-                            </ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label class="form-label">Ảnh chi tiết</label></td>
-                        <td>
-                            @if (imageDetails != null && imageDetails.Any())
-                            {
-                                @foreach (var x in imageDetails)
-                                {
-                                    <div>
-                                        <img src="@x.Image" alt="Alternate Text" style="width: 100px; height:100px">
-                                        <button class="btn btn-danger" @onclick="@(() => DeleteImageDetail(x.IDImage))">Xóa</button>
-                                    </div>
+    @if (isLoading)
+    {
+        <div class="alert alert-info">Đang tải dữ liệu...</div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+    else
+    {
+        <form @onsubmit="UpdateProduct">
+            <div class="mb-3">
+                <label for="name" class="form-label">Tên sản phẩm</label>
+                <input type="text" class="form-control" id="name" @bind="product.Name" required />
+            </div>
 
-                                }
-                            }
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Giá</label>
+                <input type="number" class="form-control" id="price" @bind="product.Price" required />
+            </div>
 
-        <div class="mt-3">
-            <button type="submit" class="btn btn-primary">Cập nhật</button>
-            <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
-            <a class="btn btn-success" href="/AddProductDetails/@product.IDProduct">Thêm chi tiết sản phẩm</a>
-            <a class="btn btn-primary" href="/AddImage/@product.IDProduct">Thêm ảnh chi tiết</a>
-        </div>
-    </form>
+            <div class="mb-3">
+                <label for="image" class="form-label">Ảnh sản phẩm</label>
+                <InputFile id="image" OnChange="HandleFileSelected" />
+                <img src="@product.Image" alt="Ảnh sản phẩm" class="img-thumbnail mt-2" style="max-width: 200px;" />
+            </div>
+
+            <div class="mb-3">
+                <label for="status" class="form-label">Trạng thái</label>
+                <select class="form-select" id="status" @bind="product.Status" required>
+                    <option value="">Vui lòng chọn trạng thái sản phẩm</option>
+                    <option value="Bán">Bán</option>
+                    <option value="Ngừng bán">Ngừng bán</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="supplier" class="form-label">Nhà cung ứng</label>
+                <select class="form-select" id="supplier" @bind="product.IDSupplier" required>
+                    <option value="">Vui lòng chọn nhà cung ứng</option>
+                    @if (supplieritems != null)
+                    {
+                        @foreach (var sup in supplieritems)
+                        {
+                            <option value="@sup.IDSupplier" selected="@((product.IDSupplier == sup.IDSupplier) ? "selected" : null)">
+                                @sup.Name
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">Loại sản phẩm</label>
+                <select class="form-select" id="category" @bind="product.IDCategory" required>
+                    <option value="">Vui lòng chọn loại sản phẩm</option>
+                    @if (categoryitems != null)
+                    {
+                        @foreach (var cate in categoryitems)
+                        {
+                            <option value="@cate.IDCategory" selected="@((product.IDCategory == cate.IDCategory) ? "selected" : null)">
+                                @cate.Name
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Chi tiết sản phẩm</label>
+                <ul class="list-unstyled">
+                    @if (product.ProductDetails != null)
+                    {
+                        @foreach (var detail in product.ProductDetails)
+                        {
+                            <li>
+                                <strong>Màu sắc:</strong> @detail.Colors.Color,
+                                <strong>Kích thước:</strong> @detail.Sizes.SizeName,
+                                <strong>Số lượng:</strong> @detail.Quantity
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ảnh chi tiết</label>
+                @if (imageDetails != null && imageDetails.Any())
+                {
+                    @foreach (var x in imageDetails)
+                    {
+                        <div class="d-inline-block me-2">
+                            <img src="@x.Image" alt="Ảnh chi tiết" class="img-thumbnail" style="width: 100px; height: 100px;" />
+                            <button class="btn btn-danger btn-sm mt-1" @onclick="@(() => DeleteImageDetail(x.IDImage))">Xóa</button>
+                        </div>
+                    }
+                }
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                <button type="button" class="btn btn-secondary" @onclick="NavigateToProductPage">Quay về danh sách</button>
+                <a class="btn btn-success" href="/AddProductDetails/@product.IDProduct">Thêm chi tiết sản phẩm</a>
+                <a class="btn btn-primary" href="/AddImage/@product.IDProduct">Thêm ảnh chi tiết</a>
+            </div>
+        </form>
+    }
 </div>
 
 @code {
@@ -136,30 +128,38 @@
     private IEnumerable<Supplier> supplieritems;
     private IEnumerable<Category> categoryitems;
     private IEnumerable<ImageDetails> imageDetails;
+    private bool isLoading = true;
+    private string errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        product = await Task.Run(() => Prodrespone.GetProductByIdAsync(id));
-        supplieritems = await Task.Run(() => supplierresponse.GetSuppliers());
-        categoryitems = await Task.Run(() => categoryresponse.GetCategories());
-        imageDetails = await Task.Run(() => imageResponse.GetImages(id));
-
+        try
+        {
+            product = await Prodrespone.GetProductByIdAsync(id);
+            supplieritems = await supplierresponse.GetSuppliersAsync();
+            categoryitems = await categoryresponse.GetCategoriesAsync();
+            imageDetails = await imageResponse.GetImagesAsync(id);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Có lỗi xảy ra khi tải dữ liệu: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
-    private void UpdateProduct()
+    private async Task UpdateProduct()
     {
         try
         {
-            // Gọi phương thức update từ dịch vụ ProductResponse
-            Prodrespone.UpdateAsync(product, id);
-
-            // Chuyển hướng đến trang danh sách sản phẩm
+            await Prodrespone.UpdateAsync(product, id);
             Navigation.NavigateTo("/ProductPage");
         }
         catch (Exception ex)
         {
-            // Xử lý lỗi nếu cần
-            Console.WriteLine($"Có lỗi xảy ra: {ex.Message}");
+            errorMessage = $"Có lỗi xảy ra khi cập nhật sản phẩm: {ex.Message}";
         }
     }
 
@@ -167,34 +167,31 @@
     {
         try
         {
-            // Tìm thông tin về ảnh từ danh sách hiện tại
             var imageDetail = imageDetails.FirstOrDefault(img => img.IDImage == imageId);
 
             if (imageDetail != null)
             {
-                // Xóa tệp ảnh khỏi thư mục
                 var fileName = Path.GetFileName(imageDetail.Image);
                 var filePath = Path.Combine(WebHostEnvironment.WebRootPath, "Image_Product", fileName);
-                if (System.IO.File.Exists(filePath))
+                if (File.Exists(filePath))
                 {
-                    System.IO.File.Delete(filePath);
+                    File.Delete(filePath);
                 }
 
-                // Xóa ảnh khỏi cơ sở dữ liệu
-                imageResponse.DeleteImage(imageId);
-
+                await imageResponse.DeleteImageAsync(imageId);
                 Navigation.NavigateTo($"/UpdateProd/{id}", forceLoad: true);
             }
             else
             {
-                Console.WriteLine("Ảnh không tìm thấy.");
+                errorMessage = "Ảnh không tìm thấy.";
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Có lỗi xảy ra khi xóa ảnh: {ex.Message}");
+            errorMessage = $"Có lỗi xảy ra khi xóa ảnh: {ex.Message}";
         }
     }
+
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         var file = e.File;
@@ -205,10 +202,8 @@
 
             try
             {
-                // Kiểm tra xem tệp đã tồn tại trong thư mục hay chưa
                 if (!File.Exists(filePath))
                 {
-                    // Đọc nội dung tệp và lưu tệp nếu chưa tồn tại
                     using (var stream = file.OpenReadStream())
                     using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                     {
@@ -216,16 +211,14 @@
                     }
                 }
 
-                // Thiết lập URL ảnh để xem trước
                 product.Image = $"Image_Product/{fileName}";
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Có lỗi xảy ra khi lưu tệp: {ex.Message}");
+                errorMessage = $"Có lỗi xảy ra khi lưu tệp: {ex.Message}";
             }
         }
     }
-
 
     private void NavigateToProductPage()
     {

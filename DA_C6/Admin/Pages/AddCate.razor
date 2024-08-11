@@ -24,7 +24,7 @@
 
     private async Task HandleValidSubmit()
     {
-        await Task.Run(() => catere.AddCategory(newCategory));
+        await catere.AddCategoryAsync(newCategory);
         Navigation.NavigateTo("/CatePage");
     }
 

@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Admin.Data;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Admin.Model;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Services
 {
-        public interface IImage
-        {
-            public IEnumerable<ImageDetails> GetImages(int productId);
-        public ImageDetails AddImage(string image, int id);
-        public ImageDetails DeleteImage(int id);
+    public interface IImage
+    {
+        Task<IEnumerable<ImageDetails>> GetImagesAsync(int productId);
+        Task<ImageDetails> AddImageAsync(string image, int id);
+        Task<ImageDetails> DeleteImageAsync(int id);
     }
-    }
+}

@@ -1,59 +1,70 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.EntityFrameworkCore;
 using Admin.Data;
 using Admin.Model;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Admin.Services
 {
-    public class SupplierResponse:ISupplier
+    public class SupplierResponse : ISupplier
     {
-        private readonly ApplicationDbContext context;
-        public SupplierResponse(ApplicationDbContext ct) => context = ct;
+        private readonly ApplicationDbContext _context;
 
-        public Supplier Addsuplire(Supplier supplier)
+        public SupplierResponse(ApplicationDbContext context) => _context = context;
+
+        public async Task<Supplier> AddSupplierAsync(Supplier supplier)
         {
             try
             {
-                context.Suppliers.Add(supplier);
-                context.SaveChanges();
+                await _context.Suppliers.AddAsync(supplier);
+                await _context.SaveChangesAsync();
                 return supplier;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-
+                // Log exception (ex.Message) here
                 return null;
             }
         }
 
-        public Supplier GetSupplierByID(int id)
+        public async Task<Supplier> GetSupplierByIdAsync(int id)
         {
-            return context.Suppliers.FirstOrDefault(c => c.IDSupplier == id);
+            return await _context.Suppliers.FindAsync(id);
         }
 
-        public IEnumerable<Supplier> GetSuppliers()
+        public async Task<IEnumerable<Supplier>> GetSuppliersAsync()
         {
-           return context.Suppliers;
+            return await _context.Suppliers.ToListAsync();
         }
 
-        public Supplier UpdateSuplier(Supplier updateSupplier, int id)
+        public async Task<Supplier> UpdateSupplierAsync(Supplier updateSupplier, int id)
         {
-            var existingSuplier = GetSupplierByID(id);
+            var existingSupplier = await GetSupplierByIdAsync(id);
 
-            if (existingSuplier != null)
+            if (existingSupplier != null)
             {
-                existingSuplier.Address = updateSupplier.Address;
-                existingSuplier.Email = updateSupplier.Email;
-                existingSuplier.Phone = updateSupplier.Phone;
-                existingSuplier.Name = updateSupplier.Name;
-                context.SaveChanges();
-                return existingSuplier;
+                existingSupplier.Address = updateSupplier.Address;
+                existingSupplier.Email = updateSupplier.Email;
+                existingSupplier.Phone = updateSupplier.Phone;
+                existingSupplier.Name = updateSupplier.Name;
+
+                try
+                {
+                    _context.Suppliers.Update(existingSupplier);
+                    await _context.SaveChangesAsync();
+                    return existingSupplier;
+                }
+                catch (System.Exception ex)
+                {
+                    // Log exception (ex.Message) here
+                    return null;
+                }
             }
             else
             {
                 return null;
-            }      
+            }
         }
     }
 }
