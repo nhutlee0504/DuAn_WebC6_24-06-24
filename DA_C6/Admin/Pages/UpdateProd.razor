@@ -34,8 +34,10 @@
                         <td><input type="number" class="form-control" id="price" @bind="product.Price" required /></td>
                     </tr>
                     <tr>
-                        <td><label for="image" class="form-label">Ảnh</label></td>
-                        <td><input type="text" class="form-control" id="image" @bind="product.Image" required /></td>
+                        <td>
+                            <InputFile OnChange="HandleFileSelected" />
+                        </td>
+                        <td><img src="@product.Image" alt="Ảnh sản phẩm" class="img-thumbnail mt-2" style="max-width: 200px;" /></td>
                     </tr>
                     <tr>
                         <td><label for="status" class="form-label">Trạng thái</label></td>
@@ -193,6 +195,37 @@
             Console.WriteLine($"Có lỗi xảy ra khi xóa ảnh: {ex.Message}");
         }
     }
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            var fileName = file.Name;
+            var filePath = Path.Combine(WebHostEnvironment.WebRootPath, "Image_Product", fileName);
+
+            try
+            {
+                // Kiểm tra xem tệp đã tồn tại trong thư mục hay chưa
+                if (!File.Exists(filePath))
+                {
+                    // Đọc nội dung tệp và lưu tệp nếu chưa tồn tại
+                    using (var stream = file.OpenReadStream())
+                    using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                    {
+                        await stream.CopyToAsync(fileStream);
+                    }
+                }
+
+                // Thiết lập URL ảnh để xem trước
+                product.Image = $"Image_Product/{fileName}";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Có lỗi xảy ra khi lưu tệp: {ex.Message}");
+            }
+        }
+    }
+
 
     private void NavigateToProductPage()
     {

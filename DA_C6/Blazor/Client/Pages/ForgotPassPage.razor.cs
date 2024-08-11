@@ -26,7 +26,7 @@ namespace Blazor.Client.Pages
         private string messageSuccess = null;
         private string messageError = null;
         private string errorValid;
-
+        private bool loading = false;
         protected override async Task OnInitializedAsync()
         {
             try
@@ -55,6 +55,7 @@ namespace Blazor.Client.Pages
                 }
                 else if (acc != null)
                 {
+                    loading = true;
                     var newPassword = GenerateRandomPassword();
                     var emailMessage = $"Mật khẩu mới là: {newPassword}";
                     await SendEmailAsync(Email, "[NEXTON] Mật khẩu mới", emailMessage);
@@ -67,10 +68,12 @@ namespace Blazor.Client.Pages
                         messageSuccess = "Mật khẩu mới đã được gửi đến Email";
                         messageError = null;
                         errorValid = null;
+                        loading = false;
                     }
                 }
                 else
                 {
+                    loading = false;
                     errorValid = null;
                     messageSuccess = null;
                     messageError = "Email không tồn tại";

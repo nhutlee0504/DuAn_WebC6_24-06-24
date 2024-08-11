@@ -151,6 +151,7 @@
     protected override async Task OnInitializedAsync()
     {
         LoggedInUser = await JSruntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+        await JSruntime.InvokeVoidAsync("resetTimer");
         await base.OnInitializedAsync();
     }
 
@@ -184,3 +185,20 @@
         NavigationManager.NavigateTo("/", forceLoad: true);
     }
 }
+<script>
+    let timeout;
+
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(logout, 1800000); // 1800000ms = 30 phút
+    }
+
+    function logout() {
+        localStorage.removeItem("LoggedInUser");
+        window.location.href = '/';
+    }
+
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+</script>
