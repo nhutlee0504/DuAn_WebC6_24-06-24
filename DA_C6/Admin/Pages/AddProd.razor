@@ -6,37 +6,51 @@
 @inject SupplierResponse supplierResponse
 @inject CategoryResponse categoryResponse
 @inject NavigationManager navigation
-
-<h3>Thêm sản phẩm mới</h3>
-<div class="container">
-    <EditForm Model="newProduct" OnValidSubmit="HandleValidSubmit">
+<style>
+    .custom-select {
+        border-radius: 8px;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+        appearance: none;
+    }</style>
+<h3 class="mb-4">Thêm sản phẩm mới</h3>
+<div class="container shadow p-4 rounded bg-light">
+    <EditForm Model="newProduct" OnValidSubmit="HandleValidSubmit" class="needs-validation" novalidate>
         <DataAnnotationsValidator />
-        <ValidationSummary />
+        <ValidationSummary class="text-danger" />
 
         <div class="mb-3">
             <label for="name" class="form-label">Tên sản phẩm</label>
             <InputText class="form-control" id="name" @bind-Value="newProduct.Name" required />
+            <div class="invalid-feedback">Vui lòng nhập tên sản phẩm.</div>
         </div>
+
         <div class="mb-3">
             <label for="price" class="form-label">Giá</label>
             <InputNumber class="form-control" id="price" @bind-Value="newProduct.Price" required />
+            <div class="invalid-feedback">Vui lòng nhập giá sản phẩm.</div>
         </div>
+
         <div class="mb-3">
             <label for="image" class="form-label">Ảnh</label>
-            <InputFile id="image" OnChange="HandleImageChange" />
+            <InputFile id="image" OnChange="HandleImageChange" class="form-control" />
         </div>
+
         <div class="mb-3">
             <label for="status" class="form-label">Trạng thái</label>
-            <InputSelect id="status" @bind-Value="newProduct.Status" required>
-                <option value="">Vui lòng chọn trạng thái sản phẩm</option>
+            <InputSelect id="status" @bind-Value="newProduct.Status" class="form-select custom-select" required>
+                <option value="">Chọn trạng thái sản phẩm</option>
                 <option value="Bán">Bán</option>
                 <option value="Ngừng bán">Ngừng bán</option>
             </InputSelect>
+            <div class="invalid-feedback">Vui lòng chọn trạng thái sản phẩm.</div>
         </div>
+
         <div class="mb-3">
             <label for="supplier" class="form-label">Nhà cung ứng</label>
-            <InputSelect id="supplier" @bind-Value="newProduct.IDSupplier" required>
-                <option value="">Vui lòng chọn nhà cung ứng</option>
+            <InputSelect id="supplier" @bind-Value="newProduct.IDSupplier" class="form-select custom-select" required>
+                <option value="">Chọn nhà cung ứng</option>
                 @if (supplierItems != null)
                 {
                     @foreach (var sup in supplierItems)
@@ -45,11 +59,13 @@
                     }
                 }
             </InputSelect>
+            <div class="invalid-feedback">Vui lòng chọn nhà cung ứng.</div>
         </div>
+
         <div class="mb-3">
             <label for="category" class="form-label">Loại sản phẩm</label>
-            <InputSelect id="category" @bind-Value="newProduct.IDCategory" required>
-                <option value="">Vui lòng chọn loại sản phẩm</option>
+            <InputSelect id="category" @bind-Value="newProduct.IDCategory" class="form-select custom-select" required>
+                <option value="">Chọn loại sản phẩm</option>
                 @if (categoryItems != null)
                 {
                     @foreach (var cate in categoryItems)
@@ -58,10 +74,17 @@
                     }
                 }
             </InputSelect>
+            <div class="invalid-feedback">Vui lòng chọn loại sản phẩm.</div>
         </div>
-        <div>
-            <button type="submit" class="btn btn-primary">Thêm</button>
-            <button type="button" class="btn btn-secondary">Quay về danh sách</button>
+
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Thêm sản phẩm
+            </button>
+            <button type="button" class="btn btn-secondary" @onclick='() => navigation.NavigateTo("/ProductPage")'>
+                <i class="fas fa-arrow-left"></i> Quay về danh sách
+            </button>
         </div>
     </EditForm>
 </div>

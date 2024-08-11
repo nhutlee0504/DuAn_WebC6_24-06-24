@@ -35,7 +35,6 @@
 
     .radio-btn-size:checked + label {
         color: white; /* Màu văn bản khi radio button được chọn */
-        border: 1px solid #0EA5E9; /* Viền khi radio button được chọn */
     }
 
     .radio-btn-size:not(:checked) + label {

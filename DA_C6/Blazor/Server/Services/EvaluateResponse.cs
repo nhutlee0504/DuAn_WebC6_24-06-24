@@ -14,7 +14,15 @@ namespace Blazor.Server.Services
         {
             _context = context;
         }
-        public IEnumerable<Evaluate> GetEvaluate()
+
+		public Evaluate AddEva(Evaluate evaluate)
+		{
+			_context.Evaluates.Add(evaluate);
+            _context.SaveChanges();
+            return evaluate;
+		}
+
+		public IEnumerable<Evaluate> GetEvaluate()
         {
             return _context.Evaluates;
         }

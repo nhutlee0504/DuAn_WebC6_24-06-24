@@ -118,6 +118,13 @@ namespace Blazor.Server.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetAllBills")]
+        public IEnumerable<Bill> GetAllBills()
+        {
+            return _bill.GetAllBill();
+        }
+
         public class UpdateBillStatusRequest
         {
             public int BillId { get; set; }

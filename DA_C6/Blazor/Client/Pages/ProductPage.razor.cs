@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System;
 using Blazor.Shared.Model;
 using System.Linq;
+using Microsoft.AspNetCore.Components;
 
 namespace Blazor.Client.Pages
 {
@@ -19,13 +20,14 @@ namespace Blazor.Client.Pages
         private int currentPage = 1;
         private int totalPages;
         private int pageSize = 6; // tổng số sản phẩm trong 1 trang
+        private string searchTerm = ""; // Biến để lưu từ khóa tìm kiếm
 
         protected override async Task OnInitializedAsync()
         {
             try
             {
-                products = await http.GetFromJsonAsync<List<Product>>("api/product/GetProducts");
-                categories = await http.GetFromJsonAsync<List<Category>>("api/category/GetCategories");
+                products = await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+                categories = await httpClient.GetFromJsonAsync<List<Category>>("api/category/getcategories");
                 UpdatePagedProducts();
             }
             catch (Exception ex)
@@ -36,8 +38,10 @@ namespace Blazor.Client.Pages
 
         private void UpdatePagedProducts()
         {
-            totalPages = (int)Math.Ceiling((double)products.Count / pageSize);
-            pagedProducts = products.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+            // Cập nhật sản phẩm phân trang dựa trên danh sách sản phẩm hiện có và từ khóa tìm kiếm
+            var filteredProducts = products.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower())).ToList();
+            totalPages = (int)Math.Ceiling((double)filteredProducts.Count / pageSize);
+            pagedProducts = filteredProducts.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
         }
 
         private async Task ChangePage(int page)
@@ -60,17 +64,17 @@ namespace Blazor.Client.Pages
                 selectedCategories.Remove(IDCategory);
             }
             if (selectedCategories.Count > 0)
-                products = (await http.GetFromJsonAsync<List<Product>>("api/product/GetProducts")).Where(x => selectedCategories.Contains(x.IDCategory)).ToList();
+                products = (await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts")).Where(x => selectedCategories.Contains(x.IDCategory)).ToList();
             else
             {
-                products = await http.GetFromJsonAsync<List<Product>>("api/product/GetProducts");
+                products = await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts");
             }
             UpdatePagedProducts();
         }
 
         private async Task OnFilterByPrice()
         {
-            var filteredProducts = await http.GetFromJsonAsync<List<Product>>("api/product/GetProducts");
+            var filteredProducts = products.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower())).ToList();
 
             if (lowPrice >= 0 && highPrice >= 0)
             {
@@ -82,7 +86,7 @@ namespace Blazor.Client.Pages
                 message = "Không tìm thấy sản phẩm trong khoản giá";
                 await Task.Delay(3000);
                 message = null;
-                products = await http.GetFromJsonAsync<List<Product>>("api/product/GetProducts");
+                products = await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts");
             }
             else
             {
@@ -95,15 +99,18 @@ namespace Blazor.Client.Pages
         {
             try
             {
+                var filteredProducts = products.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower())).ToList();
+
                 if (value == "priceLowToHigh")
                 {
-                    products = products.OrderBy(p => p.Price).ToList();
+                    filteredProducts = filteredProducts.OrderBy(p => p.Price).ToList();
                 }
                 else if (value == "priceHighToLow")
                 {
-                    products = products.OrderByDescending(p => p.Price).ToList();
+                    filteredProducts = filteredProducts.OrderByDescending(p => p.Price).ToList();
                 }
 
+                products = filteredProducts;
                 currentPage = 1;
                 UpdatePagedProducts();
             }
@@ -111,6 +118,17 @@ namespace Blazor.Client.Pages
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
+        }
+
+        private void OnSearchTermChanged(ChangeEventArgs e)
+        {
+            searchTerm = e.Value.ToString();
+            UpdatePagedProducts();
+        }
+
+        private void OnSearch()
+        {
+            UpdatePagedProducts();
         }
     }
 }

@@ -1,0 +1,47 @@
+﻿@page "/login"
+@inherits LayoutComponentBase
+@using Admin.Services
+@inject PageServices pageService
+@inject IJSRuntime JSRuntime
+
+<h3>Đăng nhập</h3>
+
+<div>
+    <label for="username">Tên đăng nhập:</label>
+    <input id="username" @bind="username" />
+
+    <label for="password">Mật khẩu:</label>
+    <input id="password" type="password" @bind="password" />
+</div>
+
+<button @onclick="DangNhap">Đăng nhập</button>
+
+@code {
+    private string username;
+    private string password;
+
+    private async Task DangNhap()
+    {
+        if (KiemTraDangNhap(username, password))
+        {
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "LoggedInUser", username);
+            // Đăng nhập thành công, điều hướng tới trang chính
+        }
+        else
+        {
+            // Xử lý thông báo lỗi đăng nhập không thành công
+        }
+    }
+
+    private bool KiemTraDangNhap(string username, string password)
+    {
+        // Thực hiện kiểm tra tên đăng nhập và mật khẩu tại đây
+        // Đây chỉ là một ví dụ đơn giản, bạn cần tích hợp logic xác thực an toàn trong ứng dụng thực tế
+        if (username == "Admin" && password == "123456")
+        {
+            return true; // Đăng nhập thành công
+        }
+
+        return false; // Đăng nhập không thành công
+    }
+}

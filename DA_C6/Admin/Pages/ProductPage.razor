@@ -4,41 +4,50 @@
 @inject ProductResponse productrepose
 @inject NavigationManager navigation
 
-<h3>ProductPage</h3>
+<h3 class="mb-4">Danh sách sản phẩm</h3>
 
-<div class="col d-flex justify-content-end">
-    <button type="button" class="btn btn-primary" @onclick="NavigateToCategoryPage">Thêm sản phẩm</button>
+<div class="d-flex justify-content-end mb-3">
+    <button type="button" class="btn btn-primary" @onclick="NavigateToCategoryPage">
+        <i class="fas fa-plus"></i> Thêm sản phẩm
+    </button>
 </div>
+
 @if (productitems == null)
 {
-    <p>Loading...</p>
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
 }
 else
 {
-    <table class="table table-hover" style="margin-top: 20px">
-        <thead>
+    <table class="table table-hover  text-center">
+        <thead class="table-light">
             <tr>
-                <th>Tên</th>
-                <th>Giá</th>
-                <th>Ảnh</th>
-                <th>Trạng thái</th>
-                <th>Nhà cung ứng</th>
-                <th>Loại</th>
-                <th>Hành động</th>
+                <th scope="col">Tên</th>
+                <th scope="col">Giá</th>
+                <th scope="col">Ảnh</th>
+                <th scope="col">Trạng thái</th>
+                <th scope="col">Nhà cung ứng</th>
+                <th scope="col">Loại</th>
+                <th scope="col"></th>
             </tr>
         </thead>
-        <tbody class="table-group-divider">
+        <tbody>
             @foreach (var x in productitems)
             {
                 <tr>
-                    <td class="ellipsis">@x.Name</td>
+                    <td class="text-truncate" style="max-width: 200px;">@x.Name</td>
                     <td>@x.Price.ToString("N0")đ</td>
-                    <td><img src="/@x.Image" style="width:100px; height:100px;"></td>
+                    <td><img src="/@x.Image" class="img-thumbnail" style="width:100px; height:100px;"></td>
                     <td>@x.Status</td>
                     <td>@x.Supplier.Name</td>
                     <td>@x.Category.Name</td>
                     <td>
-                        <button type="button" class="btn btn-outline-success" @onclick="() =>UpdateProduct(x.IDProduct) ">Cập nhật</button>
+                        <button type="button" class="btn btn-outline-success btn-sm" @onclick="() =>UpdateProduct(x.IDProduct)">
+                            <i class="fas fa-edit"></i> Xem chi tiết
+                        </button>
                     </td>
                 </tr>
             }
@@ -47,11 +56,10 @@ else
 }
 
 <style>
-    .ellipsis {
+    .text-truncate {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 200px; /* Bạn có thể điều chỉnh giá trị này */
     }
 </style>
 
@@ -62,10 +70,12 @@ else
     {
         productitems = await productrepose.GetProductsWithDetailsAsync();
     }
+
     private void NavigateToCategoryPage()
     {
         navigation.NavigateTo("/AddProdPage");
     }
+
     private void UpdateProduct(int productId)
     {
         navigation.NavigateTo($"/UpdateProd/{productId}"); // Điều hướng đến trang cập nhật với ID của sản phẩm

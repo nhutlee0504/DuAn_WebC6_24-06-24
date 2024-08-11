@@ -15,15 +15,6 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                 </ul>
-                <form id="searchForm" @onsubmit="SearchProducts" class="mx-auto w-50">
-                    <div class="position-relative w-100">
-                        <input @bind="searchTerm" class="form-control pl-5"
-                               style="border-radius: 25px; background-color: #F8F8F8;"
-                               type="search" id="find" name="find"
-                               placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
-                        <button type="submit" style="display: none;"></button>
-                    </div>
-                </form>
                 <ul class="navbar-nav flex-grow-1 justify-content-end">
                     @if (string.IsNullOrEmpty(LoggedInUser))
                     {
@@ -178,6 +169,11 @@
         {
             NavigationManager.NavigateTo($"/product?find={searchTerm}", forceLoad: true);
         }
+    }
+
+    private async Task LoadTrang()
+    {
+        NavigationManager.NavigateTo("/", forceLoad: true);
     }
 }
 <script>

@@ -1,8 +1,21 @@
-﻿@page "/product"
-@inject HttpClient http
-@inject NavigationManager NavigationManager
+﻿    @page "/product"
+    @inject HttpClient httpClient
+    @inject NavigationManager NavigationManager
 
-<style>
+    <style>
+    .product-name {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .product-price {
+        display: block;
+        white-space: nowrap; /* Đảm bảo giá không bị cắt */
+    }
+
+
     .bg-text {
         background-color: white;
     }
@@ -29,10 +42,11 @@
         text-decoration: none;
     }
 
-    .active > .page-link, .page-link.active{
-       border: 1.5px solid black;
+    .active > .page-link, .page-link.active {
+        border: 1.5px solid black;
     }
-</style>
+
+    </style>
 
 <div class="container">
     <ol class="breadcrumb bg-transparent">
@@ -41,6 +55,12 @@
     </ol>
     <div class="row mt-3">
         <div class="col-sm-3">
+            <h5>Tìm kiếm</h5>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm" @bind="searchTerm" @oninput="OnSearchTermChanged">
+                <button class="btn btn-dark" @onclick="OnSearch">Tìm kiếm</button>
+            </div>
+
             <h5>Loại</h5>
             <form>
                 @if (categories != null)
@@ -97,21 +117,22 @@
                 {
                     @foreach (var x in pagedProducts)
                     {
-                        <div class="col-sm-4 d-flex justify-content-center flex-column prod  mb-4">
+                        <div class="col-sm-4 d-flex justify-content-center flex-column prod mb-4">
                             <div class="border border-secondary-subtle rounded">
                                 <a href="/productdetail/@x.IDProduct"><img src="@x.Image" alt="Alternate Text" class="mw-100" /></a>
                             </div>
                             <div class="row container-fluid">
                                 <div class="col-md-8">
-                                    <span class="fw-bold text-truncate">@x.Name</span>
+                                    <span class="fw-bold product-name">@x.Name</span>
                                     <br />
                                     <span style="font-size: small; line-height: 1" class="text-truncate">@categories.FirstOrDefault(z => z.IDCategory == x.IDCategory)?.Name</span>
                                     <br />
                                     <span style="line-height: 3"><i class="bi bi-star-fill text-warning"></i> 4.9 (100)</span>
                                 </div>
                                 <div class="col-md-4">
-                                    <p class="fw-bold text-truncate">@x.Price.ToString("N0") đồng</p>
+                                    <p class="fw-bold product-price">@x.Price.ToString("N0") đồng</p>
                                 </div>
+
                             </div>
                         </div>
                     }
