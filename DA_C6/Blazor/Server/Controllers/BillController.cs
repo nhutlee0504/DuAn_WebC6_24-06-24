@@ -27,8 +27,7 @@ namespace Blazor.Server.Controllers
         }
 
         [HttpGet]
-        [Route("GetBills")]
-        public IEnumerable<Bill> GetBills()
+        public IEnumerable<Bill> GetSizes()
         {
             return _bill.GetAllBill();
         }
@@ -117,6 +116,13 @@ namespace Blazor.Server.Controllers
             {
                 return BadRequest("Không thể cập nhật trạng thái đơn hàng này.");
             }
+        }
+
+        [HttpGet]
+        [Route("GetAllBills")]
+        public IEnumerable<Bill> GetAllBills()
+        {
+            return _bill.GetAllBill();
         }
 
         public class UpdateBillStatusRequest

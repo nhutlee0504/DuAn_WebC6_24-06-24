@@ -5,351 +5,449 @@
 @inject NavigationManager navigation
 <style>
 	.alert {
-		border-radius: 0.5rem; 
+		border-radius: 0.5rem;
 		padding: 1rem;
-		font-size: 1rem; 
-		margin-bottom: 1rem; 
+		font-size: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	.alert-danger {
 		background-color: #dc3545;
-		color: #ffffff; 
+		color: #ffffff;
 	}
 
 	.alert-success {
-		background-color: #28a745; 
+		background-color: #28a745;
 		color: #ffffff;
 	}</style>
 <div class="container">
-    <div class="error-message">
-        @if (!string.IsNullOrEmpty(errorMessage))
-        {
-            <div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
-                @errorMessage
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-success" role="alert" style="display: @(string.IsNullOrEmpty(successMessage) ? "none" : "block")">
-                <!-- Hiển thị thông báo thành công nếu có -->
-                @successMessage
-            </div>
-        }
-    </div>
-    @if (productitems != null)
-    {
-        <div class="row">
-            <div class="col-md-7">
-                <div class="row ">
-                    <div class="d-flex">
-                        <div class="col-md-9">
-                            <div class="justify-content-center" style="margin-right: 15px;">
-                                <img id="main-image" src="/@productitems.Image" alt="Alternate Text" class="w-100" style="border-radius: 25px;">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="image-option">
-                                <input type="radio" id="image-@productitems.IDProduct" name="image-options" value="@productitems.IDProduct" class="radio-btn-image" @onclick="() => UpdateMainImage(productitems.Image)">
-                                <label for="image-@productitems.IDProduct">
-                                    <img src="/@productitems.Image" alt="Option @productitems.IDProduct" class="w-75 img-thumbnail">
-                                </label>
-                            </div>
-                            @if (imagedetailitems != null && imagedetailitems.Any())
-                            {
-                                <div class="image-selection">
-                                 
-                                    @foreach (var img in imagedetailitems.Take(3))
-                                    {
-                                        <div class="image-option">
-                                            <input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image" @onclick="() => UpdateMainImage(img.Image)">
-                                            <label for="image-@img.IDImage">
-                                                <img src="/@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
-                                            </label>
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <hr>
-                <h3>THÔNG TIN SẢN PHẨM</h3>
-                <h4>@productitems.Name</h4>
-                <h6 class="text-secondary">
-                    @categoryitems.FirstOrDefault(y => y.IDCategory == productitems.IDCategory).Name -
-                    @supplieritems.FirstOrDefault(y => y.IDSupplier == productitems.IDSupplier).Name
-                    <p>@productitems.Describe</p>
-                </h6>
+	<div class="error-message">
+		@if (!string.IsNullOrEmpty(errorMessage))
+		{
+			<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
+				@errorMessage
+			</div>
+		}
+		else
+		{
+			<div class="alert alert-success" role="alert" style="display: @(string.IsNullOrEmpty(successMessage) ? "none" : "block")">
+				<!-- Hiển thị thông báo thành công nếu có -->
+				@successMessage
+			</div>
+		}
+	</div>
+	@if (productitems != null)
+	{
+		<div class="row">
+			<div class="col-md-7">
+				<div class="row ">
+					<div class="d-flex">
+						<div class="col-md-9">
+							<div class="justify-content-center" style="margin-right: 15px;">
+								<img id="main-image" src="/@productitems.Image" alt="Alternate Text" class="w-100" style="border-radius: 25px;">
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="image-option">
+								<input type="radio" id="image-@productitems.IDProduct" name="image-options" value="@productitems.IDProduct" class="radio-btn-image" @onclick="() => UpdateMainImage(productitems.Image)">
+								<label for="image-@productitems.IDProduct">
+									<img src="/@productitems.Image" alt="Option @productitems.IDProduct" class="w-75 img-thumbnail">
+								</label>
+							</div>
+							@if (imagedetailitems != null && imagedetailitems.Any())
+							{
+								<div class="image-selection">
 
-            </div>
-            <div class="col-md-5">
+									@foreach (var img in imagedetailitems.Take(3))
+									{
+										<div class="image-option">
+											<input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image" @onclick="() => UpdateMainImage(img.Image)">
+											<label for="image-@img.IDImage">
+												<img src="/@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
+											</label>
+										</div>
+									}
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+				<hr>
+				<h3>THÔNG TIN SẢN PHẨM</h3>
+				<h4>@productitems.Name</h4>
+				<h6 class="text-secondary">
+					@categoryitems.FirstOrDefault(y => y.IDCategory == productitems.IDCategory).Name -
+					@supplieritems.FirstOrDefault(y => y.IDSupplier == productitems.IDSupplier).Name
+					<p>@productitems.Describe</p>
 
-                <div class="card" style="background-color:#D9D9D9">
-                    <div class="card-body">
-                        <div class="container">
-                            <div class="row d-flex justify-content-between">
-                                <div class="d-flex justify-content-between">
-                                    <h4>
-                                        4.9<i class="bi bi-star-half text-warning"></i>
-                                     
-                                    </h4>
-                                    <h4>
-                                        @productitems.Price.ToString("N0")đ
-                                    </h4>
-                                </div>
-                            </div>
 
-                            <div>
-                                <div class="font-weight-bold" style="font-size:large">Màu và kích cỡ:</div>
-                            </div>
 
-                            @*color and size*@
-                            <form method="post" asp-controller="Cart" asp-action="AddCart">
-                                <div class="row mb-3">
-                                    @if (productdetailitems != null)
-                                    {
-                                        @foreach (var item in productdetailitems)
-                                        {
-                                            <div class="col-md-2">
-                                                <!-- Thêm thuộc tính data-color để lưu mã màu của từng item -->
-                                                <input class="radio-btn-size" type="radio" name="IdPDetail" id="@item.IDPDetail" value="@item.IDPDetail" checked="@(item == productdetailitems.FirstOrDefault())" />
-                                                <label for="@item.IDPDetail" class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y => y.IDColor == item.IDColor).Color">
-                                                    @sizeitems.FirstOrDefault(y => y.IDSize == item.Size).SizeName
-                                                </label>
-                                            </div>
-                                        }
-                                    }
-                                </div>
+					@if (userEvaluate != null)
+					{
+						<div class="user-evaluation">
+							<p>Bạn đã đánh giá sản phẩm này:</p>
+							<div class="rating">
+								<!-- Hiển thị số sao đánh giá -->
+								<p>Số sao: @userEvaluate.Point</p>
+							</div>
+							<!-- Hiển thị lời đánh giá -->
+							<p>Lời đánh giá: @userEvaluate.Describe</p>
+						</div>
+					}
+					else
+					{
+						@if (billDetailsByBillId.Values.Any(billDetails => billDetails.Any(detail => detail.Product.IDProduct == productitems.IDProduct)))
+						{
+							<form>
+								@for (int j = 1; j <= 5; j++)
+								{
+									int pointValue = j; // Tạo biến mới để lưu trữ giá trị đánh giá
+									<input type="radio" id="star-@j" name="point" value="@pointValue" class="radio-btn-point" @onclick="() => UpdatePoint(pointValue)">
+									<label class="radio-label" for="star-@j"><i class="bi bi-star-fill"></i></label>
+								}
+								<input type="hidden" name="id" value="@productitems.IDProduct" />
+								<textarea name="dsc" rows="5" class="w-100" @bind="description" placeholder="Đánh giá sản phẩm"></textarea>
+								<button class="btn btn-secondary" @onclick="AddEvaluate">Gửi đánh giá</button>
+							</form>
+						}
+					}
 
-                                <div class="row">
-                                    <div class="col-sm-12 d-flex justify-content-between">
-                                        <div class="quantity-selector">
-                                            <form>
-                                                <button type="button" class="decrease-btn" @onclick="DecreaseQuantity">-</button>
-                                                <input type="text" name="quantity" @bind="QuantityToAdd" class="quantity-input" readonly>
-                                                <button type="button" class="increase-btn" @onclick="IncreaseQuantity">+</button>
-                                            </form>
-                                        </div>
-                                        <div>
-                                            <button type="button" class="btn add-cart" @onclick="AddCart">
-                                                <i class="bi bi-bag-plus"></i>
-                                                <div>Thêm vào giỏ hàng</div>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    @if (qrCodeUrl != null)
-                    {
-                        <div class="col-md-4">
-                            <img src="@qrCodeUrl" alt="QR Code" class="imageQR" style="width:100px; height:100px"/>
-                        </div>
-                    }
-                    <div class="col-md-8">
-                        <div class="card mt-3" style="border 1px solid: black">
-                            @if (evaluates != null && evaluates.Count > 0)
-                            {
-                                @foreach (var x in evaluates)
-                                {
-                                    <div class="card-body">
-                                        <div class="evaluate-item">
-                                            <div class="user">@x.UserName - Đánh giá: @x.Point<i class="bi bi-star-fill text-warning"></i> </div>
-                                            <div class="describe">Mô tả: @x.Describe</div>
-                                        </div>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <div class="card-body">
-                                    <div class="evaluate-item">
-                                        <span>Sản phẩm chưa được đánh giá!!!</span>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <section style="background-color: #eee;">
-            <div class="container py-3">
-                <h3>Gợi ý sản phẩm</h3>
-                <div class="row overflow-auto">
-                    @if (productitemsmany != null && categoryitems != null)
-                    {
-                        @foreach (var x in productitemsmany.Where(p => p.IDCategory == productitems.IDCategory).Take(4))
-                        {
-                            <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
-                                <div class="card position-relative">
-                                    <div class="bg-info position-absolute top-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow-1-strong m-3"
-                                         style="width: 35px; height: 35px;">
-                                        <span class="text-white mb-0 small">
-                                            <i class="bi bi-bag-heart"></i>
-                                        </span>
-                                    </div>
-                                    <a @onclick="() => chuyensp(x.IDProduct)">
-                                        <img src="/@x.Image" class="card-img-top custom-class-img" alt="Ao" />
-                                    </a>
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <h5 class="mb-0">@x.Name</h5>
-                                            <h5 class="text-dark mb-0">@x.Price.ToString("N0") đ</h5>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-0">
-                                            <p class="small"><a href="#!" class="text-muted">@categoryitems.FirstOrDefault(z => z.IDCategory == x.IDCategory).Name</a></p>
-                                        </div>
-                                        <div class="d-flex align-items-center">
 
-                                            <i class="fa fa-star text-warning me-2"></i>
+				</h6>
 
-                                            <p class="text-muted mb-0">4.9 <i class="bi bi-star-fill text-warning"></i> <span class="fw-bold">(98)</span></p>
+			</div>
+			<div class="col-md-5">
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                </div>
-            </div>
-        </section>
-    }
-    else
-    {
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    }
+				<div class="card" style="background-color:#D9D9D9">
+					<div class="card-body">
+						<div class="container">
+							<div class="row d-flex justify-content-between">
+								<div class="d-flex justify-content-between">
+									<h4>
+										4.9<i class="bi bi-star-half text-warning"></i>
+
+									</h4>
+									<h4>
+										@productitems.Price.ToString("N0")đ
+									</h4>
+								</div>
+							</div>
+
+							<div>
+								<div class="font-weight-bold" style="font-size:large">Màu và kích cỡ:</div>
+							</div>
+
+							@*color and size*@
+							<form method="post" asp-controller="Cart" asp-action="AddCart">
+								<div class="row mb-3">
+									@if (productdetailitems != null)
+									{
+										@foreach (var item in productdetailitems)
+										{
+											<div class="col-md-2">
+												<!-- Thêm thuộc tính data-color để lưu mã màu của từng item -->
+												<input class="radio-btn-size" type="radio" name="IdPDetail" id="@item.IDPDetail" value="@item.IDPDetail" checked="@(item == productdetailitems.FirstOrDefault())" />
+												<label for="@item.IDPDetail" class="font-weight-bold radio-btn-size" style="background-color: @coloritems.FirstOrDefault(y => y.IDColor == item.IDColor).Color">
+													@sizeitems.FirstOrDefault(y => y.IDSize == item.Size).SizeName
+												</label>
+											</div>
+										}
+									}
+								</div>
+
+								<div class="row">
+									<div class="col-sm-12 d-flex justify-content-between">
+										<div class="quantity-selector">
+											<form>
+												<button type="button" class="decrease-btn" @onclick="DecreaseQuantity">-</button>
+												<input type="text" name="quantity" @bind="QuantityToAdd" class="quantity-input" readonly>
+												<button type="button" class="increase-btn" @onclick="IncreaseQuantity">+</button>
+											</form>
+										</div>
+										<div>
+											<button type="button" class="btn add-cart" @onclick="AddCart">
+												<i class="bi bi-bag-plus"></i>
+												<div>Thêm vào giỏ hàng</div>
+											</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					@if (qrCodeUrl != null)
+					{
+						<div class="col-md-4">
+							<img src="@qrCodeUrl" alt="QR Code" class="imageQR" style="width:100px; height:100px" />
+						</div>
+					}
+					<div class="col-md-8">
+						<div class="card mt-3" style="border 1px solid: black">
+							@if (evaluates != null && evaluates.Count > 0)
+							{
+								@foreach (var x in evaluates)
+								{
+									<div class="card-body">
+										<div class="evaluate-item">
+											<div class="user">@x.UserName - Đánh giá: @x.Point<i class="bi bi-star-fill text-warning"></i> </div>
+											<div class="describe">Mô tả: @x.Describe</div>
+										</div>
+									</div>
+								}
+							}
+							else
+							{
+								<div class="card-body">
+									<div class="evaluate-item">
+										<span>Sản phẩm chưa được đánh giá!!!</span>
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<section style="background-color: #eee;">
+			<div class="container py-3">
+				<h3>Gợi ý sản phẩm</h3>
+				<div class="row overflow-auto">
+					@if (productitemsmany != null && categoryitems != null)
+					{
+						@foreach (var x in productitemsmany.Where(p => p.IDCategory == productitems.IDCategory).Take(4))
+						{
+							<div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+								<div class="card position-relative">
+									<div class="bg-info position-absolute top-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow-1-strong m-3"
+										 style="width: 35px; height: 35px;">
+										<span class="text-white mb-0 small">
+											<i class="bi bi-bag-heart"></i>
+										</span>
+									</div>
+									<a @onclick="() => chuyensp(x.IDProduct)">
+										<img src="/@x.Image" class="card-img-top custom-class-img" alt="Ao" />
+									</a>
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h5 class="mb-0">@x.Name</h5>
+											<h5 class="text-dark mb-0">@x.Price.ToString("N0") đ</h5>
+										</div>
+										<div class="d-flex justify-content-between mb-0">
+											<p class="small"><a href="#!" class="text-muted">@categoryitems.FirstOrDefault(z => z.IDCategory == x.IDCategory).Name</a></p>
+										</div>
+										<div class="d-flex align-items-center">
+
+											<i class="fa fa-star text-warning me-2"></i>
+
+											<p class="text-muted mb-0">4.9 <i class="bi bi-star-fill text-warning"></i> <span class="fw-bold">(98)</span></p>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+					}
+				</div>
+			</div>
+		</section>
+	}
+	else
+	{
+		<div class="spinner-border" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	}
 
 </div>
 @code {
-    [Parameter]
-    public string id { get; set; }
+	[Parameter]
+	public string id { get; set; }
 
-    private Product productitems;
-    private List<Product> productitemsmany;
-    private List<Cart> cartItems;
-    private List<ProductDetails> productdetailitems;
-    private List<Sizes> sizeitems;
-    private List<Colors> coloritems;
-    private List<Category> categoryitems;
-    private List<Supplier> supplieritems;
-    private List<ImageDetails> imagedetailitems;
-    private Product p = new Product();
-    private ProductDetails pd = new ProductDetails();
-    private Sizes s = new Sizes();
-    private Colors cl = new Colors();
-    private Category ct = new Category();
-    private Supplier sp = new Supplier();
-    private ImageDetails imd = new ImageDetails();
-    private Cart c = new Cart();
-    private List<Evaluate> evaluates;
-    private string qrCodeUrl;
-    private bool hasBoughtProduct = false;
-    private string LoggedInUser;
+	private Product productitems;
+	private List<Product> productitemsmany;
+	private List<Cart> cartItems;
+	private List<ProductDetails> productdetailitems;
+	private List<Sizes> sizeitems;
+	private List<Colors> coloritems;
+	private List<Category> categoryitems;
+	private List<Supplier> supplieritems;
+	private List<ImageDetails> imagedetailitems;
+	private IEnumerable<Bill> billitems;
+	private Cart c = new Cart();
+	private List<Evaluate> evaluates;
+	private Evaluate newe = new Evaluate();
+	private string LoggedInUser;
+	private Dictionary<int, List<BillDetailViewModel>> billDetailsByBillId = new Dictionary<int, List<BillDetailViewModel>>();
+	private Evaluate userEvaluate;
+	private string qrCodeUrl;
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
-            productitemsmany = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
-            productitems = await httpclient.GetFromJsonAsync<Product>($"api/Product/GetProduct/{id}");
-            productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>($"api/ProductDetail/GetPddtByProdId/{id}");
-            sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
-            coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
-            categoryitems = await httpclient.GetFromJsonAsync<List<Category>>("api/Category/GetCategories");
-            supplieritems = await httpclient.GetFromJsonAsync<List<Supplier>>("api/Supplier/GetSuppliers");
-            imagedetailitems = await httpclient.GetFromJsonAsync<List<ImageDetails>>($"api/ImageDetail/GetImageDetails/{id}");
-            evaluates = (await httpclient.GetFromJsonAsync<List<Evaluate>>($"api/evaluate/get")).Where(x => x.IDProduct == int.Parse(id)).ToList();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
-        await base.OnInitializedAsync();
-    }
-    private int QuantityToAdd = 1;
-    private void IncreaseQuantity()
-    {
-        QuantityToAdd++;
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			LoggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+			productitemsmany = await httpclient.GetFromJsonAsync<List<Product>>("api/Product/GetProducts");
+			productitems = await httpclient.GetFromJsonAsync<Product>($"api/Product/GetProduct/{id}");
+			productdetailitems = await httpclient.GetFromJsonAsync<List<ProductDetails>>($"api/ProductDetail/GetPddtByProdId/{id}");
+			sizeitems = await httpclient.GetFromJsonAsync<List<Sizes>>("api/Size/GetSizes");
+			coloritems = await httpclient.GetFromJsonAsync<List<Colors>>("api/Color/GetColors");
+			categoryitems = await httpclient.GetFromJsonAsync<List<Category>>("api/Category/GetCategories");
+			supplieritems = await httpclient.GetFromJsonAsync<List<Supplier>>("api/Supplier/GetSuppliers");
+			imagedetailitems = await httpclient.GetFromJsonAsync<List<ImageDetails>>($"api/ImageDetail/GetImageDetails/{id}");
+			billitems = (await httpclient.GetFromJsonAsync<IEnumerable<Bill>>("api/Bill/GetAllBills")).Where(t => t.UserName == LoggedInUser);
+			evaluates = (await httpclient.GetFromJsonAsync<List<Evaluate>>($"api/evaluate/get")).Where(x => x.IDProduct == int.Parse(id)).ToList();
+			userEvaluate = evaluates.FirstOrDefault(x => x.UserName == LoggedInUser && x.IDProduct == productitems.IDProduct);
+			await LoadQRCodeUrl();
+			// Gọi phương thức LoadBillDetails với từng BillId trong billItems
+			foreach (var bill in billitems)
+			{
+				await LoadBillDetails(bill.IDBill);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error: {ex.Message}");
+		}
+		await base.OnInitializedAsync();
+	}
+	private int QuantityToAdd = 1;
+	private void IncreaseQuantity()
+	{
+		QuantityToAdd++;
+	}
 
-    private void DecreaseQuantity()
-    {
-        if (QuantityToAdd > 1)
-        {
-            QuantityToAdd--;
-        }
-    }
+	private void DecreaseQuantity()
+	{
+		if (QuantityToAdd > 1)
+		{
+			QuantityToAdd--;
+		}
+	}
 
-    private string errorMessage = "";
-    private string successMessage = "";
-    private async Task AddCart()
-    {
-        var selectedIdPDetail = await JSRuntime.InvokeAsync<string>("eval", "document.querySelector('input[name=IdPDetail]:checked').value");
-        var selectedProduct = productdetailitems.FirstOrDefault(x => x.IDPDetail == int.Parse(selectedIdPDetail));
-        if (selectedProduct != null && selectedProduct.Quantity < QuantityToAdd)
-        {
-            errorMessage = "Số lượng đã chọn vượt quá số lượng trong kho!";
-        }
-        else
-        {
-            errorMessage = "";
-            var loggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+	private string errorMessage = "";
+	private string successMessage = "";
+	private async Task AddCart()
+	{
+		var selectedIdPDetail = await JSRuntime.InvokeAsync<string>("eval", "document.querySelector('input[name=IdPDetail]:checked').value");
+		var selectedProduct = productdetailitems.FirstOrDefault(x => x.IDPDetail == int.Parse(selectedIdPDetail));
+		if (selectedProduct != null && selectedProduct.Quantity < QuantityToAdd)
+		{
+			errorMessage = "Số lượng đã chọn vượt quá số lượng trong kho!";
+		}
+		else
+		{
+			errorMessage = "";
+			var loggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
 
-            if (string.IsNullOrEmpty(loggedInUser))
-            {
-                await JSRuntime.InvokeVoidAsync("window.location.assign", "/login");
-            }
-            else
-            {
-                c.UserName = loggedInUser;
-                c.IDPDetail = int.Parse(selectedIdPDetail);
-                c.Quantity = QuantityToAdd;
+			if (string.IsNullOrEmpty(loggedInUser))
+			{
+				await JSRuntime.InvokeVoidAsync("window.location.assign", "/login");
+			}
+			else
+			{
+				c.UserName = loggedInUser;
+				c.IDPDetail = int.Parse(selectedIdPDetail);
+				c.Quantity = QuantityToAdd;
 
-                errorMessage = "";
-                successMessage = "Đã thêm sản phẩm vào giỏ hàng!";
-                await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
-                cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
-                // await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage");
+				errorMessage = "";
+				successMessage = "Đã thêm sản phẩm vào giỏ hàng!";
+				await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
+				cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
+				// await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage");
 
-            }
-        }
-    }
+			}
+		}
+	}
 
-    private async Task<string> GetQRCodeAsync(string data)
-    {
-        try
-        {
-            var response = await httpclient.GetStringAsync($"api/qrcode/generate?data={Uri.EscapeDataString(data)}");
-            return response;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error fetching QR code: {ex.Message}");
-            return null;
-        }
-    }
-    private async Task LoadQRCodeUrl()
-    {
-        var qrCodeData = $"Sản phẩm: {productitems.Name} - Giá: {productitems.Price.ToString("N0")} đồng";
-        qrCodeUrl = await GetQRCodeAsync(qrCodeData);
-    }
+	private int selectedPoint = 1;
+	private string description = "";
 
-    private async Task UpdateMainImage(string selectedImage)
-    {
-        var mainImage = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "main-image");
-        await mainImage.InvokeVoidAsync("setAttribute", "src", selectedImage);
-    }
+	private void UpdatePoint(int point)
+	{
+		selectedPoint = point;
+	}
 
-    private async Task chuyensp(int id)
-    {
-        navigation.NavigateTo($"/productdetail/{id}", forceLoad: true);
-    }
+
+	private async Task AddEvaluate()
+	{
+		var loggedInUser = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "LoggedInUser");
+		newe.UserName = loggedInUser;
+		newe.IDProduct = productitems.IDProduct;
+		newe.Point = selectedPoint;
+		newe.Describe = description;
+		await httpclient.PostAsJsonAsync<Evaluate>("api/Evaluate/AddEva", newe);
+		// evaluates = (await httpclient.GetFromJsonAsync<List<Evaluate>>($"api/evaluate/get")).Where(x => x.IDProduct == int.Parse(id)).ToList();
+		// userEvaluate = evaluates.FirstOrDefault(x => x.UserName == LoggedInUser && x.IDProduct == productitems.IDProduct);
+
+	}
+
+	private async Task<string> GetQRCodeAsync(string data)
+	{
+		try
+		{
+			var response = await httpclient.GetStringAsync($"api/qrcode/generate?data={Uri.EscapeDataString(data)}");
+			return response;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error fetching QR code: {ex.Message}");
+			return null;
+		}
+	}
+	private async Task LoadQRCodeUrl()
+	{
+		var qrCodeData = $"Sản phẩm: {productitems.Name} - Giá: {productitems.Price.ToString("N0")} đồng";
+		qrCodeUrl = await GetQRCodeAsync(qrCodeData);
+	}
+
+	private async Task UpdateMainImage(string selectedImage)
+	{
+		var mainImage = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "main-image");
+		await mainImage.InvokeVoidAsync("setAttribute", "src", selectedImage);
+	}
+
+	private async Task chuyensp(int id)
+	{
+		navigation.NavigateTo($"/productdetail/{id}", forceLoad: true);
+	}
+
+	// Sửa phương thức LoadBillDetails để lưu thông tin chi tiết hóa đơn vào Dictionary
+	private async Task LoadBillDetails(int BillId)
+	{
+		try
+		{
+			var response = await httpclient.GetAsync($"/api/BillDetail/details/{BillId}");
+			response.EnsureSuccessStatusCode();
+
+			var billDetails = await response.Content.ReadFromJsonAsync<List<BillDetailViewModel>>();
+
+			// Lưu danh sách chi tiết hóa đơn vào Dictionary theo BillId
+			billDetailsByBillId[BillId] = billDetails;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error: {ex.Message}");
+		}
+	}
+
+	public class BillDetailViewModel
+	{
+		public int IDBDetail { get; set; }
+		public int IDBill { get; set; }
+		public int IDPDetail { get; set; }
+		public int Quantity { get; set; }
+		public decimal Price { get; set; }
+		public ProductViewModel Product { get; set; }
+	}
+
+	public class ProductViewModel
+	{
+		public int IDProduct { get; set; }
+		public string Name { get; set; }
+		public string Image { get; set; }
+		public string Color { get; set; }
+		public string Size { get; set; }
+	}
 }

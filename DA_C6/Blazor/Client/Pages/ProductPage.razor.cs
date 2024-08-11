@@ -33,8 +33,8 @@ namespace Blazor.Client.Pages
 				var uri = new Uri(NavigationManager.Uri);
 				var param = System.Web.HttpUtility.ParseQueryString(uri.Query);
 				searchTermFromUrl = param.Get("find");
-				products = await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts");
-				categories = await httpClient.GetFromJsonAsync<List<Category>>("api/category/getcategories");
+				products = await httpClient.GetFromJsonAsync<List<Product>>("api/Product/Getproducts");
+				categories = await httpClient.GetFromJsonAsync<List<Category>>("api/Category/Getcategories");
 				UpdatePagedProducts();
 			}
 			catch (Exception ex)
@@ -69,17 +69,17 @@ namespace Blazor.Client.Pages
 				selectedCategories.Remove(IDCategory);
 			}
 			if (selectedCategories.Count > 0)
-				products = (await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts")).Where(x => selectedCategories.Contains(x.IDCategory)).ToList();
+				products = (await httpClient.GetFromJsonAsync<List<Product>>("api/Product/Getproducts")).Where(x => selectedCategories.Contains(x.IDCategory)).ToList();
 			else
 			{
-				products = await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+				products = await httpClient.GetFromJsonAsync<List<Product>>("api/Product/Getproducts");
 			}
 			UpdatePagedProducts();
 		}
 
 		private async Task OnFilterByPrice()
 		{
-			var filteredProducts = await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+			var filteredProducts = await httpClient.GetFromJsonAsync<List<Product>>("api/Product/Getproducts");
 
 			if (lowPrice >= 0 && highPrice >= 0)
 			{
@@ -91,7 +91,7 @@ namespace Blazor.Client.Pages
 				message = "Không tìm thấy sản phẩm trong khoản giá";
 				await Task.Delay(3000);
 				message = null;
-				products = await httpClient.GetFromJsonAsync<List<Product>>("api/product/getproducts");
+				products = await httpClient.GetFromJsonAsync<List<Product>>("api/Product/Getproducts");
 			}
 			else
 			{

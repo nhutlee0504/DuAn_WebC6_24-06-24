@@ -55,10 +55,5 @@ namespace Blazor.Controllers
             return bid.GetBillDetailsForAdmin(id);
         }
 
-        //[HttpGet]
-        //public IEnumerable<BillDetails> checkvaluew(bool ktr)
-        //{
-        //    string username = HttpContext.Session.GetString("LoggedInUser");
-        //}
     }
 }

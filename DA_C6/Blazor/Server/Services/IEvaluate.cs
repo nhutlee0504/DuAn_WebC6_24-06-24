@@ -10,5 +10,7 @@ namespace Blazor.Server.Services
     public interface IEvaluate
     {
         public IEnumerable<Evaluate> GetEvaluate();
+
+        public Evaluate AddEva(Evaluate evaluate);
     }
 }

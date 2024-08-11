@@ -14,7 +14,7 @@ namespace API.Services
         {
             _context = context;
         }
-
+        
         public List<BillDetails> GetBillDetails(int id)
         {
             return _context.BillDetails
@@ -30,7 +30,7 @@ namespace API.Services
 
         public IEnumerable<BillDetails> GetBillDetailsForAdmin(int id)
         {
-            return _context.BillDetails.Where(t => t.IDBill == id);
+            return _context.BillDetails.Where(x => x.IDBill == id);
         }
     }
 }

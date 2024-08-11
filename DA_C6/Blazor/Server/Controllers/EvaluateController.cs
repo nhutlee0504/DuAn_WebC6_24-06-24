@@ -23,5 +23,12 @@ namespace Blazor.Server.Controllers
         {
             return _evaluate.GetEvaluate();
         }
+
+        [HttpPost]
+        [Route("AddEva")]
+        public Evaluate AddEva(Evaluate evaluate)
+        {
+            return _evaluate.AddEva(evaluate);
+        }
     }
 }

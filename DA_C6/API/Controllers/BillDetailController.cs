@@ -14,8 +14,6 @@ namespace API.Controllers
     {
         private IBillDetail bid;
         public BillDetailController(IBillDetail s) => bid = s;
-
-
         [HttpGet("{id}")]
         public IActionResult GetBillDetails(int id)
         {
@@ -60,5 +58,6 @@ namespace API.Controllers
         {
             return bid.GetBillDetailsForAdmin(id);
         }
+
     }
 }

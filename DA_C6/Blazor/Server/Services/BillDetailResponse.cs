@@ -10,12 +10,11 @@ namespace Blazor.Server.Services
     public class BillDetailResponse : IBillDetail
     {
         private readonly ApplicationDbContext _context;
-
-        public List<BillDetails> GetAllBillDetails()
+        public BillDetailResponse(ApplicationDbContext context)
         {
-            return _context.BillDetails.ToList();
+            _context = context;
         }
-
+        
         public List<BillDetails> GetBillDetails(int id)
         {
             return _context.BillDetails
@@ -31,7 +30,7 @@ namespace Blazor.Server.Services
 
         public IEnumerable<BillDetails> GetBillDetailsForAdmin(int id)
         {
-            return _context.BillDetails.Where(t => t.IDBill == id);
+            return _context.BillDetails.Where(x => x.IDBill == id);
         }
     }
 }
