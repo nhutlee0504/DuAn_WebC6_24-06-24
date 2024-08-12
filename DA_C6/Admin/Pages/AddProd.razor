@@ -97,8 +97,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        supplierItems = await supplierResponse.GetSuppliersAsync();
-        categoryItems = await categoryResponse.GetCategoriesAsync();
+        supplierItems = await Task.Run(() => supplierResponse.GetSuppliersAsync());
+        categoryItems = await Task.Run(() => categoryResponse.GetCategoriesAsync());
     }
 
     private async Task HandleValidSubmit()
@@ -113,7 +113,7 @@
             newProduct.Image = "default-image.jpg"; // Giá trị mặc định nếu không có ảnh tải lên
         }
 
-        await Task.Run(() => productResponse.AddAsync(newProduct));
+        await productResponse.AddAsync(newProduct);
         navigation.NavigateTo("/ProductPage");
     }
 

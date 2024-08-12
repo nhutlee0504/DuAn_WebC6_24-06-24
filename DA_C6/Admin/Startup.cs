@@ -1,4 +1,4 @@
-using Admin.Data;
+﻿using Admin.Data;
 using Admin.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -35,7 +35,7 @@ namespace Admin
             //services.AddRazorPages();
 
             services.AddDbContext<ApplicationDbContext>(options =>
-		    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+		    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
             services.AddScoped<Services.CategoryResponse>();
             services.AddScoped<Services.SizeResponse>();

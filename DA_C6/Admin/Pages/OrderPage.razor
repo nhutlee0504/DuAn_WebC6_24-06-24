@@ -115,12 +115,12 @@ else
     private async Task UpdateBillShip(int id)
     {
         bill = await billitem.UpdateWithAdminAsync(id);
-        Navigation.NavigateTo("/OrderPage", forceLoad: true);
+        Navigation.NavigateTo("/OrderPage");
     }
 
     private async Task UpdateBillShip2(int id)
     {
         bill = await billitem.UpdateWithAdmin2Async(id);
-        Navigation.NavigateTo("/OrderPage", forceLoad: true);
+        Navigation.NavigateTo("/OrderPage");
     }
 }

@@ -1,47 +1,201 @@
 ﻿@page "/login"
-@inherits LayoutComponentBase
+@using System.ComponentModel.DataAnnotations
 @using Admin.Services
-@inject PageServices pageService
+@using System.Net.Http.Json
+@inject HttpClient HttpClient
+@inject AccountResponse AccountResponse
+@inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 
-<h3>Đăng nhập</h3>
 
-<div>
-    <label for="username">Tên đăng nhập:</label>
-    <input id="username" @bind="username" />
+<style>
+    .alert {
+        border-radius: 0.5rem;
+        padding: 1rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
 
-    <label for="password">Mật khẩu:</label>
-    <input id="password" type="password" @bind="password" />
-</div>
+    .alert-danger {
+        background-color: #dc3545;
+        color: #ffffff;
+    }
 
-<button @onclick="DangNhap">Đăng nhập</button>
+    .alert-success {
+        background-color: #28a745;
+        color: #ffffff;
+    }
+</style>
+<script>
+    window.localStorageManager = {
+        getLoggedInUser: function () {
+            return localStorage.getItem('LoggedInUser');
+        },
+        getLoggedInRole: function () {
+            return localStorage.getItem('LoggedInRole');
+        }
+    }
+    let timeout;
+
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(logout, 1800000); // 1800000ms = 30 phút
+    }
+
+    function logout() {
+        localStorage.removeItem("LoggedInUser");
+        localStorage.removeItem("LoggedInRole");
+        window.location.href = '/';
+    }
+
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+</script>
 
 @code {
-    private string username;
-    private string password;
+    bool isLoggedIn;
+    bool isInitialized = false;
 
-    private async Task DangNhap()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (KiemTraDangNhap(username, password))
+        if (!isInitialized)
         {
-            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "LoggedInUser", username);
-            // Đăng nhập thành công, điều hướng tới trang chính
-        }
-        else
-        {
-            // Xử lý thông báo lỗi đăng nhập không thành công
+            var loggedInUser = await JSRuntime.InvokeAsync<string>("localStorageManager.getLoggedInUser");
+            var loggedInRole = await JSRuntime.InvokeAsync<string>("localStorageManager.getLoggedInRole");
+            isLoggedIn = loggedInRole == "Admin";
+            isInitialized = true;
+            StateHasChanged();
         }
     }
 
-    private bool KiemTraDangNhap(string username, string password)
-    {
-        // Thực hiện kiểm tra tên đăng nhập và mật khẩu tại đây
-        // Đây chỉ là một ví dụ đơn giản, bạn cần tích hợp logic xác thực an toàn trong ứng dụng thực tế
-        if (username == "Admin" && password == "123456")
-        {
-            return true; // Đăng nhập thành công
-        }
 
-        return false; // Đăng nhập không thành công
+    private async Task Logout()
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "LoggedInUser");
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "LoggedInRole");
+        isLoggedIn = false;
+        NavigationManager.NavigateTo("/", forceLoad: true);
     }
+
+
+    public class AccountLogin
+    {
+        [Required(ErrorMessage = "Tên tài khoản không được bỏ trống.")]
+        public string UserName { get; set; }
+
+        [Required(ErrorMessage = "Mật khẩu không được bỏ trống.")]
+        public string Password { get; set; }
+    }
+
+    private AccountLogin loginModel = new AccountLogin();
+    private string errorMessage;
+    private string successMessage;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var account = await Task.Run(() => AccountResponse.LoginAccount(loginModel.UserName, loginModel.Password));
+            if (account != null && account.Role == "Admin")
+            {
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "LoggedInUser", account.UserName);
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "LoggedInRole", account.Role);
+                successMessage = "Đăng nhập thành công!";
+                errorMessage = null;
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            }
+            else if (account != null && account.Role != "Admin")
+            {
+                errorMessage = "Tài khoản của bạn không có quyền truy cập.";
+                successMessage = null;
+                await ClearErrorMessageAfterDelay();
+            }
+            else
+            {
+                errorMessage = "Tài khoản hoặc mật khẩu không đúng";
+                successMessage = null;
+                await ClearErrorMessageAfterDelay();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Đã xảy ra lỗi: " + ex.Message;
+            successMessage = null;
+            await ClearErrorMessageAfterDelay();
+        }
+    }
+    private async Task ClearErrorMessageAfterDelay()
+    {
+        await Task.Delay(3000);
+        errorMessage = null;
+        StateHasChanged();
+    }
+}
+@if (isLoggedIn)
+{
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+
+        <div class="main">
+            <div class="content">
+                @Body
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-danger" @onclick="Logout">Đăng xuất</button>
+}
+else
+{
+    <div class="login-page">
+
+        <Login />
+        <div class="container">
+            <div class="row justify-content-center mt-5 mb-5">
+                <div class="col-md-6">
+                    <div class="form-container p-4 rounded bg-white shadow-sm">
+                        <h2 class="text-center mb-4">Đăng nhập</h2>
+                        @if (!string.IsNullOrEmpty(successMessage))
+                        {
+                            <div class="alert alert-success" role="alert">
+                                @successMessage
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @errorMessage
+                            </div>
+                        }
+
+                        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="mb-3">
+                                <label for="UserName" class="form-label">Tên tài khoản</label>
+                                <InputText id="UserName" class="form-control rounded-pill" @bind-Value="loginModel.UserName" placeholder="Nhập tên tài khoản" />
+                                <ValidationMessage For="@(() => loginModel.UserName)" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Password" class="form-label">Mật khẩu</label>
+                                <div class="input-group">
+                                    <InputText id="Password" type="password" class="form-control rounded-start" @bind-Value="loginModel.Password" placeholder="Nhập mật khẩu" />
+                                    <button type="button" class="btn btn-outline-secondary rounded-end" id="togglePassword">
+                                        👁️
+                                    </button>
+                                </div>
+                                <ValidationMessage For="@(() => loginModel.Password)" />
+                            </div>
+                            <button type="submit" class="btn btn-dark btn-block w-100 rounded-pill">Tiếp tục</button>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 }
