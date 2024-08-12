@@ -10,8 +10,6 @@
 @inject NavigationManager NavigationManager
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Bootstrap Bundle JS (bao gồm cả Popper.js) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <style>
     .modal {
@@ -21,26 +19,26 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* Nền mờ */
+        background: rgba(0, 0, 0, 0.5);
         z-index: 1050;
-        overflow-y: auto; /* Thêm cuộn nếu nội dung modal quá dài */
+        overflow-y: auto;
     }
 
     .modal-dialog {
-        margin: 5rem auto; /* Điều chỉnh khoảng cách từ trên xuống để modal nằm giữa màn hình */
-        max-width: 500px; /* Điều chỉnh chiều rộng tối đa của modal nếu cần */
+        margin: 5rem auto;
+        max-width: 500px;
     }
 
     .modal-content {
         background: #fff;
         border-radius: 0.3rem;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng nổi bật hơn */
-        text-align: center; /* Căn giữa nội dung modal */
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        text-align: center;
     }
 
     .modal-header {
         padding: 1.5rem;
-        border-bottom: 1px solid #dee2e6; /* Thêm đường kẻ phân cách */
+        border-bottom: 1px solid #dee2e6;
     }
 
     .modal-title {
@@ -54,7 +52,6 @@
         font-size: 1.5rem;
     }
 
-    /* CSS cho biểu tượng success */
     .success-icon {
         display: block;
         margin: 1rem auto;
@@ -65,7 +62,7 @@
         color: white;
         line-height: 4rem;
         font-size: 2rem;
-        text-align: center; /* Căn giữa nội dung biểu tượng */
+        text-align: center;
     }
 
     .modal-body {
@@ -76,7 +73,6 @@
             font-size: 1.1rem;
         }
 
-    /* CSS cho button */
     .btn-primary {
         background-color: #007bff;
         border-color: #007bff;
@@ -109,6 +105,7 @@
             background-color: #c82333;
             border-color: #bd2130;
         }
+
     .btn-custom {
         background-color: #000;
         color: #fff;
@@ -125,6 +122,7 @@
             box-shadow: none;
             outline: none;
         }
+
     .pagination-container {
         display: flex;
         flex-direction: column;
@@ -204,7 +202,7 @@
             }
 
         .breadcrumb a {
-            color: #007bff; 
+            color: #007bff;
             text-decoration: none;
         }
 
@@ -230,12 +228,13 @@
     }
 
     .input-group {
-        margin-bottom: 1rem; 
+        margin-bottom: 1rem;
     }
 
     .input-group-text i {
-        color: dark; 
+        color: dark;
     }
+
     .icon-nav {
         width: 15px;
     }
@@ -284,8 +283,8 @@
         .btn-container .btn {
             margin: 5px;
         }
-</style>
 
+</style>
 @if (errorMessage != null)
 {
     <div class="alert alert-danger" role="alert">
@@ -567,7 +566,26 @@
         </div>
     </div>
 }
-
+@if (_isReceiveSuccessVisible)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block; padding-right: 17px;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận nhận hàng thành công</h5>
+                    <button type="button" class="btn-close" @onclick="() => _isReceiveSuccessVisible = false"></button>
+                </div>
+                <div class="modal-body">
+                    <i class="fas fa-check-circle success-icon"></i>
+                    <p>@_receiveSuccessMessage</p>
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-primary" href="/">Về trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 <!-- Modal Thông Báo Hủy Thành Công -->
 @if (_isCancelSuccessVisible)
 {
@@ -591,6 +609,8 @@
 }
 
 @code {
+    private bool _isReceiveSuccessVisible = false;
+    private string _receiveSuccessMessage = "Bạn đã xác nhận nhận hàng thành công.";
     private void NavigateToBillDetails(int billId)
     {
         NavigationManager.NavigateTo($"/billdetails/{billId}");
@@ -798,7 +818,6 @@
                 }
                 else
                 {
-                    // Xử lý khi cập nhật không thành công
                 }
             }
         }
@@ -857,7 +876,7 @@
 
     private async Task ConfirmCancel()
     {
-        _isCancelConfirmationVisible = false; // Ẩn modal xác nhận hủy
+        _isCancelConfirmationVisible = false;
 
         var response = await HttpClient.PostAsync($"api/bill/cancel/{_billIdToCancel}", null);
 
@@ -886,11 +905,12 @@
         if (response.IsSuccessStatusCode)
         {
             _isPaymentSuccessful = true;
+            _isReceiveSuccessVisible = true;
+            
             _successMessage = "Trạng thái đơn hàng đã được cập nhật thành công!";
             StateHasChanged();
-            await JSRuntime.InvokeVoidAsync("alert", $"Đã xác nhận thành công hóa đơn! Cảm ơn đã mua hàng :D");
-            await JSRuntime.InvokeVoidAsync("location.reload");
-          
+            await Task.Delay(3000);
+
         }
         else
         {

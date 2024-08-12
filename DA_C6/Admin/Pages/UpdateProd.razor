@@ -141,9 +141,9 @@
     protected override async Task OnInitializedAsync()
     {
         product = await Task.Run(() => Prodrespone.GetProductByIdAsync(id));
-        supplieritems = await Task.Run(() => supplierresponse.GetSuppliers());
-        categoryitems = await Task.Run(() => categoryresponse.GetCategories());
-        imageDetails = await Task.Run(() => imageResponse.GetImages(id));
+        supplieritems = await Task.Run(() => supplierresponse.GetSuppliersAsync());
+        categoryitems = await Task.Run(() => categoryresponse.GetCategoriesAsync());
+        imageDetails = await Task.Run(() => imageResponse.GetImagesAsync(id));
 
     }
 
@@ -182,7 +182,7 @@
                 }
 
                 // Xóa ảnh khỏi cơ sở dữ liệu
-                imageResponse.DeleteImage(imageId);
+                imageResponse.DeleteImageAsync(imageId);
 
                 Navigation.NavigateTo($"/UpdateProd/{id}");
             }

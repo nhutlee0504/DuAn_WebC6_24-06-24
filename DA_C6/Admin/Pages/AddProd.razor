@@ -97,8 +97,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        supplierItems = await Task.Run(() => supplierResponse.GetSuppliers());
-        categoryItems = await Task.Run(() => categoryResponse.GetCategories());
+        supplierItems = await Task.Run(() => supplierResponse.GetSuppliersAsync());
+        categoryItems = await Task.Run(() => categoryResponse.GetCategoriesAsync());
     }
 
     private async Task HandleValidSubmit()

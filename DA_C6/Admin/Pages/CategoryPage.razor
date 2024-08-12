@@ -42,7 +42,7 @@ else
     IEnumerable<Category> cateitems;
     protected override async Task OnInitializedAsync()
     {
-        cateitems = await Task.Run(() => catere.GetCategories());
+        cateitems = await catere.GetCategoriesAsync();
     }
 
     private void NavigateToAddPage()

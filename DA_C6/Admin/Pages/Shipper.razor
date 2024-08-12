@@ -118,12 +118,12 @@ else
     private async Task UpdateBillShip(int id)
     {
         bill = await billitem.UpdateWithShipperAsync(id);
-        Navigation.NavigateTo("/Shipper", forceLoad: true);
+        Navigation.NavigateTo("/Shipper");
     }
 
     private async Task UpdateBillShip2(int id)
     {
         bill = await billitem.UpdateWithShipper2Async(id);
-        Navigation.NavigateTo("/Shipper", forceLoad: true);
+        Navigation.NavigateTo("/Shipper");
     }
 }

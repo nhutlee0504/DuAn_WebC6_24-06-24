@@ -72,7 +72,7 @@
 	{
 		// await Task.Run(() => productrepose.UpdateAsync(newProduct, id));
 		await productrepose.UpdateAsync(newProduct, id);
-		navigation.NavigateTo("/ProductPage");
+		navigation.NavigateTo("/ProductPage", forceLoad: true);
 	}
 
 	private void NavigateToProductPage()

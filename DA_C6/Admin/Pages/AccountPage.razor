@@ -64,7 +64,7 @@ else
         accounts = await Task.Run(() => accountrespose.GetAccountById(User));
         accounts.Role = "Banned";
         var FindAccount = await Task.Run(() => accountrespose.UpdateAccount(User, accounts));
-        navigation.NavigateTo("AccountPage", forceLoad: true);
+        navigation.NavigateTo("AccountPage");
     }
 
     private async Task UnBlockAccount(string User)
@@ -72,6 +72,6 @@ else
         accounts = await Task.Run(() => accountrespose.GetAccountById(User));
         accounts.Role = "Member";
         var FindAccount = await Task.Run(() => accountrespose.UpdateAccount(User, accounts));
-        navigation.NavigateTo("AccountPage", forceLoad: true);
+        navigation.NavigateTo("AccountPage");
     }
 }
