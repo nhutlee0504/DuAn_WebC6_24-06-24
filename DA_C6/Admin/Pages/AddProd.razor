@@ -124,7 +124,7 @@
 
     private async Task<string> SaveImageFile(IBrowserFile file)
     {
-        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.Name);
+        var fileName = file.Name;
         var filePath = Path.Combine("wwwroot/Image_Product", fileName);
 
         using (var stream = new FileStream(filePath, FileMode.Create))
@@ -132,6 +132,6 @@
             await file.OpenReadStream().CopyToAsync(stream);
         }
 
-        return fileName;
+        return $"Image_Product/{fileName}";
     }
 }

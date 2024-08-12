@@ -1,0 +1,23 @@
+﻿@page "/response-google"
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+@code {
+    [Parameter] public string UserLogin { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        UserLogin = query["userName"];
+        if(!String.IsNullOrEmpty(UserLogin))
+        {
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "LoggedInUser", UserLogin);
+            NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            Console.WriteLine("Lỗi: " + UserLogin);
+        }
+    }
+}
