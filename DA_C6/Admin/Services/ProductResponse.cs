@@ -2,6 +2,7 @@
 using Admin.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Admin.Services
@@ -44,6 +45,8 @@ namespace Admin.Services
                 existingProduct.IDSupplier = product.IDSupplier;
                 existingProduct.IDCategory = product.IDCategory;
 
+                // Ensure you update the product
+                _context.Products.Update(existingProduct);
                 await _context.SaveChangesAsync();
             }
             return existingProduct;
@@ -61,8 +64,14 @@ namespace Admin.Services
 
         public async Task<IEnumerable<Product>> GetProductsWithDetailsAsync()
         {
-            return await _context.Products.Include(p => p.Supplier).Include(p => p.Category).Include(p => p.ProductDetails).ThenInclude(pd => pd.Colors).Include(p => p.ProductDetails).ThenInclude(pd => pd.Sizes).ToListAsync();
+            return await _context.Products
+                .Include(p => p.Supplier)
+                .Include(p => p.Category)
+                .Include(p => p.ProductDetails)
+                    .ThenInclude(pd => pd.Colors)
+                .Include(p => p.ProductDetails)
+                    .ThenInclude(pd => pd.Sizes)
+                .ToListAsync();
         }
-    
     }
 }

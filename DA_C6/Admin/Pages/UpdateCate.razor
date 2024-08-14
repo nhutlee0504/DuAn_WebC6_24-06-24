@@ -9,12 +9,12 @@
     private Category category = new Category();
     protected override async Task OnInitializedAsync()
     {
-        category = await Task.Run(() => CategoryService.GetCategoryById(id));
+        category = await CategoryService.GetCategoryByIdAsync(id);
     }
 
     private void UpdateCategory()
     {
-        CategoryService.UpdateCategory(id, category);
+        CategoryService.UpdateCategoryAsync(id, category);
         Navigation.NavigateTo("/CatePage");
     }
 

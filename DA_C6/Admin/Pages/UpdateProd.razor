@@ -95,6 +95,7 @@
                                             <strong>Màu sắc:</strong> @detail.Colors.Color,
                                             <strong>Kích thước:</strong> @detail.Sizes.SizeName,
                                             <strong>Số lượng:</strong> @detail.Quantity
+                                            <a class="btn btn-success" href="/UppProductDetails/@detail.IDPDetail">Cập nhật</a>
                                         </li>
                                     }
                                 }
@@ -140,18 +141,18 @@
     protected override async Task OnInitializedAsync()
     {
         product = await Task.Run(() => Prodrespone.GetProductByIdAsync(id));
-        supplieritems = await Task.Run(() => supplierresponse.GetSuppliers());
-        categoryitems = await Task.Run(() => categoryresponse.GetCategories());
-        imageDetails = await Task.Run(() => imageResponse.GetImages(id));
+        supplieritems = await Task.Run(() => supplierresponse.GetSuppliersAsync());
+        categoryitems = await Task.Run(() => categoryresponse.GetCategoriesAsync());
+        imageDetails = await Task.Run(() => imageResponse.GetImagesAsync(id));
 
     }
 
-    private void UpdateProduct()
+    private async Task UpdateProduct()
     {
         try
         {
             // Gọi phương thức update từ dịch vụ ProductResponse
-            Prodrespone.UpdateAsync(product, id);
+            await Prodrespone.UpdateAsync(product, id);
 
             // Chuyển hướng đến trang danh sách sản phẩm
             Navigation.NavigateTo("/ProductPage");
@@ -181,9 +182,9 @@
                 }
 
                 // Xóa ảnh khỏi cơ sở dữ liệu
-                imageResponse.DeleteImage(imageId);
+                imageResponse.DeleteImageAsync(imageId);
 
-                Navigation.NavigateTo($"/UpdateProd/{id}", forceLoad: true);
+                Navigation.NavigateTo($"/UpdateProd/{id}");
             }
             else
             {
@@ -225,7 +226,6 @@
             }
         }
     }
-
 
     private void NavigateToProductPage()
     {

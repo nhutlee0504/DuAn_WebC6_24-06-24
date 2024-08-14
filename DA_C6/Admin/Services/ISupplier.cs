@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using Admin.Model;
+
 namespace Admin.Services
 {
     public interface ISupplier
     {
-        public IEnumerable<Supplier> GetSuppliers();
-        public Supplier Addsuplire (Supplier supplier);
-        public Supplier UpdateSuplier (Supplier supplier, int id);
-        public Supplier GetSupplierByID(int id);
+        Task<IEnumerable<Supplier>> GetSuppliersAsync();
+        Task<Supplier> AddSupplierAsync(Supplier supplier);
+        Task<Supplier> UpdateSupplierAsync(Supplier supplier, int id);
+        Task<Supplier> GetSupplierByIdAsync(int id);
     }
 }

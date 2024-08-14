@@ -1,50 +1,75 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Admin.Data;
+﻿using Admin.Data;
 using Admin.Model;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Admin.Services
 {
     public class ImageResponse : IImage
     {
-        private readonly ApplicationDbContext context;
-        private readonly IImage _imageService;
-        public ImageResponse(ApplicationDbContext ct) => context = ct;
+        private readonly ApplicationDbContext _context;
 
-        public IEnumerable<ImageDetails> GetImages(int productId)
+        public ImageResponse(ApplicationDbContext context) => _context = context;
+
+        public async Task<IEnumerable<ImageDetails>> GetImagesAsync(int productId)
         {
-            return context.ImageDetails.Where(x => x.IDProduct == productId);
+            return await _context.ImageDetails
+                                 .Where(x => x.IDProduct == productId)
+                                 .ToListAsync();
         }
-        public ImageDetails AddImage(string image, int id)
+
+        public async Task<ImageDetails> AddImageAsync(string image, int id)
         {
-            var prod = context.Products.FirstOrDefault(x => x.IDProduct == id);
+            var prod = await _context.Products
+                                     .FindAsync(id);
+
             if (prod == null)
             {
                 return null;
             }
-            ImageDetails imageDetails = new ImageDetails();
-            imageDetails.IDProduct = prod.IDProduct;
-            imageDetails.Image = image;
-            context.ImageDetails.Add(imageDetails);
-            context.SaveChanges();
-            return imageDetails;
+
+            var imageDetails = new ImageDetails
+            {
+                IDProduct = prod.IDProduct,
+                Image = image
+            };
+
+            try
+            {
+                await _context.ImageDetails.AddAsync(imageDetails);
+                await _context.SaveChangesAsync();
+                return imageDetails;
+            }
+            catch (System.Exception ex)
+            {
+                // Log exception (ex.Message) here
+                return null;
+            }
         }
 
-        public ImageDetails DeleteImage(int id)
+        public async Task<ImageDetails> DeleteImageAsync(int id)
         {
-            var image = context.ImageDetails.FirstOrDefault(img => img.IDImage == id);
+            var image = await _context.ImageDetails
+                                      .FindAsync(id);
 
             if (image == null)
             {
                 return null;
             }
 
-            context.ImageDetails.Remove(image);
-            context.SaveChanges();
-
-            return image;
+            try
+            {
+                _context.ImageDetails.Remove(image);
+                await _context.SaveChangesAsync();
+                return image;
+            }
+            catch (System.Exception ex)
+            {
+                // Log exception (ex.Message) here
+                return null;
+            }
         }
     }
 }

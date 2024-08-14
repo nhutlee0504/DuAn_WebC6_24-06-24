@@ -36,7 +36,7 @@
 
     private async Task HandleValidSubmit()
     {
-        await Task.Run(() => sup.Addsuplire(newSup));
+        await sup.AddSupplierAsync(newSup);
         Navigation.NavigateTo("/SupplierPage");
     }
 

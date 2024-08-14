@@ -9,6 +9,17 @@
 
 
 <style>
+    .custom-btn{
+    background-color:transparent;
+    color:white;
+    width: 100%;
+    
+    
+    }
+    .custom-btn:hover{
+    background-color:white;
+    color:black
+    }
     .alert {
         border-radius: 0.5rem;
         padding: 1rem;
@@ -35,7 +46,22 @@
             return localStorage.getItem('LoggedInRole');
         }
     }
+    let timeout;
 
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(logout, 1800000); // 1800000ms = 30 phút
+    }
+
+    function logout() {
+        localStorage.removeItem("LoggedInUser");
+        localStorage.removeItem("LoggedInRole");
+        window.location.href = '/';
+    }
+
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
 </script>
 @code {
     bool isLoggedIn;
@@ -109,12 +135,6 @@
             await ClearErrorMessageAfterDelay();
         }
     }
-
-
-
-
-
-
     private async Task ClearErrorMessageAfterDelay()
     {
         await Task.Delay(3000);
@@ -127,6 +147,7 @@
     <div class="page">
         <div class="sidebar">
             <NavMenu />
+            <button class="btn custom-btn" @onclick="Logout">Đăng xuất</button>
         </div>
 
         <div class="main">
@@ -135,7 +156,7 @@
             </div>
         </div>
     </div>
-    <button class="btn btn-danger" @onclick="Logout">Đăng xuất</button>
+    
 }
 else
 {
@@ -180,19 +201,6 @@ else
                                 <ValidationMessage For="@(() => loginModel.Password)" />
                             </div>
                             <button type="submit" class="btn btn-dark btn-block w-100 rounded-pill">Tiếp tục</button>
-                            <div class="text-center mt-4 position-relative">
-                                <span class="bg-white px-3 position-absolute" style="left: 50%; top: -10px; transform: translateX(-50%);">Hoặc</span>
-                                <hr class="mt-3">
-                            </div>
-                            <div class="text-center mt-3">
-                                <a href="forgotPass" class="text-primary">Quên mật khẩu?</a>
-                            </div>
-                            @*      <div class="text-center mt-3">
-                        <a href="signinGoogle" class="btn btn-light btn-block rounded-pill border w-100">Đăng nhập bằng Google</a>
-                        </div> *@
-                            <div class="text-center mt-3">
-                                Bạn mới biết đến NEXTON? <a class="text-primary" href="Pages/Register">Đăng ký tài khoản</a>
-                            </div>
                         </EditForm>
                     </div>
                 </div>

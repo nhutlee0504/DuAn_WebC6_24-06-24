@@ -1,5 +1,6 @@
 ﻿@page "/productdetail/{id}"
 @using Blazor.Shared.Model
+@using System.Text.Json
 @inject HttpClient httpclient
 @inject IJSRuntime JSRuntime
 @inject NavigationManager navigation
@@ -63,7 +64,7 @@
 										<div class="image-option">
 											<input type="radio" id="image-@img.IDImage" name="image-options" value="@img.Image" class="radio-btn-image" @onclick="() => UpdateMainImage(img.Image)">
 											<label for="image-@img.IDImage">
-												<img src="/@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
+												<img src="@img.Image" alt="Option @img.IDImage" class="w-75 img-thumbnail">
 											</label>
 										</div>
 									}
@@ -73,7 +74,17 @@
 					</div>
 				</div>
 				<hr>
+				<div class="float-end">
+					@if (qrCodeUrl != null)
+					{
+						<div class="col-md-4">
+							<img src="@qrCodeUrl" alt="QR Code" class="imageQR" style="width:100px; height:100px" />
+						</div>
+					}
+				</div>
 				<h3>THÔNG TIN SẢN PHẨM</h3>
+
+
 				<h4>@productitems.Name</h4>
 				<h6 class="text-secondary">
 					@categoryitems.FirstOrDefault(y => y.IDCategory == productitems.IDCategory).Name -
@@ -84,13 +95,9 @@
 
 					@if (userEvaluate != null)
 					{
-						<div class="user-evaluation">
-							<p>Bạn đã đánh giá sản phẩm này:</p>
-							<div class="rating">
-								<!-- Hiển thị số sao đánh giá -->
-								<p>Số sao: @userEvaluate.Point</p>
-							</div>
-							<!-- Hiển thị lời đánh giá -->
+						<div class="card p-3">
+							<p>Đánh giá của bạn</p>
+							<p>Số sao: @userEvaluate.Point <label class="radio-label" for="star"><i class="bi bi-star-fill text-warning"></i></label></p>
 							<p>Lời đánh giá: @userEvaluate.Describe</p>
 						</div>
 					}
@@ -177,13 +184,7 @@
 					</div>
 				</div>
 				<div class="row">
-					@if (qrCodeUrl != null)
-					{
-						<div class="col-md-4">
-							<img src="@qrCodeUrl" alt="QR Code" class="imageQR" style="width:100px; height:100px" />
-						</div>
-					}
-					<div class="col-md-8">
+					<div class="col-md-12">
 						<div class="card mt-3" style="border 1px solid: black">
 							@if (evaluates != null && evaluates.Count > 0)
 							{
@@ -299,6 +300,12 @@
 			billitems = (await httpclient.GetFromJsonAsync<IEnumerable<Bill>>("api/Bill/GetAllBills")).Where(t => t.UserName == LoggedInUser);
 			evaluates = (await httpclient.GetFromJsonAsync<List<Evaluate>>($"api/evaluate/get")).Where(x => x.IDProduct == int.Parse(id)).ToList();
 			userEvaluate = evaluates.FirstOrDefault(x => x.UserName == LoggedInUser && x.IDProduct == productitems.IDProduct);
+			// Lấy thông tin giỏ hàng từ localStorage
+			var cartItemsJson = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "cartItems");
+			if (!string.IsNullOrEmpty(cartItemsJson))
+			{
+				cartItems = JsonSerializer.Deserialize<List<Cart>>(cartItemsJson);
+			}
 			await LoadQRCodeUrl();
 			// Gọi phương thức LoadBillDetails với từng BillId trong billItems
 			foreach (var bill in billitems)
@@ -332,6 +339,7 @@
 	{
 		var selectedIdPDetail = await JSRuntime.InvokeAsync<string>("eval", "document.querySelector('input[name=IdPDetail]:checked').value");
 		var selectedProduct = productdetailitems.FirstOrDefault(x => x.IDPDetail == int.Parse(selectedIdPDetail));
+
 		if (selectedProduct != null && selectedProduct.Quantity < QuantityToAdd)
 		{
 			errorMessage = "Số lượng đã chọn vượt quá số lượng trong kho!";
@@ -347,19 +355,47 @@
 			}
 			else
 			{
-				c.UserName = loggedInUser;
-				c.IDPDetail = int.Parse(selectedIdPDetail);
-				c.Quantity = QuantityToAdd;
+				// Kiểm tra xem danh sách cartItems có dữ liệu không
+				if (cartItems != null && cartItems.Any())
+				{
+					// Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+					var existingCartItem = cartItems.FirstOrDefault(c => c.UserName == loggedInUser && c.IDPDetail == int.Parse(selectedIdPDetail));
+					await JSRuntime.InvokeVoidAsync("localStorage.setItem", "cartItems", JsonSerializer.Serialize(cartItems));
+					if (existingCartItem != null)
+					{
+						// Tăng số lượng sản phẩm trong giỏ hàng
+						existingCartItem.Quantity++;
+						await httpclient.PutAsJsonAsync($"api/Cart/UpdateCart/{existingCartItem.IDCart}", existingCartItem);
+						successMessage = "Số lượng sản phẩm trong giỏ hàng đã được cập nhật.";
+					}
+					else
+					{
+						c.UserName = loggedInUser;
+						c.IDPDetail = int.Parse(selectedIdPDetail);
+						c.Quantity = QuantityToAdd;
 
-				errorMessage = "";
-				successMessage = "Đã thêm sản phẩm vào giỏ hàng!";
-				await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
+						errorMessage = "";
+						successMessage = "Đã thêm sản phẩm vào giỏ hàng!";
+						await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
+					}
+				}
+				else
+				{
+					c.UserName = loggedInUser;
+					c.IDPDetail = int.Parse(selectedIdPDetail);
+					c.Quantity = QuantityToAdd;
+
+					errorMessage = "";
+					successMessage = "Đã thêm sản phẩm vào giỏ hàng!";
+					await httpclient.PostAsJsonAsync<Cart>("api/Cart/AddCart", c);
+				}
+
 				cartItems = await httpclient.GetFromJsonAsync<List<Cart>>("api/Cart/GetCarts");
-				// await JSRuntime.InvokeVoidAsync("window.location.assign", "/cartpage");
-
 			}
 		}
 	}
+
+
 
 	private int selectedPoint = 1;
 	private string description = "";

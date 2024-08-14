@@ -1,0 +1,98 @@
+﻿/* CSS cho responsive */
+@media (max-width: 576px) {
+    .product-name, .product-price {
+        text-align: center;
+    }
+
+    .breadcrumb {
+        justify-content: center;
+    }
+
+    .col-sm-3 {
+        margin-bottom: 20px;
+    }
+
+    .col-sm-9 {
+        text-align: center;
+    }
+
+    .col-sm-4 {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .pagination {
+        justify-content: center;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+        .input-group input {
+            margin-bottom: 10px;
+        }
+}
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+    .custom-checkbox input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        cursor: pointer;
+        appearance: none; /* Loại bỏ kiểu mặc định của checkbox */
+        background-color: white;
+        border: 2px solid black; /* Đường viền màu đen */
+        border-radius: 4px; /* Tùy chọn, làm tròn các góc */
+        position: relative;
+        transition: background-color 0.3s ease;
+    }
+
+        .custom-checkbox input[type="checkbox"]:checked {
+            background-color: black; /* Nền màu đen khi được tick */
+            border-color: black; /* Loại bỏ đường viền */
+        }
+
+            .custom-checkbox input[type="checkbox"]:checked::before {
+                content: "";
+                position: absolute;
+                top: 4px;
+                left: 6px;
+                width: 6px;
+                height: 12px;
+                border: solid white; /* Dấu tick màu trắng */
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+                opacity: 0;
+                animation: checkmark 0.3s forwards;
+            }
+
+    .custom-checkbox label {
+        font-size: 16px;
+        color: #333;
+        cursor: pointer;
+    }
+
+@keyframes checkmark {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(45deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(45deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(45deg);
+    }
+}

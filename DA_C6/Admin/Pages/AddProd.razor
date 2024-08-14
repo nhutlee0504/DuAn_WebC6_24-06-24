@@ -97,8 +97,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        supplierItems = await Task.Run(() => supplierResponse.GetSuppliers());
-        categoryItems = await Task.Run(() => categoryResponse.GetCategories());
+        supplierItems = await Task.Run(() => supplierResponse.GetSuppliersAsync());
+        categoryItems = await Task.Run(() => categoryResponse.GetCategoriesAsync());
     }
 
     private async Task HandleValidSubmit()
@@ -113,7 +113,7 @@
             newProduct.Image = "default-image.jpg"; // Giá trị mặc định nếu không có ảnh tải lên
         }
 
-        await Task.Run(() => productResponse.AddAsync(newProduct));
+        await productResponse.AddAsync(newProduct);
         navigation.NavigateTo("/ProductPage");
     }
 
@@ -124,7 +124,7 @@
 
     private async Task<string> SaveImageFile(IBrowserFile file)
     {
-        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.Name);
+        var fileName = file.Name;
         var filePath = Path.Combine("wwwroot/Image_Product", fileName);
 
         using (var stream = new FileStream(filePath, FileMode.Create))
@@ -132,6 +132,6 @@
             await file.OpenReadStream().CopyToAsync(stream);
         }
 
-        return fileName;
+        return $"Image_Product/{fileName}";
     }
 }
