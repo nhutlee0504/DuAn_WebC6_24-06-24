@@ -3,6 +3,7 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using System.Threading.Tasks;
 using System;
+using System.Text;
 
 namespace YourNamespace.Controllers
 {
