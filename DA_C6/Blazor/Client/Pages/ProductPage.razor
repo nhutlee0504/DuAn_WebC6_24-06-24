@@ -148,20 +148,25 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                            <a class="page-link text-black" aria-label="Previous" @onclick="@(e => ChangePage(currentPage - 1))">
+                            <a class="page-link text-black" aria-label="Previous" @onclick="() => ChangePage(currentPage - 1)">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        @for (var i = 1; i <= totalPages; i++)
+                        @for (var i = currentPage - 2; i <= currentPage + 2; i++)
                         {
-                            <li class="page-item @(currentPage == i ? "active" : "")">
-                                <a class="page-link text-black bg-white" @onclick="@(e => ChangePage(i))">
-                                    <span>@i</span>
-                                </a>
-                            </li>
+                            int j = i;
+                            if(i > 0 & i<=totalPages)
+                            {
+                                <li class="page-item @(currentPage == i ? "active" : "")">
+                                    <a class="page-link text-black bg-white" @onclick="() => ChangePage(j)">
+                                        <span>@i</span>
+                                    </a>
+                                </li>
+
+                            }
                         }
                         <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                            <a class="page-link text-black" aria-label="Next" @onclick="@(e => ChangePage(currentPage + 1))">
+                            <a class="page-link text-black" aria-label="Next" @onclick="() => ChangePage(currentPage + 1)">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>

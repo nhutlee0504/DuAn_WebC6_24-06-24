@@ -19,7 +19,7 @@ namespace Blazor.Client.Pages
         private List<Product> pagedProducts;
         private int currentPage = 1;
         private int totalPages;
-        private int pageSize = 6; // tổng số sản phẩm trong 1 trang
+        private int pageSize =6; // tổng số sản phẩm trong 1 trang
         private string searchTerm = ""; // Biến để lưu từ khóa tìm kiếm
 
         protected override async Task OnInitializedAsync()
@@ -46,11 +46,8 @@ namespace Blazor.Client.Pages
 
         private async Task ChangePage(int page)
         {
-            if (page >= 1 && page <= totalPages)
-            {
                 currentPage = page;
                 UpdatePagedProducts();
-            }
         }
 
         private async Task OnCategoryChanged(int IDCategory, bool isChecked)
