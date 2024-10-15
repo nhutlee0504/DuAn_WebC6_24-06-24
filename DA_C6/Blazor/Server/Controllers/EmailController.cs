@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System;
 using System.Text;
 
-namespace YourNamespace.Controllers
+namespace Blazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
